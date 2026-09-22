@@ -43,7 +43,11 @@ void InitSCI ( void );
 void PWMInit ( void );
 void AtoDInit ( void );
 int getchar(void);
+#ifdef PC_SIDE
+int putchar(int c);
+#else
 int putchar(char c);
+#endif
 void InitCANopen ( void );
 int RetractLA ( void );
 int CenterLA ( void );

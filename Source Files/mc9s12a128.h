@@ -79,7 +79,12 @@ Address							Module							(Bytes)Size
 
 *****************************************************************************/
 
+#ifdef PC_SIDE
+extern unsigned char sfr_regs[0x400];
+#define _REG_BASE        sfr_regs
+#else
 #define _REG_BASE        0
+#endif
 #define _ADDR(off)      (unsigned char volatile *)(_REG_BASE + off)
 #define _P(off)         *(unsigned char volatile *)(_REG_BASE + off)
 #define _LP(off)        *(unsigned short volatile *)(_REG_BASE + off)

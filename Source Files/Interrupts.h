@@ -1,6 +1,7 @@
 #ifndef Interrupts_H
 #define Interrupts_H
 
+#ifndef PC_SIDE
 #pragma interrupt_handler DUMMY_ENTRY
 #pragma interrupt_handler SCI0_Int_Handler
 #pragma interrupt_handler SCI1_Int_Handler
@@ -13,6 +14,7 @@
 #pragma interrupt_handler TC5_Int_Handler
 #pragma interrupt_handler TC6_Int_Handler
 #pragma interrupt_handler CANRxISR
+#endif
 
 #define TC_50us (int)(50/Tbus/TSCR2_PreScale+0.5)
 #define TC_104us (int)(104/Tbus/TSCR2_PreScale+0.5)

@@ -1120,8 +1120,13 @@ int getchar(void)
 	return SCI0DRL;
 	}
 
+#ifdef PC_SIDE
+int putchar(int c)
+	{
+	return fputc(c, stdout);
+	}
+#else
 extern int _textmode;
-
 int putchar(char c)
 	{
 	if (_textmode && c == '\n')
@@ -1131,6 +1136,7 @@ int putchar(char c)
 	SCI0DRL = c;
 	return c;
 	}
+#endif
 
 void InitCANopen ( void )
 {
@@ -1422,8 +1428,10 @@ void InitXmit ( void )
 	 
 int ATDGetLevel ( char ATD_Num )
 {
- 	ATD0CTL5=ATD0CTL5_Init | ATD_Num;
+	ATD0CTL5=ATD0CTL5_Init | ATD_Num;
+#ifndef PC_SIDE
 	while ( !(ATD0STAT0 & 0x80) );
+#endif
 	
 	return (ATD0DR0+ATD0DR1+ATD0DR2+ATD0DR3)/4; 				
 }
@@ -3098,5 +3106,3 @@ void LAMain ( int Move_Position, int Move_Speed)
         }
     }
 }
-
-

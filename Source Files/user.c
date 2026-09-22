@@ -23,7 +23,7 @@ VERSION:   2.10, ESA 12-JAN-05
 #include "mco.h"
 #include "mcohw.h"
 #include "mc9s12a128.h"
-#include "subroutines.h"
+#include "Subroutines.h"
 
 // ensure the number of tpdos and rpdos is correct
 #if (NR_OF_RPDOS != 8)
@@ -231,4 +231,3 @@ UNSIGNED8 i;
   //MCO_InitTPDO(4,0x318,100,100,5,IN_digi_3); 
   MCO_InitTPDO(4,0x318,0,100,5,IN_digi_3);
 }
-

@@ -11,6 +11,7 @@ extern void _start(void);
 #pragma nonpaged_function _start
 
 //#pragma abs_address:0xffd6
+#ifndef PC_SIDE
 #pragma abs_address:0xFF80
 void (*interrupt_vectors[])(void) =
 {
@@ -82,4 +83,5 @@ void (*interrupt_vectors[])(void) =
 };
 
 #pragma end_abs_address
+#endif
 #endif
