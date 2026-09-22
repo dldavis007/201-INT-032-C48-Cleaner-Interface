@@ -1,0 +1,2434 @@
+                        .module Interrupts.c
+                        .area text
+ 0000                   .dbfile ..\..\REV3~1.25\SOURCE~1\Interrupts.c
+                        .area data
+ 0000                   .dbfile ..\..\REV3~1.25\SOURCE~1\Interrupts.c
+ 0000           _Seconds::
+ 0000                   .blkb 1
+                        .area idata
+ 0000 3C                .byte 60
+                        .area data
+ 0001                   .dbfile ..\..\REV3~1.25\SOURCE~1\Interrupts.c
+ 0001                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0001                   .dbsym e Seconds _Seconds c
+ 0001           _Tick::
+ 0001                   .blkb 2
+                        .area idata
+ 0001 03D0              .word 976
+                        .area data
+ 0003                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0003                   .dbsym e Tick _Tick I
+ 0003           _SIN0Buf::
+ 0003                   .blkb 2
+                        .area idata
+ 0003 0000              .byte 0,0
+                        .area data
+ 0005                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0005                   .blkb 148
+                        .area idata
+ 0005 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000  .word 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+ 0041 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000  .word 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+ 007D 00000000000000000000      .word 0,0,0,0,0
+ 0087 00000000000000000000      .word 0,0,0,0,0
+ 0091 0000000000000000  .byte 0,0,0,0,0,0,0,0
+                        .area data
+ 0099                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0099                   .dbsym e SIN0Buf _SIN0Buf A[150:150]c
+ 0099           _SIN0Bufptr::
+ 0099                   .blkb 2
+                        .area idata
+ 0099 0000              .word 0
+                        .area data
+ 009B                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 009B                   .dbsym e SIN0Bufptr _SIN0Bufptr I
+ 009B           _SOUT0Buf::
+ 009B                   .blkb 2
+                        .area idata
+ 009B 0000              .byte 0,0
+                        .area data
+ 009D                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 009D                   .blkb 78
+                        .area idata
+ 009D 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000  .word 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+ 00D9 00000000000000000000      .word 0,0,0,0,0
+ 00E3 0000000000000000  .byte 0,0,0,0,0,0,0,0
+                        .area data
+ 00EB                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 00EB                   .dbsym e SOUT0Buf _SOUT0Buf A[80:80]c
+ 00EB           _SOUT0Bufptr::
+ 00EB                   .blkb 2
+                        .area idata
+ 00EB 0000              .word 0
+                        .area data
+ 00ED                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 00ED                   .dbsym e SOUT0Bufptr _SOUT0Bufptr I
+ 00ED           _RampTimer::
+ 00ED                   .blkb 2
+                        .area idata
+ 00ED 0013              .word 19
+                        .area data
+ 00EF                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 00EF                   .dbsym e RampTimer _RampTimer I
+ 00EF           _fast_inc::
+ 00EF                   .blkb 1
+                        .area idata
+ 00EF 00                .byte 0
+                        .area data
+ 00F0                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 00F0                   .dbsym e fast_inc _fast_inc c
+                        .area text
+ 0000                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0000                   .dbfunc e DUMMY_ENTRY _DUMMY_ENTRY fV
+ 0000           _DUMMY_ENTRY::
+ 0000                   .dbline -1
+ 0000                   .dbline 70
+ 0000           ; #include "Interrupts.h"
+ 0000           ; #include "mc9s12a128.h"
+ 0000           ; #include "Controller.h"
+ 0000           ; #include "mco.h"
+ 0000           ; #include "mcohw.h"
+ 0000           ; #include "nodecfg.h"
+ 0000           ; #include "procimg.h"
+ 0000           ; #include "Subroutines.h"
+ 0000           ; #include <math.h>
+ 0000           ; #include <stdlib.h>
+ 0000           ; 
+ 0000           ; char Seconds = 60;
+ 0000           ; 
+ 0000           ; int Tick = RTI_One_Sec;
+ 0000           ; 
+ 0000           ; unsigned int TC0_RCVD_Data;
+ 0000           ; 
+ 0000           ; char Gen_Flags;
+ 0000           ; 
+ 0000           ; unsigned int Timer1;
+ 0000           ; unsigned int Timer2;
+ 0000           ; unsigned int LA_Wait_Timer;
+ 0000           ; unsigned long LineupTimer;
+ 0000           ; unsigned long LineupTimeCapture;
+ 0000           ; 
+ 0000           ; extern char LA_Moving;
+ 0000           ; unsigned int MenuTimer;
+ 0000           ; unsigned int FocusZoomTimer;
+ 0000           ; unsigned int AdvanceTimer;
+ 0000           ; int Update_Menu_Timer;
+ 0000           ; unsigned int SequenceTimer;
+ 0000           ; 
+ 0000           ; char SIN0Buf[SIN0BufLen] = "\0";
+ 0000           ; int SIN0Bufptr = 0;
+ 0000           ; char SOUT0Buf[SOUT0BufLen] = "\0";
+ 0000           ; int SOUT0Bufptr = 0;
+ 0000           ; 
+ 0000           ; unsigned int MenuTimer;
+ 0000           ; unsigned int CompressorTimer;
+ 0000           ; int updatePressureTimer;       //limit frequency of updates to menu
+ 0000           ; 
+ 0000           ; 
+ 0000           ; extern signed char HeadRampCW;
+ 0000           ; extern signed char HeadRampCCW;
+ 0000           ; extern int HeadSpeed;
+ 0000           ; int RampTimer = RampTime;
+ 0000           ; 
+ 0000           ; unsigned long  StateTime;
+ 0000           ; extern char State;
+ 0000           ; 
+ 0000           ; char fast_inc=0;
+ 0000           ; unsigned int IncSpeedUpTimer;
+ 0000           ; char IncSpeedUpCntr;
+ 0000           ; 
+ 0000           ; char LA_PWM_Bit, LAspd, LA_PWM_Out;
+ 0000           ; extern char PB1_PWM, PB3_PWM;
+ 0000           ; 
+ 0000           ; char HD_PWM_Bit, HD_PWM_Out;
+ 0000           ; 
+ 0000           ; unsigned int PID_Timer;
+ 0000           ; unsigned int HdOffTimer;
+ 0000           ; 
+ 0000           ; unsigned int LA_speed_timer;
+ 0000           ; unsigned int TC2_prev,TC2_cap;
+ 0000           ; long LA_speed;
+ 0000           ; 
+ 0000           ; 
+ 0000           ; 
+ 0000           ; void DUMMY_ENTRY ( void )
+ 0000           ; {
+ 0000                   .dbline -2
+ 0000           L5:
+ 0000                   .dbline 0 ; func end
+ 0000 0B                rti
+ 0001                   .dbend
+ 0001                   .dbfunc e CANRxISR _CANRxISR fV
+ 0001                   .dbstruct 0 12 .1
+ 0001                   .dbfield 0 ID i
+ 0001                   .dbfield 2 LEN c
+ 0001                   .dbfield 3 dummy32bit c
+ 0001                   .dbfield 4 BUF A[8:8]c
+ 0001                   .dbend
+ 0001           ;         rxdata -> 2,SP
+ 0001           ;     ReceiveBuf -> 10,SP
+ 0001           ;     Identifier -> 22,SP
+ 0001           ;         length -> 26,SP
+ 0001           ;    pReceiveBuf -> 27,SP
+ 0001           ;          index -> 29,SP
+ 0001           _CANRxISR::
+ 0001 1BF1E2            leas -30,S
+ 0004                   .dbline -1
+ 0004                   .dbline 75
+ 0004           ; 
+ 0004           ; }
+ 0004           ; 
+ 0004           ; void CANRxISR ( void )
+ 0004           ; {
+ 0004                   .dbline 80
+ 0004           ;       unsigned char length, index;
+ 0004           ;       unsigned char rxdata[8];
+ 0004           ;     UNSIGNED32 Identifier;
+ 0004           ;       CAN_MSG ReceiveBuf;
+ 0004           ;       CAN_MSG *pReceiveBuf = &ReceiveBuf;
+ 0004 198A              leay 10,S
+ 0006 6DF01B            sty 27,S
+ 0009                   .dbline 82
+ 0009           ;       
+ 0009           ;     Identifier   = (UNSIGNED32)CANRXIDR0;
+ 0009 F60160            ldab 0x160
+ 000C 87                clra
+ 000D 160000            jsr int2long
+ 0010 3A                puld
+ 0011 6CF018            std 24,S
+ 0014 3A                puld
+ 0015 6CF018            std 24,S
+ 0018                   .dbline 83
+ 0018           ;     Identifier <<= 8;
+ 0018 ECF018            ldd 24,S
+ 001B 3B                pshd
+ 001C ECF018            ldd 24,S
+ 001F 3B                pshd
+ 0020 CC0008            ldd #8
+ 0023 160000            jsr lsl4
+ 0026 3A                puld
+ 0027 6CF018            std 24,S
+ 002A 3A                puld
+ 002B 6CF018            std 24,S
+ 002E                   .dbline 84
+ 002E           ;     Identifier  |= (UNSIGNED32) CANRXIDR1;
+ 002E ECF018            ldd 24,S
+ 0031 3B                pshd
+ 0032 ECF018            ldd 24,S
+ 0035 3B                pshd
+ 0036 F60161            ldab 0x161
+ 0039 87                clra
+ 003A 160000            jsr int2long
+ 003D 160000            jsr or4
+ 0040 3A                puld
+ 0041 6CF018            std 24,S
+ 0044 3A                puld
+ 0045 6CF018            std 24,S
+ 0048                   .dbline 85
+ 0048           ;     Identifier >>= 5;
+ 0048 ECF018            ldd 24,S
+ 004B 3B                pshd
+ 004C ECF018            ldd 24,S
+ 004F 3B                pshd
+ 0050 CC0005            ldd #5
+ 0053 160000            jsr lsr4
+ 0056 3A                puld
+ 0057 6CF018            std 24,S
+ 005A 3A                puld
+ 005B 6CF018            std 24,S
+ 005E                   .dbline 87
+ 005E           ;       
+ 005E           ;       length = (CANRXDLR & 0x0f);
+ 005E F6016C            ldab 0x16c
+ 0061 C40F              andb #15
+ 0063 6BF01A            stab 26,S
+ 0066                   .dbline 88
+ 0066           ;       for ( index = 0; index < length; index++ )
+ 0066 69F01D            clr 29,S
+ 0069 2022              bra L10
+ 006B           L7:
+ 006B                   .dbline 89
+ 006B           ;               *(UNSIGNED8 *)(pReceiveBuf->BUF+index) = *(&CANRXDSR0 + index);         /* Get received data */
+ 006B ECF01B            ldd 27,S
+ 006E C30004            addd #4
+ 0071 B746              tfr D,Y
+ 0073 E6F01D            ldab 29,S
+ 0076 87                clra
+ 0077 6D80              sty 0,S
+ 0079 E380              addd 0,S
+ 007B B746              tfr D,Y
+ 007D E6F01D            ldab 29,S
+ 0080 87                clra
+ 0081 C30164            addd #356
+ 0084 B745              tfr D,X
+ 0086 E600              ldab 0,X
+ 0088 6B40              stab 0,Y
+ 008A           L8:
+ 008A                   .dbline 88
+ 008A 62F01D            inc 29,S
+ 008D           L10:
+ 008D                   .dbline 88
+ 008D E6F01D            ldab 29,S
+ 0090 E1F01A            cmpb 26,S
+ 0093 25D6              blo L7
+ 0095                   .dbline 90
+ 0095           ;       CANRFLG = 0x01;                                                                                                                 /* Clear RXF */
+ 0095 180B010144        movb #1,0x144
+ 009A                   .dbline 92
+ 009A           ; 
+ 009A           ;     pReceiveBuf->ID = Identifier;
+ 009A ECF018            ldd 24,S
+ 009D 3B                pshd
+ 009E ECF018            ldd 24,S
+ 00A1 3B                pshd
+ 00A2 1B82              leas 2,S
+ 00A4 31                puly
+ 00A5 EEF01B            ldx 27,S
+ 00A8 6D00              sty 0,X
+ 00AA                   .dbline 93
+ 00AA           ;     pReceiveBuf->LEN = length;
+ 00AA E6F01A            ldab 26,S
+ 00AD B716              tfr B,Y
+ 00AF ECF01B            ldd 27,S
+ 00B2 C30002            addd #2
+ 00B5 B745              tfr D,X
+ 00B7 B761              tfr Y,B
+ 00B9 6B00              stab 0,X
+ 00BB                   .dbline -2
+ 00BB           L6:
+ 00BB                   .dbline 0 ; func end
+ 00BB 1BF01E            leas 30,S
+ 00BE 0B                rti
+ 00BF                   .dbsym l rxdata 2 A[8:8]c
+ 00BF                   .dbsym l ReceiveBuf 10 S[.1]
+ 00BF                   .dbsym l Identifier 22 l
+ 00BF                   .dbsym l length 26 c
+ 00BF                   .dbsym l pReceiveBuf 27 pS[.1]
+ 00BF                   .dbsym l index 29 c
+ 00BF                   .dbend
+ 00BF                   .dbfunc e IRQ_Int_Handler _IRQ_Int_Handler fV
+ 00BF           _IRQ_Int_Handler::
+ 00BF                   .dbline -1
+ 00BF                   .dbline 98
+ 00BF           ; 
+ 00BF           ; }     
+ 00BF           ; 
+ 00BF           ; void IRQ_Int_Handler ( void )
+ 00BF           ; {
+ 00BF                   .dbline -2
+ 00BF           L11:
+ 00BF                   .dbline 0 ; func end
+ 00BF 0B                rti
+ 00C0                   .dbend
+ 00C0                   .dbfunc e TC0_Int_Handler _TC0_Int_Handler fV
+ 00C0           _TC0_Int_Handler::
+ 00C0                   .dbline -1
+ 00C0                   .dbline 103
+ 00C0           ; 
+ 00C0           ; }
+ 00C0           ; 
+ 00C0           ; void TC0_Int_Handler ( void )
+ 00C0           ; {
+ 00C0                   .dbline 104
+ 00C0           ;        TFLG1 = 0x01;                  //clear interrupt
+ 00C0 180B01004E        movb #1,0x4e
+ 00C5                   .dbline -2
+ 00C5           L12:
+ 00C5                   .dbline 0 ; func end
+ 00C5 0B                rti
+ 00C6                   .dbend
+                        .area data
+ 00F0                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 00F0           _resolver::
+ 00F0                   .blkb 1
+                        .area idata
+ 00F0 00                .byte 0
+                        .area data
+ 00F1                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 00F1                   .dbsym e resolver _resolver c
+ 00F1           _phase::
+ 00F1                   .blkb 1
+                        .area idata
+ 00F1 00                .byte 0
+                        .area data
+ 00F2                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 00F2                   .dbsym e phase _phase c
+ 00F2           _prev_phase::
+ 00F2                   .blkb 1
+                        .area idata
+ 00F2 00                .byte 0
+                        .area data
+ 00F3                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 00F3                   .dbsym e prev_phase _prev_phase c
+ 00F3           _count::
+ 00F3                   .blkb 1
+                        .area idata
+ 00F3 00                .byte 0
+                        .area data
+ 00F4                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 00F4                   .dbsym e count _count c
+ 00F4           _LA_position::
+ 00F4                   .blkb 2
+                        .area idata
+ 00F4 09C4              .word 2500
+                        .area data
+ 00F6                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 00F6                   .dbsym e LA_position _LA_position I
+ 00F6           _prevLA_position::
+ 00F6                   .blkb 2
+                        .area idata
+ 00F6 09C4              .word 2500
+                        .area data
+ 00F8                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 00F8                   .dbsym e prevLA_position _prevLA_position I
+ 00F8           _direction::
+ 00F8                   .blkb 1
+                        .area idata
+ 00F8 00                .byte 0
+                        .area data
+ 00F9                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 00F9                   .dbsym e direction _direction C
+                        .area text
+ 00C6                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 00C6                   .dbfunc e TC1_Int_Handler _TC1_Int_Handler fV
+ 00C6           _TC1_Int_Handler::
+ 00C6                   .dbline -1
+ 00C6                   .dbline 118
+ 00C6           ; //     StoreFlag = 1;
+ 00C6           ; }
+ 00C6           ; 
+ 00C6           ; char resolver=0;
+ 00C6           ; char phase=0;
+ 00C6           ; char prev_phase=0;
+ 00C6           ; char count=0;
+ 00C6           ; int LA_position=2500;
+ 00C6           ; int prevLA_position=2500;
+ 00C6           ; signed char direction=0;
+ 00C6           ; 
+ 00C6           ; 
+ 00C6           ; void TC1_Int_Handler ( void )                         //encoder direction, both edges
+ 00C6           ; {
+ 00C6                   .dbline 119
+ 00C6           ;     TFLG1 = 0x02;                     //clear interrupt flag
+ 00C6 180B02004E        movb #2,0x4e
+ 00CB                   .dbline -2
+ 00CB           L13:
+ 00CB                   .dbline 0 ; func end
+ 00CB 0B                rti
+ 00CC                   .dbend
+                        .area data
+ 00F9                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 00F9           L17:
+ 00F9                   .blkb 1
+                        .area idata
+ 00F9 00                .byte 0
+                        .area data
+ 00FA                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+                        .area bss
+ 0000                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0000           L18:
+ 0000                   .blkb 16
+                        .area text
+ 00CC                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 00CC                   .dbfunc e TC2_Int_Handler _TC2_Int_Handler fV
+ 00CC                   .dbsym s LA_speed_array L18 A[16:8]i
+ 00CC                   .dbsym s LA_speed_array_ptr L17 c
+ 00CC           ;              i -> 4,SP
+ 00CC           _TC2_Int_Handler::
+ 00CC 1B9B              leas -5,S
+ 00CE                   .dbline -1
+ 00CE                   .dbline 129
+ 00CE           ;       
+ 00CE           ; //    if(PTT & 0x02) direction=1;
+ 00CE           ; //    else direction=-1;
+ 00CE           ; }
+ 00CE           ; 
+ 00CE           ; 
+ 00CE           ; 
+ 00CE           ; 
+ 00CE           ; void TC2_Int_Handler ( void )                 //tach, falling edges, changed to both because actuator encoder was too slow
+ 00CE           ; {
+ 00CE                   .dbline 130
+ 00CE           ;       TFLG1 = 0x04;
+ 00CE 180B04004E        movb #4,0x4e
+ 00D3                   .dbline 131
+ 00D3           ;       LA_position+=direction;
+ 00D3 F600F8            ldab _direction
+ 00D6 B716              tfr B,Y
+ 00D8 FC00F4            ldd _LA_position
+ 00DB 6D80              sty 0,S
+ 00DD E380              addd 0,S
+ 00DF 7C00F4            std _LA_position
+ 00E2                   .dbline 136
+ 00E2           ;       //remove next line if changing edge triggers
+ 00E2           ;       //LA_position+=direction;
+ 00E2           ;       
+ 00E2           ; 
+ 00E2           ;       TC2_cap=TC2-TC2_prev;            
+ 00E2 FC0054            ldd 0x54
+ 00E5 B30016            subd _TC2_prev
+ 00E8 7C0014            std _TC2_cap
+ 00EB                   .dbline 137
+ 00EB           ;       TC2_prev=TC2;
+ 00EB 180400540016      movw 0x54,_TC2_prev
+ 00F1                   .dbline 139
+ 00F1           ;       
+ 00F1           ;       if (TC2_cap < 6700)                      //Max LA speed should not exceed 6700, this also prevents divide by zero
+ 00F1 FD0014            ldy _TC2_cap
+ 00F4 8D1A2C            cpy #6700
+ 00F7 2406              bhs L15
+ 00F9                   .dbline 140
+ 00F9           ;           TC2_cap = 6700;
+ 00F9 18031A2C0014      movw #6700,_TC2_cap
+ 00FF           L15:
+ 00FF                   .dbline 142
+ 00FF           ;                       
+ 00FF           ;       LA_speed = 800000/TC2_cap;
+ 00FF 1800AE3500        movw #13568,2,-S
+ 0104 1800AE000C        movw #12,2,-S
+ 0109 FD0014            ldy _TC2_cap
+ 010C 35                pshy
+ 010D 1800AE0000        movw #0,2,-S
+ 0112 160000            jsr div4s
+ 0115 31                puly
+ 0116 7D0010            sty _LA_speed
+ 0119 31                puly
+ 011A 7D0012            sty _LA_speed+2
+ 011D                   .dbline 148
+ 011D           ;       //LA_speed = LA_speed<<5; //LA_speed = LA_speed * ???,  This is to compensate for the Timer prescaler
+ 011D           ; //    if (LA_speed > 120)
+ 011D           ; //        LA_speed = 120;
+ 011D           ;       
+ 011D           ;       
+ 011D           ;       {
+ 011D                   .dbline 152
+ 011D           ;           char i;
+ 011D           ;               static char LA_speed_array_ptr=0;
+ 011D           ;               static unsigned int LA_speed_array[8];
+ 011D           ;               LA_speed_array[LA_speed_array_ptr++] = LA_speed;
+ 011D F600F9            ldab L17
+ 0120 87                clra
+ 0121 6C82              std 2,S
+ 0123 B746              tfr D,Y
+ 0125 02                iny
+ 0126 B761              tfr Y,B
+ 0128 EE82              ldx 2,S
+ 012A 7B00F9            stab L17
+ 012D CD0000            ldy #L18
+ 0130 B754              tfr X,D
+ 0132 59                lsld
+ 0133 6D80              sty 0,S
+ 0135 E380              addd 0,S
+ 0137 B746              tfr D,Y
+ 0139 1801AE0012        movw _LA_speed+2,2,-S
+ 013E 1801AE0010        movw _LA_speed,2,-S
+ 0143 1B82              leas 2,S
+ 0145 30                pulx
+ 0146 6E40              stx 0,Y
+ 0148                   .dbline 153
+ 0148           ;               LA_speed = 0;
+ 0148 180300000010      movw #0,_LA_speed
+ 014E 180300000012      movw #0,_LA_speed+2
+ 0154                   .dbline 154
+ 0154           ;               if (LA_speed_array_ptr>=sizeof(LA_speed_array)/sizeof(int)) LA_speed_array_ptr=0;
+ 0154 F600F9            ldab L17
+ 0157 C108              cmpb #8
+ 0159 2503              blo L19
+ 015B                   .dbline 154
+ 015B 7900F9            clr L17
+ 015E           L19:
+ 015E                   .dbline 155
+ 015E           ;               for (i=0;i<sizeof(LA_speed_array)/sizeof(int);i++)
+ 015E 6984              clr 4,S
+ 0160 202C              bra L24
+ 0162           L21:
+ 0162                   .dbline 156
+ 0162           ;               LA_speed = LA_speed + LA_speed_array[i];
+ 0162 1801AE0012        movw _LA_speed+2,2,-S
+ 0167 1801AE0010        movw _LA_speed,2,-S
+ 016C CD0000            ldy #L18
+ 016F E688              ldab 8,S
+ 0171 87                clra
+ 0172 59                lsld
+ 0173 6D84              sty 4,S
+ 0175 E384              addd 4,S
+ 0177 B746              tfr D,Y
+ 0179 ED40              ldy 0,Y
+ 017B 35                pshy
+ 017C 1800AE0000        movw #0,2,-S
+ 0181 160000            jsr add4
+ 0184 30                pulx
+ 0185 7E0010            stx _LA_speed
+ 0188 30                pulx
+ 0189 7E0012            stx _LA_speed+2
+ 018C           L22:
+ 018C                   .dbline 155
+ 018C 6284              inc 4,S
+ 018E           L24:
+ 018E                   .dbline 155
+ 018E E684              ldab 4,S
+ 0190 C108              cmpb #8
+ 0192 25CE              blo L21
+ 0194                   .dbline 157
+ 0194           ;               LA_speed = LA_speed>>3;
+ 0194 1801AE0012        movw _LA_speed+2,2,-S
+ 0199 1801AE0010        movw _LA_speed,2,-S
+ 019E CC0003            ldd #3
+ 01A1 160000            jsr asr4
+ 01A4 31                puly
+ 01A5 7D0010            sty _LA_speed
+ 01A8 31                puly
+ 01A9 7D0012            sty _LA_speed+2
+ 01AC                   .dbline 158
+ 01AC           ;       }
+ 01AC                   .dbline 160
+ 01AC           ;       
+ 01AC           ;       LA_speed_timer = RTI_One_Sec * .5;
+ 01AC 180301E80018      movw #488,_LA_speed_timer
+ 01B2                   .dbline 163
+ 01B2           ; 
+ 01B2           ;       
+ 01B2           ;       if (LA_position<0) 
+ 01B2 FD00F4            ldy _LA_position
+ 01B5 8D0000            cpy #0
+ 01B8 2C06              bge L25
+ 01BA                   .dbline 164
+ 01BA           ;           LA_position=0;
+ 01BA 1803000000F4      movw #0,_LA_position
+ 01C0           L25:
+ 01C0                   .dbline -2
+ 01C0           L14:
+ 01C0                   .dbline 0 ; func end
+ 01C0 1B85              leas 5,S
+ 01C2 0B                rti
+ 01C3                   .dbsym l i 4 c
+ 01C3                   .dbend
+                        .area data
+ 00FA                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 00FA           _TC_6410_PWM::
+ 00FA                   .blkb 2
+                        .area idata
+ 00FA 01E0              .word 480
+                        .area data
+ 00FC                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 00FC                   .blkb 2
+                        .area idata
+ 00FC 0210              .word 528
+                        .area data
+ 00FE                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 00FE                   .blkb 2
+                        .area idata
+ 00FE 0240              .word 576
+                        .area data
+ 0100                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0100                   .blkb 2
+                        .area idata
+ 0100 0270              .word 624
+                        .area data
+ 0102                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0102                   .blkb 2
+                        .area idata
+ 0102 02A0              .word 672
+                        .area data
+ 0104                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0104                   .blkb 2
+                        .area idata
+ 0104 02D0              .word 720
+                        .area data
+ 0106                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0106                   .blkb 2
+                        .area idata
+ 0106 0300              .word 768
+                        .area data
+ 0108                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0108                   .blkb 2
+                        .area idata
+ 0108 0330              .word 816
+                        .area data
+ 010A                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 010A                   .blkb 2
+                        .area idata
+ 010A 0360              .word 864
+                        .area data
+ 010C                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 010C                   .blkb 2
+                        .area idata
+ 010C 0390              .word 912
+                        .area data
+ 010E                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 010E                   .blkb 2
+                        .area idata
+ 010E 03C0              .word 960
+                        .area data
+ 0110                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0110                   .blkb 2
+                        .area idata
+ 0110 03F0              .word 1008
+                        .area data
+ 0112                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0112                   .blkb 2
+                        .area idata
+ 0112 0420              .word 1056
+                        .area data
+ 0114                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0114                   .blkb 2
+                        .area idata
+ 0114 0450              .word 1104
+                        .area data
+ 0116                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0116                   .blkb 2
+                        .area idata
+ 0116 0480              .word 1152
+                        .area data
+ 0118                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0118                   .blkb 2
+                        .area idata
+ 0118 04B1              .word 1201
+                        .area data
+ 011A                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 011A                   .blkb 2
+                        .area idata
+ 011A 04E1              .word 1249
+                        .area data
+ 011C                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 011C                   .blkb 2
+                        .area idata
+ 011C 0511              .word 1297
+                        .area data
+ 011E                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 011E                   .blkb 2
+                        .area idata
+ 011E 0541              .word 1345
+                        .area data
+ 0120                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0120                   .blkb 2
+                        .area idata
+ 0120 0571              .word 1393
+                        .area data
+ 0122                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0122                   .blkb 2
+                        .area idata
+ 0122 05A1              .word 1441
+                        .area data
+ 0124                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0124                   .blkb 2
+                        .area idata
+ 0124 05D1              .word 1489
+                        .area data
+ 0126                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0126                   .blkb 2
+                        .area idata
+ 0126 0601              .word 1537
+                        .area data
+ 0128                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0128                   .blkb 2
+                        .area idata
+ 0128 0631              .word 1585
+                        .area data
+ 012A                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 012A                   .blkb 2
+                        .area idata
+ 012A 0661              .word 1633
+                        .area data
+ 012C                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 012C                   .blkb 2
+                        .area idata
+ 012C 0691              .word 1681
+                        .area data
+ 012E                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 012E                   .blkb 2
+                        .area idata
+ 012E 06C1              .word 1729
+                        .area data
+ 0130                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0130                   .blkb 2
+                        .area idata
+ 0130 06F1              .word 1777
+                        .area data
+ 0132                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0132                   .blkb 2
+                        .area idata
+ 0132 0721              .word 1825
+                        .area data
+ 0134                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0134                   .blkb 2
+                        .area idata
+ 0134 0751              .word 1873
+                        .area data
+ 0136                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0136                   .blkb 2
+                        .area idata
+ 0136 0781              .word 1921
+                        .area data
+ 0138                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0138                   .blkb 2
+                        .area idata
+ 0138 07B1              .word 1969
+                        .area data
+ 013A                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 013A                   .blkb 2
+                        .area idata
+ 013A 07E1              .word 2017
+                        .area data
+ 013C                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 013C                   .blkb 2
+                        .area idata
+ 013C 0811              .word 2065
+                        .area data
+ 013E                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 013E                   .blkb 2
+                        .area idata
+ 013E 0841              .word 2113
+                        .area data
+ 0140                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0140                   .blkb 2
+                        .area idata
+ 0140 0871              .word 2161
+                        .area data
+ 0142                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0142                   .blkb 2
+                        .area idata
+ 0142 08A1              .word 2209
+                        .area data
+ 0144                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0144                   .blkb 2
+                        .area idata
+ 0144 08D1              .word 2257
+                        .area data
+ 0146                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0146                   .blkb 2
+                        .area idata
+ 0146 0901              .word 2305
+                        .area data
+ 0148                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0148                   .blkb 2
+                        .area idata
+ 0148 0931              .word 2353
+                        .area data
+ 014A                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 014A                   .blkb 2
+                        .area idata
+ 014A 0962              .word 2402
+                        .area data
+ 014C                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 014C                   .blkb 2
+                        .area idata
+ 014C 0992              .word 2450
+                        .area data
+ 014E                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 014E                   .blkb 2
+                        .area idata
+ 014E 09C2              .word 2498
+                        .area data
+ 0150                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0150                   .blkb 2
+                        .area idata
+ 0150 09F2              .word 2546
+                        .area data
+ 0152                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0152                   .blkb 2
+                        .area idata
+ 0152 0A22              .word 2594
+                        .area data
+ 0154                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0154                   .blkb 2
+                        .area idata
+ 0154 0A52              .word 2642
+                        .area data
+ 0156                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0156                   .blkb 2
+                        .area idata
+ 0156 0A82              .word 2690
+                        .area data
+ 0158                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0158                   .blkb 2
+                        .area idata
+ 0158 0AB2              .word 2738
+                        .area data
+ 015A                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 015A                   .blkb 2
+                        .area idata
+ 015A 0AE2              .word 2786
+                        .area data
+ 015C                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 015C                   .blkb 2
+                        .area idata
+ 015C 0B12              .word 2834
+                        .area data
+ 015E                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 015E                   .blkb 2
+                        .area idata
+ 015E 0B42              .word 2882
+                        .area data
+ 0160                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0160                   .blkb 2
+                        .area idata
+ 0160 0B72              .word 2930
+                        .area data
+ 0162                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0162                   .blkb 2
+                        .area idata
+ 0162 0BA2              .word 2978
+                        .area data
+ 0164                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0164                   .blkb 2
+                        .area idata
+ 0164 0BD2              .word 3026
+                        .area data
+ 0166                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0166                   .blkb 2
+                        .area idata
+ 0166 0C02              .word 3074
+                        .area data
+ 0168                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0168                   .blkb 2
+                        .area idata
+ 0168 0C32              .word 3122
+                        .area data
+ 016A                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 016A                   .blkb 2
+                        .area idata
+ 016A 0C62              .word 3170
+                        .area data
+ 016C                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 016C                   .blkb 2
+                        .area idata
+ 016C 0C92              .word 3218
+                        .area data
+ 016E                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 016E                   .blkb 2
+                        .area idata
+ 016E 0CC2              .word 3266
+                        .area data
+ 0170                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0170                   .blkb 2
+                        .area idata
+ 0170 0CF2              .word 3314
+                        .area data
+ 0172                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0172                   .blkb 2
+                        .area idata
+ 0172 0D22              .word 3362
+                        .area data
+ 0174                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0174                   .blkb 2
+                        .area idata
+ 0174 0D52              .word 3410
+                        .area data
+ 0176                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0176                   .blkb 2
+                        .area idata
+ 0176 0D82              .word 3458
+                        .area data
+ 0178                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0178                   .blkb 2
+                        .area idata
+ 0178 0DB2              .word 3506
+                        .area data
+ 017A                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 017A                   .blkb 2
+                        .area idata
+ 017A 0DE2              .word 3554
+                        .area data
+ 017C                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 017C                   .blkb 2
+                        .area idata
+ 017C 0E13              .word 3603
+                        .area data
+ 017E                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 017E                   .blkb 2
+                        .area idata
+ 017E 0E43              .word 3651
+                        .area data
+ 0180                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0180                   .blkb 2
+                        .area idata
+ 0180 0E73              .word 3699
+                        .area data
+ 0182                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0182                   .blkb 2
+                        .area idata
+ 0182 0EA3              .word 3747
+                        .area data
+ 0184                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0184                   .blkb 2
+                        .area idata
+ 0184 0ED3              .word 3795
+                        .area data
+ 0186                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0186                   .blkb 2
+                        .area idata
+ 0186 0F03              .word 3843
+                        .area data
+ 0188                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0188                   .blkb 2
+                        .area idata
+ 0188 0F33              .word 3891
+                        .area data
+ 018A                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 018A                   .blkb 2
+                        .area idata
+ 018A 0F63              .word 3939
+                        .area data
+ 018C                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 018C                   .blkb 2
+                        .area idata
+ 018C 0F93              .word 3987
+                        .area data
+ 018E                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 018E                   .blkb 2
+                        .area idata
+ 018E 0FC3              .word 4035
+                        .area data
+ 0190                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0190                   .blkb 2
+                        .area idata
+ 0190 0FF3              .word 4083
+                        .area data
+ 0192                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0192                   .blkb 2
+                        .area idata
+ 0192 1023              .word 4131
+                        .area data
+ 0194                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0194                   .blkb 2
+                        .area idata
+ 0194 1053              .word 4179
+                        .area data
+ 0196                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0196                   .blkb 2
+                        .area idata
+ 0196 1083              .word 4227
+                        .area data
+ 0198                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0198                   .blkb 2
+                        .area idata
+ 0198 10B3              .word 4275
+                        .area data
+ 019A                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 019A                   .blkb 2
+                        .area idata
+ 019A 10E3              .word 4323
+                        .area data
+ 019C                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 019C                   .blkb 2
+                        .area idata
+ 019C 1113              .word 4371
+                        .area data
+ 019E                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 019E                   .blkb 2
+                        .area idata
+ 019E 1143              .word 4419
+                        .area data
+ 01A0                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 01A0                   .blkb 2
+                        .area idata
+ 01A0 1173              .word 4467
+                        .area data
+ 01A2                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 01A2                   .blkb 2
+                        .area idata
+ 01A2 11A3              .word 4515
+                        .area data
+ 01A4                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 01A4                   .blkb 2
+                        .area idata
+ 01A4 11D3              .word 4563
+                        .area data
+ 01A6                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 01A6                   .dbsym e TC_6410_PWM _TC_6410_PWM A[172:86]I
+ 01A6           L28:
+ 01A6                   .blkb 2
+                        .area idata
+ 01A6 0000              .word 0
+                        .area data
+ 01A8                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+                        .area text
+ 01C3                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 01C3                   .dbfunc e TC3_Int_Handler _TC3_Int_Handler fV
+ 01C3                   .dbsym s abs_hdspd L28 I
+ 01C3           _TC3_Int_Handler::
+ 01C3 1B9C              leas -4,S
+ 01C5                   .dbline -1
+ 01C5                   .dbline 178
+ 01C5           ; }
+ 01C5           ; 
+ 01C5           ; int TC_6410_PWM[86]={TC_6410us * .10,TC_6410us * .11,TC_6410us * .12,TC_6410us * .13,TC_6410us * .14,TC_6410us * .15,TC_6410us * .16,TC_6410us * .17,TC_6410us * .18,TC_6410us * .19,
+ 01C5           ;                                TC_6410us * .20,TC_6410us * .21,TC_6410us * .22,TC_6410us * .23,TC_6410us * .24,TC_6410us * .25,TC_6410us * .26,TC_6410us * .27,TC_6410us * .28,TC_6410us * .29,
+ 01C5           ;                                TC_6410us * .30,TC_6410us * .31,TC_6410us * .32,TC_6410us * .33,TC_6410us * .34,TC_6410us * .35,TC_6410us * .36,TC_6410us * .37,TC_6410us * .38,TC_6410us * .39,
+ 01C5           ;                                TC_6410us * .40,TC_6410us * .41,TC_6410us * .42,TC_6410us * .43,TC_6410us * .44,TC_6410us * .45,TC_6410us * .46,TC_6410us * .47,TC_6410us * .48,TC_6410us * .49,
+ 01C5           ;                                TC_6410us * .50,TC_6410us * .51,TC_6410us * .52,TC_6410us * .53,TC_6410us * .54,TC_6410us * .55,TC_6410us * .56,TC_6410us * .57,TC_6410us * .58,TC_6410us * .59,
+ 01C5           ;                                TC_6410us * .60,TC_6410us * .61,TC_6410us * .62,TC_6410us * .63,TC_6410us * .64,TC_6410us * .65,TC_6410us * .66,TC_6410us * .67,TC_6410us * .68,TC_6410us * .69,
+ 01C5           ;                                TC_6410us * .70,TC_6410us * .71,TC_6410us * .72,TC_6410us * .73,TC_6410us * .74,TC_6410us * .75,TC_6410us * .76,TC_6410us * .77,TC_6410us * .78,TC_6410us * .79,
+ 01C5           ;                                TC_6410us * .80,TC_6410us * .81,TC_6410us * .82,TC_6410us * .83,TC_6410us * .84,TC_6410us * .85,TC_6410us * .86,TC_6410us * .87,TC_6410us * .88,TC_6410us * .89,
+ 01C5           ;                                TC_6410us * .90,TC_6410us * .91,TC_6410us * .92,TC_6410us * .93,TC_6410us * .94,TC_6410us * .95};
+ 01C5           ; 
+ 01C5           ; void TC3_Int_Handler ( void )
+ 01C5           ; {
+ 01C5                   .dbline 181
+ 01C5           ;        static int abs_hdspd = 0;
+ 01C5           ;        
+ 01C5           ;        TFLG1 = 0x08;                  //clear interrupt
+ 01C5 180B08004E        movb #8,0x4e
+ 01CA                   .dbline 183
+ 01CA           ;        
+ 01CA           ;        if ( !(PORTB & HD_PWM_Bit) )
+ 01CA F60001            ldab 0x1
+ 01CD F5001F            bitb _HD_PWM_Bit
+ 01D0 260A              bne L29
+ 01D2                   .dbline 184
+ 01D2           ;            abs_hdspd = abs ( HeadSpeed );                                     // Only allow speed to change (go to zero) at the end of a Low PWM cycle
+ 01D2 FC0000            ldd _HeadSpeed
+ 01D5 4A000000          xcall $_abs
+ 01D9 7C01A6            std L28
+ 01DC           L29:
+ 01DC                   .dbline 202
+ 01DC           ; 
+ 01DC           ; // >>>>>>>>>>>>>>>>>>   PortB & PTP (below) are used for the Internal Head Ramp (FET H-Bridge, smaller machines) <<<<<<<<<<<<<<<<<<<<<         
+ 01DC           ; 
+ 01DC           ;        
+ 01DC           ;        
+ 01DC           ;        //                    PTB 76543210
+ 01DC           ;        //                             | | 
+ 01DC           ;        //  (Reverse) H-Bridge IN  ----' '----  H-Bridge IN (Forward)
+ 01DC           ;        //                             
+ 01DC           ; 
+ 01DC           ;        //                    PTP 76543210
+ 01DC           ;        //                            | |
+ 01DC           ;        // (Reverse) H-Bridge /SD ----' '---- H-Bridge /SD (Forward)
+ 01DC           ;        //         
+ 01DC           ;        
+ 01DC           ;        // PTP is set (high, not shut down) in doevents
+ 01DC           ;        
+ 01DC           ;        if ( HeadSpeed >= 10 )
+ 01DC FD0000            ldy _HeadSpeed
+ 01DF 8D000A            cpy #10
+ 01E2 2D07              blt L31
+ 01E4                   .dbline 203
+ 01E4           ;        {           
+ 01E4                   .dbline 204
+ 01E4           ;            HD_PWM_Bit = 0x01;
+ 01E4 180B01001F        movb #1,_HD_PWM_Bit
+ 01E9                   .dbline 205
+ 01E9           ;        }
+ 01E9 204B              bra L32
+ 01EB           L31:
+ 01EB                   .dbline 206
+ 01EB           ;        else if ( HeadSpeed <= -10 )
+ 01EB FD0000            ldy _HeadSpeed
+ 01EE 8DFFF6            cpy #65526
+ 01F1 2E07              bgt L33
+ 01F3                   .dbline 207
+ 01F3           ;        {
+ 01F3                   .dbline 208
+ 01F3           ;            HD_PWM_Bit = 0x04;
+ 01F3 180B04001F        movb #4,_HD_PWM_Bit
+ 01F8                   .dbline 209
+ 01F8           ;        }
+ 01F8 203C              bra L34
+ 01FA           L33:
+ 01FA                   .dbline 210
+ 01FA           ;        else if ( HD_PWM_Out )                                                         //if stopping and high side is going high 
+ 01FA F6001E            ldab _HD_PWM_Out
+ 01FD C100              cmpb #0
+ 01FF 2735              beq L35
+ 0201                   .dbline 211
+ 0201           ;        {
+ 0201                   .dbline 212
+ 0201           ;                PTP &= ~(HD_PWM_Bit<<1);                                               //disable high side driver to prevent braking   
+ 0201 F6001F            ldab _HD_PWM_Bit
+ 0204 87                clra
+ 0205 59                lsld
+ 0206 41                coma
+ 0207 51                comb
+ 0208 B746              tfr D,Y
+ 020A F60258            ldab 0x258
+ 020D 87                clra
+ 020E 6D80              sty 0,S
+ 0210 A480              anda 0,S
+ 0212 E481              andb 1,S
+ 0214 7B0258            stab 0x258
+ 0217                   .dbline 213
+ 0217           ;                HD_PWM_Out = 0;                                                                //don't go high     
+ 0217 79001E            clr _HD_PWM_Out
+ 021A                   .dbline 214
+ 021A           ;                abs_hdspd = 0;
+ 021A 1803000001A6      movw #0,L28
+ 0220                   .dbline 215
+ 0220           ;                PORTB = PORTB & ~0x05;                                                 //clear both PWM outputs
+ 0220 1D000105          bclr 0x1,#5
+ 0224                   .dbline 216
+ 0224           ;                HD_PWM_Bit = 0;
+ 0224 79001F            clr _HD_PWM_Bit
+ 0227                   .dbline 218
+ 0227           ;                
+ 0227           ;                TCTL2 = ( TCTL2 & ~0xC0 ) | 0x80;                              // 0x80 == clear TC output
+ 0227 F60049            ldab 0x49
+ 022A C43F              andb #65343
+ 022C CA80              orab #128
+ 022E 7B0049            stab 0x49
+ 0231                   .dbline 219
+ 0231           ;                CFORC = 0x08;                                                                  // External PWM low
+ 0231 180B080041        movb #8,0x41
+ 0236                   .dbline 220
+ 0236           ;        }
+ 0236           L35:
+ 0236           L34:
+ 0236           L32:
+ 0236                   .dbline 223
+ 0236           ;        
+ 0236           ;        
+ 0236           ;        PORTB = ( PORTB & ~HD_PWM_Bit ) | HD_PWM_Out;          //Internal PWM outputs
+ 0236 F6001F            ldab _HD_PWM_Bit
+ 0239 51                comb
+ 023A B716              tfr B,Y
+ 023C F60001            ldab 0x1
+ 023F 6D80              sty 0,S
+ 0241 E481              andb 1,S
+ 0243 FA001E            orab _HD_PWM_Out
+ 0246 7B0001            stab 0x1
+ 0249                   .dbline 228
+ 0249           ;        
+ 0249           ; // >>>>>>>>>>>>>>>>>>   PTT bit 3, TC3 (below) is used for the external Head Ramp (Low side FET driver and relays) <<<<<<<<<<<<<<<<<<<<<       
+ 0249           ; //PWM output on PT3 for external 
+ 0249           ; 
+ 0249           ;        if ( abs_hdspd > 95 )
+ 0249 FD01A6            ldy L28
+ 024C 8D005F            cpy #95
+ 024F 2F06              ble L37
+ 0251                   .dbline 229
+ 0251           ;        {
+ 0251                   .dbline 230
+ 0251           ;                abs_hdspd = 95;                                                           //Internal stays at 95, external switch to always on at 95 percent
+ 0251 1803005F01A6      movw #95,L28
+ 0257                   .dbline 231
+ 0257           ;        }
+ 0257           L37:
+ 0257                   .dbline 233
+ 0257           ;        
+ 0257           ;        if ( PORTB & HD_PWM_Bit )                                         //PWM output is high (just went high), set time to PWM percent
+ 0257 F60001            ldab 0x1
+ 025A F5001F            bitb _HD_PWM_Bit
+ 025D 2758              beq L39
+ 025F                   .dbline 234
+ 025F           ;        {
+ 025F                   .dbline 235
+ 025F           ;            if ( abs_hdspd < 95 )
+ 025F FD01A6            ldy L28
+ 0262 8D005F            cpy #95
+ 0265 2C0C              bge L41
+ 0267                   .dbline 236
+ 0267           ;                {
+ 0267                   .dbline 237
+ 0267           ;                        TCTL2 = ( TCTL2 & ~0xC0 ) | 0x80;                 // 0x80 == clear TC output, on next interrupt
+ 0267 F60049            ldab 0x49
+ 026A C43F              andb #65343
+ 026C CA80              orab #128
+ 026E 7B0049            stab 0x49
+ 0271                   .dbline 238
+ 0271           ;                }
+ 0271 200F              bra L42
+ 0273           L41:
+ 0273                   .dbline 240
+ 0273           ;                else   
+ 0273           ;                {                                                                                         // Head speed is equal to 95
+ 0273                   .dbline 241
+ 0273           ;                        TCTL2 = ( TCTL2 & ~0xC0 ) | 0xC0;                 // 0xC0 == Set TC output, on force (next line) (force External PWM to 100%)
+ 0273 F60049            ldab 0x49
+ 0276 C43F              andb #65343
+ 0278 CAC0              orab #192
+ 027A 7B0049            stab 0x49
+ 027D                   .dbline 242
+ 027D           ;                        CFORC = 0x08;                                                     // External PWM High
+ 027D 180B080041        movb #8,0x41
+ 0282                   .dbline 243
+ 0282           ;                }
+ 0282           L42:
+ 0282                   .dbline 244
+ 0282           ;                HD_PWM_Out = 0;                                                           //Internal PWM will go low on next interrupt
+ 0282 79001E            clr _HD_PWM_Out
+ 0285                   .dbline 245
+ 0285           ;          TC3 = TC3 + TC_6410_PWM[abs_hdspd-10 < 0?0:abs_hdspd-10];               // Get high time of PWM
+ 0285 FC01A6            ldd L28
+ 0288 83000A            subd #10
+ 028B 8C0000            cpd #0
+ 028E 2C07              bge L44
+ 0290 1800820000        movw #0,2,S
+ 0295 2008              bra L45
+ 0297           L44:
+ 0297 FC01A6            ldd L28
+ 029A 83000A            subd #10
+ 029D 6C82              std 2,S
+ 029F           L45:
+ 029F CD00FA            ldy #_TC_6410_PWM
+ 02A2 EC82              ldd 2,S
+ 02A4 59                lsld
+ 02A5 6D80              sty 0,S
+ 02A7 E380              addd 0,S
+ 02A9 B746              tfr D,Y
+ 02AB FC0056            ldd 0x56
+ 02AE E340              addd 0,Y
+ 02B0 7C0056            std 0x56
+ 02B3                   .dbline 246
+ 02B3           ;        }
+ 02B3 1820008E          lbra L40
+ 02B7           L39:
+ 02B7                   .dbline 248
+ 02B7           ;        else                                                                                      //PWM output is low (just went low), set time to (100% - PWM percent)
+ 02B7           ;        {
+ 02B7                   .dbline 249
+ 02B7           ;                TC3 = TC3 + ( TC_6410us - TC_6410_PWM[abs_hdspd-10 < 0?0:abs_hdspd-10]);  // Calculate low time of PWM (entire PWM time is 6.41ms)
+ 02B7 FC01A6            ldd L28
+ 02BA 83000A            subd #10
+ 02BD 8C0000            cpd #0
+ 02C0 2C07              bge L47
+ 02C2 1800820000        movw #0,2,S
+ 02C7 2008              bra L48
+ 02C9           L47:
+ 02C9 FC01A6            ldd L28
+ 02CC 83000A            subd #10
+ 02CF 6C82              std 2,S
+ 02D1           L48:
+ 02D1 FD0056            ldy 0x56
+ 02D4 35                pshy
+ 02D5 1800AE0000        movw #0,2,-S
+ 02DA 1800AE12C4        movw #4804,2,-S
+ 02DF 1800AE0000        movw #0,2,-S
+ 02E4 EC8A              ldd 10,S
+ 02E6 CD00FA            ldy #_TC_6410_PWM
+ 02E9 59                lsld
+ 02EA 6D88              sty 8,S
+ 02EC E388              addd 8,S
+ 02EE B746              tfr D,Y
+ 02F0 EC40              ldd 0,Y
+ 02F2 160000            jsr int2long
+ 02F5 160000            jsr sub4
+ 02F8 160000            jsr add4
+ 02FB 1B82              leas 2,S
+ 02FD 31                puly
+ 02FE 7D0056            sty 0x56
+ 0301                   .dbline 250
+ 0301           ;                if ( abs_hdspd >= 10 && abs_hdspd < 95 )
+ 0301 FD01A6            ldy L28
+ 0304 8D000A            cpy #10
+ 0307 2D14              blt L49
+ 0309 FD01A6            ldy L28
+ 030C 8D005F            cpy #95
+ 030F 2C0C              bge L49
+ 0311                   .dbline 251
+ 0311           ;                {
+ 0311                   .dbline 252
+ 0311           ;                TCTL2 = ( TCTL2 & ~0xC0 ) | 0xC0;                 // 0xC0 == Set TC output, External PWM High, on next interrupt
+ 0311 F60049            ldab 0x49
+ 0314 C43F              andb #65343
+ 0316 CAC0              orab #192
+ 0318 7B0049            stab 0x49
+ 031B                   .dbline 253
+ 031B           ;                }
+ 031B 2022              bra L50
+ 031D           L49:
+ 031D                   .dbline 254
+ 031D           ;                else if ( abs_hdspd >= 95 )    
+ 031D FD01A6            ldy L28
+ 0320 8D005F            cpy #95
+ 0323 2D11              blt L51
+ 0325                   .dbline 255
+ 0325           ;                {                                                                                         // Head speed is equal or greater than 95
+ 0325                   .dbline 256
+ 0325           ;                        TCTL2 = ( TCTL2 & ~0xC0 ) | 0xC0;                 // 0xC0 == Set TC output, on force (next line) (force External PWM to 100%)
+ 0325 F60049            ldab 0x49
+ 0328 C43F              andb #65343
+ 032A CAC0              orab #192
+ 032C 7B0049            stab 0x49
+ 032F                   .dbline 257
+ 032F           ;                        CFORC = 0x08;                                                     // External PWM High
+ 032F 180B080041        movb #8,0x41
+ 0334                   .dbline 258
+ 0334           ;                }
+ 0334 2009              bra L52
+ 0336           L51:
+ 0336                   .dbline 260
+ 0336           ;                else
+ 0336           ;                {
+ 0336                   .dbline 261
+ 0336           ;                    TC3 = TC3 + TC_6410_PWM[85];                          //set PWM to longest time when stopping (hdspd = 0)
+ 0336 FC0056            ldd 0x56
+ 0339 F301A4            addd _TC_6410_PWM+170
+ 033C 7C0056            std 0x56
+ 033F                   .dbline 262
+ 033F           ;                }
+ 033F           L52:
+ 033F           L50:
+ 033F                   .dbline 263
+ 033F           ;        HD_PWM_Out = HD_PWM_Bit;                                          //Internal PWM will go high on next interrupt
+ 033F 180C001F001E      movb _HD_PWM_Bit,_HD_PWM_Out
+ 0345                   .dbline 264
+ 0345           ;        }
+ 0345           L40:
+ 0345                   .dbline -2
+ 0345           L27:
+ 0345                   .dbline 0 ; func end
+ 0345 1B84              leas 4,S
+ 0347 0B                rti
+ 0348                   .dbend
+ 0348                   .dbfunc e TC5_Int_Handler _TC5_Int_Handler fV
+ 0348           _TC5_Int_Handler::
+ 0348                   .dbline -1
+ 0348                   .dbline 271
+ 0348           ; }
+ 0348           ; 
+ 0348           ; 
+ 0348           ;                                
+ 0348           ;                                
+ 0348           ; void TC5_Int_Handler ( void )
+ 0348           ; {
+ 0348                   .dbline 272
+ 0348           ;        TFLG1 = 0x20;                  //clear interrupt
+ 0348 180B20004E        movb #32,0x4e
+ 034D                   .dbline 273
+ 034D           ;        TC5 = TCNT + TC_1ms;
+ 034D FC0044            ldd 0x44
+ 0350 C302ED            addd #749
+ 0353 7C005A            std 0x5a
+ 0356                   .dbline 274
+ 0356           ;        MCOHW_TimerISR();
+ 0356 4A000000          xcall $_MCOHW_TimerISR
+ 035A                   .dbline -2
+ 035A           L54:
+ 035A                   .dbline 0 ; func end
+ 035A 0B                rti
+ 035B                   .dbend
+ 035B                   .dbfunc e TC6_Int_Handler _TC6_Int_Handler fV
+ 035B           _TC6_Int_Handler::
+ 035B 1B9C              leas -4,S
+ 035D                   .dbline -1
+ 035D                   .dbline 278
+ 035D           ; }
+ 035D           ; 
+ 035D           ; void TC6_Int_Handler ( void )
+ 035D           ; {
+ 035D                   .dbline 279
+ 035D           ;        TFLG1 = 0x40;                  //clear interrupt
+ 035D 180B40004E        movb #64,0x4e
+ 0362                   .dbline 281
+ 0362           ;        
+ 0362           ;        if ( PB1_PWM )
+ 0362 F60000            ldab _PB1_PWM
+ 0365 C100              cmpb #0
+ 0367 270D              beq L56
+ 0369                   .dbline 282
+ 0369           ;        {           
+ 0369                   .dbline 283
+ 0369           ;            LA_PWM_Bit = 0x02;
+ 0369 180B020022        movb #2,_LA_PWM_Bit
+ 036E                   .dbline 284
+ 036E           ;                LAspd = PB1_PWM;
+ 036E 180C00000021      movb _PB1_PWM,_LAspd
+ 0374                   .dbline 285
+ 0374           ;        }
+ 0374 2017              bra L57
+ 0376           L56:
+ 0376                   .dbline 286
+ 0376           ;        else if ( PB3_PWM )
+ 0376 F60000            ldab _PB3_PWM
+ 0379 C100              cmpb #0
+ 037B 270D              beq L58
+ 037D                   .dbline 287
+ 037D           ;        {
+ 037D                   .dbline 288
+ 037D           ;            LA_PWM_Bit = 0x08;
+ 037D 180B080022        movb #8,_LA_PWM_Bit
+ 0382                   .dbline 289
+ 0382           ;                LAspd = PB3_PWM;
+ 0382 180C00000021      movb _PB3_PWM,_LAspd
+ 0388                   .dbline 290
+ 0388           ;        }
+ 0388 2003              bra L59
+ 038A           L58:
+ 038A                   .dbline 292
+ 038A           ;        else
+ 038A           ;        {
+ 038A                   .dbline 293
+ 038A           ;                LAspd = 0;
+ 038A 790021            clr _LAspd
+ 038D                   .dbline 296
+ 038D           ;                //PORTB = ( PORTB & ~0x0a );
+ 038D           ;                //PTP &= ~(LA_PWM_Bit>>1);                        //disable driver to prevent braking       
+ 038D           ;        }
+ 038D           L59:
+ 038D           L57:
+ 038D                   .dbline 298
+ 038D           ;        
+ 038D           ;        PORTB = ( PORTB & ~LA_PWM_Bit ) | LA_PWM_Out;
+ 038D F60022            ldab _LA_PWM_Bit
+ 0390 51                comb
+ 0391 B716              tfr B,Y
+ 0393 F60001            ldab 0x1
+ 0396 6D80              sty 0,S
+ 0398 E481              andb 1,S
+ 039A FA0020            orab _LA_PWM_Out
+ 039D 7B0001            stab 0x1
+ 03A0                   .dbline 300
+ 03A0           ;        
+ 03A0           ;        if ( LAspd > 95 )  //Limit output to 95%
+ 03A0 F60021            ldab _LAspd
+ 03A3 C15F              cmpb #95
+ 03A5 2305              bls L60
+ 03A7                   .dbline 301
+ 03A7           ;        {
+ 03A7                   .dbline 302
+ 03A7           ;                LAspd = 95;
+ 03A7 180B5F0021        movb #95,_LAspd
+ 03AC                   .dbline 303
+ 03AC           ;        }
+ 03AC           L60:
+ 03AC                   .dbline 305
+ 03AC           ;        
+ 03AC           ;        if ( LAspd < 10 )  //Always off if < 10, Clear output on next interrupt
+ 03AC F60021            ldab _LAspd
+ 03AF C10A              cmpb #10
+ 03B1 2423              bhs L62
+ 03B3                   .dbline 306
+ 03B3           ;        {
+ 03B3                   .dbline 308
+ 03B3           ;            //TC6 = TC6 + TC_1200us;
+ 03B3           ;            TC6 = TC6 + TC_6410us;
+ 03B3 FD005C            ldy 0x5c
+ 03B6 35                pshy
+ 03B7 1800AE0000        movw #0,2,-S
+ 03BC 1800AE12C4        movw #4804,2,-S
+ 03C1 1800AE0000        movw #0,2,-S
+ 03C6 160000            jsr add4
+ 03C9 1B82              leas 2,S
+ 03CB 31                puly
+ 03CC 7D005C            sty 0x5c
+ 03CF                   .dbline 309
+ 03CF           ;                LA_PWM_Out = 0;
+ 03CF 790020            clr _LA_PWM_Out
+ 03D2                   .dbline 310
+ 03D2           ;        }
+ 03D2 18200089          lbra L63
+ 03D6           L62:
+ 03D6                   .dbline 311
+ 03D6           ;        else if ( PORTB & LA_PWM_Bit ) //if output is high, Clear output on next interrupt (LA_PWM_In is equal to active output)
+ 03D6 F60001            ldab 0x1
+ 03D9 F50022            bitb _LA_PWM_Bit
+ 03DC 2732              beq L64
+ 03DE                   .dbline 312
+ 03DE           ;        {
+ 03DE                   .dbline 315
+ 03DE           ;            //TC6 = TC6 + ( TC_1200us/10 * LAspd/10 );
+ 03DE           ;            //TC6 = TC6 + ( TC_6410us/10 * LAspd/10 );
+ 03DE           ;            TC6 = TC6 + TC_6410_PWM[LAspd-10<0?0:LAspd-10];
+ 03DE F60021            ldab _LAspd
+ 03E1 C00A              subb #10
+ 03E3 C100              cmpb #0
+ 03E5 2407              bhs L67
+ 03E7 1800820000        movw #0,2,S
+ 03EC 2009              bra L68
+ 03EE           L67:
+ 03EE F60021            ldab _LAspd
+ 03F1 87                clra
+ 03F2 83000A            subd #10
+ 03F5 6C82              std 2,S
+ 03F7           L68:
+ 03F7 CD00FA            ldy #_TC_6410_PWM
+ 03FA EC82              ldd 2,S
+ 03FC 59                lsld
+ 03FD 6D80              sty 0,S
+ 03FF E380              addd 0,S
+ 0401 B746              tfr D,Y
+ 0403 FC005C            ldd 0x5c
+ 0406 E340              addd 0,Y
+ 0408 7C005C            std 0x5c
+ 040B                   .dbline 316
+ 040B           ;                LA_PWM_Out = 0;
+ 040B 790020            clr _LA_PWM_Out
+ 040E                   .dbline 317
+ 040E           ;        }
+ 040E 204F              bra L65
+ 0410           L64:
+ 0410                   .dbline 319
+ 0410           ;        else  //if output is low, Set output on next interrupt
+ 0410           ;        {
+ 0410                   .dbline 322
+ 0410           ;          //TC6 = TC6 + ( TC_1200us - ( TC_1200us/10 * LAspd/10 ) );
+ 0410           ;          //TC6 = TC6 + ( TC_6410us - ( TC_6410us/10 * LAspd/10 ) );
+ 0410           ;          TC6 = TC6 + ( TC_6410us - TC_6410_PWM[LAspd-10<0?0:LAspd-10]);
+ 0410 F60021            ldab _LAspd
+ 0413 C00A              subb #10
+ 0415 C100              cmpb #0
+ 0417 2407              bhs L70
+ 0419 1800820000        movw #0,2,S
+ 041E 2009              bra L71
+ 0420           L70:
+ 0420 F60021            ldab _LAspd
+ 0423 87                clra
+ 0424 83000A            subd #10
+ 0427 6C82              std 2,S
+ 0429           L71:
+ 0429 FD005C            ldy 0x5c
+ 042C 35                pshy
+ 042D 1800AE0000        movw #0,2,-S
+ 0432 1800AE12C4        movw #4804,2,-S
+ 0437 1800AE0000        movw #0,2,-S
+ 043C EC8A              ldd 10,S
+ 043E CD00FA            ldy #_TC_6410_PWM
+ 0441 59                lsld
+ 0442 6D88              sty 8,S
+ 0444 E388              addd 8,S
+ 0446 B746              tfr D,Y
+ 0448 EC40              ldd 0,Y
+ 044A 160000            jsr int2long
+ 044D 160000            jsr sub4
+ 0450 160000            jsr add4
+ 0453 1B82              leas 2,S
+ 0455 31                puly
+ 0456 7D005C            sty 0x5c
+ 0459                   .dbline 323
+ 0459           ;                LA_PWM_Out = LA_PWM_Bit;
+ 0459 180C00220020      movb _LA_PWM_Bit,_LA_PWM_Out
+ 045F                   .dbline 324
+ 045F           ;        }
+ 045F           L65:
+ 045F           L63:
+ 045F                   .dbline -2
+ 045F           L55:
+ 045F                   .dbline 0 ; func end
+ 045F 1B84              leas 4,S
+ 0461 0B                rti
+ 0462                   .dbend
+ 0462                   .dbfunc e RTI_Int_Handler _RTI_Int_Handler fV
+ 0462           _RTI_Int_Handler::
+ 0462 1B92              leas -14,S
+ 0464                   .dbline -1
+ 0464                   .dbline 328
+ 0464           ; }
+ 0464           ; 
+ 0464           ; void RTI_Int_Handler ( void )
+ 0464           ; {
+ 0464                   .dbline 329
+ 0464           ;        CRGFLG = 0x80;         //clear interrupt
+ 0464 180B800037        movb #128,0x37
+ 0469                   .dbline 331
+ 0469           ; 
+ 0469           ;       StateTime++;
+ 0469 1801AE0028        movw _StateTime+2,2,-S
+ 046E 1801AE0026        movw _StateTime,2,-S
+ 0473 1800AE0001        movw #1,2,-S
+ 0478 1800AE0000        movw #0,2,-S
+ 047D 160000            jsr add4
+ 0480 31                puly
+ 0481 7D0026            sty _StateTime
+ 0484 31                puly
+ 0485 7D0028            sty _StateTime+2
+ 0488                   .dbline 332
+ 0488           ;     LineupTimer++;
+ 0488 1801AE003E        movw _LineupTimer+2,2,-S
+ 048D 1801AE003C        movw _LineupTimer,2,-S
+ 0492 1800AE0001        movw #1,2,-S
+ 0497 1800AE0000        movw #0,2,-S
+ 049C 160000            jsr add4
+ 049F 31                puly
+ 04A0 7D003C            sty _LineupTimer
+ 04A3 31                puly
+ 04A4 7D003E            sty _LineupTimer+2
+ 04A7                   .dbline 334
+ 04A7           ;       
+ 04A7           ;       if ( HdOffTimer )
+ 04A7 FD001A            ldy _HdOffTimer
+ 04AA 8D0000            cpy #0
+ 04AD 2707              beq L73
+ 04AF                   .dbline 335
+ 04AF           ;       {
+ 04AF                   .dbline 336
+ 04AF           ;                HdOffTimer--;          
+ 04AF FD001A            ldy _HdOffTimer
+ 04B2 03                dey
+ 04B3 7D001A            sty _HdOffTimer
+ 04B6                   .dbline 337
+ 04B6           ;       }
+ 04B6           L73:
+ 04B6                   .dbline 338
+ 04B6           ;       if ( PID_Timer )
+ 04B6 FD001C            ldy _PID_Timer
+ 04B9 8D0000            cpy #0
+ 04BC 2707              beq L75
+ 04BE                   .dbline 339
+ 04BE           ;       {
+ 04BE                   .dbline 340
+ 04BE           ;           PID_Timer--;
+ 04BE FD001C            ldy _PID_Timer
+ 04C1 03                dey
+ 04C2 7D001C            sty _PID_Timer
+ 04C5                   .dbline 341
+ 04C5           ;       }
+ 04C5           L75:
+ 04C5                   .dbline 342
+ 04C5           ;       if ( LA_speed_timer )
+ 04C5 FD0018            ldy _LA_speed_timer
+ 04C8 8D0000            cpy #0
+ 04CB 2709              beq L77
+ 04CD                   .dbline 343
+ 04CD           ;       {
+ 04CD                   .dbline 344
+ 04CD           ;           LA_speed_timer--;
+ 04CD FD0018            ldy _LA_speed_timer
+ 04D0 03                dey
+ 04D1 7D0018            sty _LA_speed_timer
+ 04D4                   .dbline 346
+ 04D4           ;               
+ 04D4           ;       }
+ 04D4 200C              bra L78
+ 04D6           L77:
+ 04D6                   .dbline 347
+ 04D6           ;       else{
+ 04D6                   .dbline 348
+ 04D6           ;                LA_speed=0;
+ 04D6 180300000010      movw #0,_LA_speed
+ 04DC 180300000012      movw #0,_LA_speed+2
+ 04E2                   .dbline 349
+ 04E2           ;       } 
+ 04E2           L78:
+ 04E2                   .dbline 350
+ 04E2           ;     if ( Timer1 )
+ 04E2 FD0044            ldy _Timer1
+ 04E5 8D0000            cpy #0
+ 04E8 2716              beq L79
+ 04EA                   .dbline 351
+ 04EA           ;     {
+ 04EA                   .dbline 352
+ 04EA           ;         if ( !--Timer1 )
+ 04EA FD0044            ldy _Timer1
+ 04ED 03                dey
+ 04EE 6D8C              sty 12,S
+ 04F0 18058C0044        movw 12,S,_Timer1
+ 04F5 ED8C              ldy 12,S
+ 04F7 8D0000            cpy #0
+ 04FA 2604              bne L81
+ 04FC                   .dbline 353
+ 04FC           ;             Gen_Flags &= ~Gen_Flags_Timer1;
+ 04FC 1D004608          bclr _Gen_Flags,#8
+ 0500           L81:
+ 0500                   .dbline 354
+ 0500           ;     }
+ 0500           L79:
+ 0500                   .dbline 356
+ 0500           ;     
+ 0500           ;     if ( Timer2 )
+ 0500 FD0042            ldy _Timer2
+ 0503 8D0000            cpy #0
+ 0506 2716              beq L83
+ 0508                   .dbline 357
+ 0508           ;     {
+ 0508                   .dbline 358
+ 0508           ;         if ( !--Timer2 )
+ 0508 FD0042            ldy _Timer2
+ 050B 03                dey
+ 050C 6D8A              sty 10,S
+ 050E 18058A0042        movw 10,S,_Timer2
+ 0513 ED8A              ldy 10,S
+ 0515 8D0000            cpy #0
+ 0518 2604              bne L85
+ 051A                   .dbline 359
+ 051A           ;             Gen_Flags &= ~Gen_Flags_Timer2;
+ 051A 1D004610          bclr _Gen_Flags,#16
+ 051E           L85:
+ 051E                   .dbline 360
+ 051E           ;     }
+ 051E           L83:
+ 051E                   .dbline 362
+ 051E           ;     
+ 051E           ;     if ( LA_Wait_Timer )
+ 051E FD0040            ldy _LA_Wait_Timer
+ 0521 8D0000            cpy #0
+ 0524 2712              beq L87
+ 0526                   .dbline 363
+ 0526           ;     {
+ 0526                   .dbline 364
+ 0526           ;           --LA_Wait_Timer;
+ 0526 FD0040            ldy _LA_Wait_Timer
+ 0529 03                dey
+ 052A 7D0040            sty _LA_Wait_Timer
+ 052D                   .dbline 365
+ 052D           ;               if ( !LA_Wait_Timer )
+ 052D FD0040            ldy _LA_Wait_Timer
+ 0530 8D0000            cpy #0
+ 0533 2603              bne L89
+ 0535                   .dbline 366
+ 0535           ;                   LA_Moving = 0;  //clear moving flag after delay
+ 0535 790000            clr _LA_Moving
+ 0538           L89:
+ 0538                   .dbline 367
+ 0538           ;     }
+ 0538           L87:
+ 0538                   .dbline 369
+ 0538           ;     
+ 0538           ;       if ( IncSpeedUpTimer )
+ 0538 FD0024            ldy _IncSpeedUpTimer
+ 053B 8D0000            cpy #0
+ 053E 2707              beq L91
+ 0540                   .dbline 370
+ 0540           ;     {
+ 0540                   .dbline 371
+ 0540           ;         IncSpeedUpTimer--;
+ 0540 FD0024            ldy _IncSpeedUpTimer
+ 0543 03                dey
+ 0544 7D0024            sty _IncSpeedUpTimer
+ 0547                   .dbline 372
+ 0547           ;     }
+ 0547           L91:
+ 0547                   .dbline 374
+ 0547           ;     
+ 0547           ;     if ( MenuTimer )
+ 0547 FD0036            ldy _MenuTimer
+ 054A 8D0000            cpy #0
+ 054D 2731              beq L93
+ 054F                   .dbline 375
+ 054F           ;       {
+ 054F                   .dbline 376
+ 054F           ;           MenuTimer--;
+ 054F FD0036            ldy _MenuTimer
+ 0552 03                dey
+ 0553 7D0036            sty _MenuTimer
+ 0556                   .dbline 378
+ 0556           ;         
+ 0556           ;         if ( !MenuTimer )
+ 0556 FD0036            ldy _MenuTimer
+ 0559 8D0000            cpy #0
+ 055C 2622              bne L95
+ 055E                   .dbline 379
+ 055E           ;         {
+ 055E                   .dbline 380
+ 055E           ;             if ( IncSpeedUpTimer )
+ 055E FD0024            ldy _IncSpeedUpTimer
+ 0561 8D0000            cpy #0
+ 0564 2705              beq L97
+ 0566                   .dbline 381
+ 0566           ;             {
+ 0566                   .dbline 382
+ 0566           ;                 IncSpeedUpCntr++;
+ 0566 720023            inc _IncSpeedUpCntr
+ 0569                   .dbline 383
+ 0569           ;             }
+ 0569 2006              bra L98
+ 056B           L97:
+ 056B                   .dbline 385
+ 056B           ;             else
+ 056B           ;             {
+ 056B                   .dbline 386
+ 056B           ;                 IncSpeedUpCntr=0;
+ 056B 790023            clr _IncSpeedUpCntr
+ 056E                   .dbline 387
+ 056E           ;                 fast_inc=0;
+ 056E 7900EF            clr _fast_inc
+ 0571                   .dbline 388
+ 0571           ;             }
+ 0571           L98:
+ 0571                   .dbline 390
+ 0571           ;                 
+ 0571           ;             if ( IncSpeedUpCntr > IncSpeedUpCnt )
+ 0571 F60023            ldab _IncSpeedUpCntr
+ 0574 C109              cmpb #9
+ 0576 2308              bls L99
+ 0578                   .dbline 391
+ 0578           ;             {
+ 0578                   .dbline 392
+ 0578           ;                 IncSpeedUpCntr--;
+ 0578 730023            dec _IncSpeedUpCntr
+ 057B                   .dbline 393
+ 057B           ;                 fast_inc=1;
+ 057B 180B0100EF        movb #1,_fast_inc
+ 0580                   .dbline 394
+ 0580           ;             }
+ 0580           L99:
+ 0580                   .dbline 395
+ 0580           ;         }      
+ 0580           L95:
+ 0580                   .dbline 396
+ 0580           ;       }
+ 0580           L93:
+ 0580                   .dbline 398
+ 0580           ;       
+ 0580           ;       if ( Update_Menu_Timer > 0 )
+ 0580 FD0030            ldy _Update_Menu_Timer
+ 0583 8D0000            cpy #0
+ 0586 2F07              ble L101
+ 0588                   .dbline 399
+ 0588           ;       {
+ 0588                   .dbline 400
+ 0588           ;           Update_Menu_Timer--;
+ 0588 FD0030            ldy _Update_Menu_Timer
+ 058B 03                dey
+ 058C 7D0030            sty _Update_Menu_Timer
+ 058F                   .dbline 401
+ 058F           ;       }
+ 058F           L101:
+ 058F                   .dbline 403
+ 058F           ;       
+ 058F           ;     if ( FocusZoomTimer )
+ 058F FD0034            ldy _FocusZoomTimer
+ 0592 8D0000            cpy #0
+ 0595 271C              beq L103
+ 0597                   .dbline 404
+ 0597           ;     {
+ 0597                   .dbline 405
+ 0597           ;         if ( !--FocusZoomTimer )       
+ 0597 FD0034            ldy _FocusZoomTimer
+ 059A 03                dey
+ 059B 6D88              sty 8,S
+ 059D 1805880034        movw 8,S,_FocusZoomTimer
+ 05A2 ED88              ldy 8,S
+ 05A4 8D0000            cpy #0
+ 05A7 260A              bne L105
+ 05A9                   .dbline 406
+ 05A9           ;         {   //stop focus and zoom
+ 05A9                   .dbline 407
+ 05A9           ;             PWMDTY4 = 0;
+ 05A9 7900C0            clr 0xc0
+ 05AC                   .dbline 408
+ 05AC           ;             PWMDTY5 = 0;
+ 05AC 7900C1            clr 0xc1
+ 05AF                   .dbline 409
+ 05AF           ;                       PORTA &= ~0x60;
+ 05AF 1D000060          bclr 0,#96
+ 05B3                   .dbline 410
+ 05B3           ;         }
+ 05B3           L105:
+ 05B3                   .dbline 411
+ 05B3           ;     }
+ 05B3           L103:
+ 05B3                   .dbline 413
+ 05B3           ; 
+ 05B3           ;     if ( AdvanceTimer )     //film advance timer
+ 05B3 FD0032            ldy _AdvanceTimer
+ 05B6 8D0000            cpy #0
+ 05B9 2716              beq L107
+ 05BB                   .dbline 414
+ 05BB           ;     {
+ 05BB                   .dbline 415
+ 05BB           ;         if ( !--AdvanceTimer )       
+ 05BB FD0032            ldy _AdvanceTimer
+ 05BE 03                dey
+ 05BF 6D86              sty 6,S
+ 05C1 1805860032        movw 6,S,_AdvanceTimer
+ 05C6 ED86              ldy 6,S
+ 05C8 8D0000            cpy #0
+ 05CB 2604              bne L109
+ 05CD                   .dbline 416
+ 05CD           ;         {   //stop Advance
+ 05CD                   .dbline 417
+ 05CD           ;             PORTA &= ~0x80;
+ 05CD 1D000080          bclr 0,#128
+ 05D1                   .dbline 418
+ 05D1           ;         }
+ 05D1           L109:
+ 05D1                   .dbline 419
+ 05D1           ;     }
+ 05D1           L107:
+ 05D1                   .dbline 422
+ 05D1           ; 
+ 05D1           ;     //Ramp for internal H-Bridge and external Head Ramp
+ 05D1           ;       if ( !(--RampTimer) )
+ 05D1 FD00ED            ldy _RampTimer
+ 05D4 03                dey
+ 05D5 6D84              sty 4,S
+ 05D7 18058400ED        movw 4,S,_RampTimer
+ 05DC ED84              ldy 4,S
+ 05DE 8D0000            cpy #0
+ 05E1 2662              bne L111
+ 05E3                   .dbline 423
+ 05E3           ;       {
+ 05E3                   .dbline 424
+ 05E3           ;           RampTimer = RampTime;
+ 05E3 1803001300ED      movw #19,_RampTimer
+ 05E9                   .dbline 425
+ 05E9           ;       if ( HeadRampCW == 1 )
+ 05E9 F60000            ldab _HeadRampCW
+ 05EC C101              cmpb #1
+ 05EE 2611              bne L113
+ 05F0                   .dbline 426
+ 05F0           ;       {
+ 05F0                   .dbline 427
+ 05F0           ;           if ( HeadSpeed < 97 )
+ 05F0 FD0000            ldy _HeadSpeed
+ 05F3 8D0061            cpy #97
+ 05F6 2C4D              bge L114
+ 05F8                   .dbline 428
+ 05F8           ;           {
+ 05F8                   .dbline 429
+ 05F8           ;                           HeadSpeed++;
+ 05F8 FD0000            ldy _HeadSpeed
+ 05FB 02                iny
+ 05FC 7D0000            sty _HeadSpeed
+ 05FF                   .dbline 430
+ 05FF           ;                       }
+ 05FF                   .dbline 431
+ 05FF           ;       }
+ 05FF 2044              bra L114
+ 0601           L113:
+ 0601                   .dbline 432
+ 0601           ;       else if ( HeadRampCW == -1 )
+ 0601 F60000            ldab _HeadRampCW
+ 0604 C1FF              cmpb #65535
+ 0606 2610              bne L117
+ 0608                   .dbline 433
+ 0608           ;       {                       
+ 0608                   .dbline 434
+ 0608           ;           if ( HeadSpeed > 0 )
+ 0608 FD0000            ldy _HeadSpeed
+ 060B 8D0000            cpy #0
+ 060E 2F35              ble L118
+ 0610                   .dbline 436
+ 0610           ;                   //HeadSpeed--;  //Ramp down
+ 0610           ;                               HeadSpeed = 0;  //Stop immediately instead of ramping down
+ 0610 180300000000      movw #0,_HeadSpeed
+ 0616                   .dbline 437
+ 0616           ;       }
+ 0616 202D              bra L118
+ 0618           L117:
+ 0618                   .dbline 438
+ 0618           ;       else if ( HeadRampCCW == 1 )
+ 0618 F60000            ldab _HeadRampCCW
+ 061B C101              cmpb #1
+ 061D 2611              bne L121
+ 061F                   .dbline 439
+ 061F           ;       {
+ 061F                   .dbline 440
+ 061F           ;           if ( HeadSpeed > -97 )
+ 061F FD0000            ldy _HeadSpeed
+ 0622 8DFF9F            cpy #65439
+ 0625 2F1E              ble L122
+ 0627                   .dbline 441
+ 0627           ;                       {
+ 0627                   .dbline 442
+ 0627           ;                   HeadSpeed--;
+ 0627 FD0000            ldy _HeadSpeed
+ 062A 03                dey
+ 062B 7D0000            sty _HeadSpeed
+ 062E                   .dbline 443
+ 062E           ;                       }
+ 062E                   .dbline 444
+ 062E           ;       }
+ 062E 2015              bra L122
+ 0630           L121:
+ 0630                   .dbline 445
+ 0630           ;       else if ( HeadRampCCW == -1 )
+ 0630 F60000            ldab _HeadRampCCW
+ 0633 C1FF              cmpb #65535
+ 0635 260E              bne L125
+ 0637                   .dbline 446
+ 0637           ;       {                       
+ 0637                   .dbline 447
+ 0637           ;           if ( HeadSpeed < 0 )
+ 0637 FD0000            ldy _HeadSpeed
+ 063A 8D0000            cpy #0
+ 063D 2C06              bge L127
+ 063F                   .dbline 449
+ 063F           ;                   //HeadSpeed++;  //Ramp up
+ 063F           ;                               HeadSpeed = 0;  //Stop immediately instead of ramping down                              
+ 063F 180300000000      movw #0,_HeadSpeed
+ 0645           L127:
+ 0645                   .dbline 450
+ 0645           ;       }
+ 0645           L125:
+ 0645           L122:
+ 0645           L118:
+ 0645           L114:
+ 0645                   .dbline 452
+ 0645           ; 
+ 0645           ;       }
+ 0645           L111:
+ 0645                   .dbline 454
+ 0645           ;               
+ 0645           ;     if ( !(Tick--) )
+ 0645 1801820001        movw _Tick,2,S
+ 064A ED82              ldy 2,S
+ 064C 03                dey
+ 064D 7D0001            sty _Tick
+ 0650 ED82              ldy 2,S
+ 0652 8D0000            cpy #0
+ 0655 265A              bne L129
+ 0657                   .dbline 455
+ 0657           ;     {
+ 0657                   .dbline 456
+ 0657           ;         Tick = RTI_One_Sec;
+ 0657 180303D00001      movw #976,_Tick
+ 065D                   .dbline 457
+ 065D           ;         if ( !(Seconds--) )
+ 065D F60000            ldab _Seconds
+ 0660 87                clra
+ 0661 6C80              std 0,S
+ 0663 B746              tfr D,Y
+ 0665 03                dey
+ 0666 B761              tfr Y,B
+ 0668 7B0000            stab _Seconds
+ 066B ED80              ldy 0,S
+ 066D 8D0000            cpy #0
+ 0670 2605              bne L131
+ 0672                   .dbline 458
+ 0672           ;         {
+ 0672                   .dbline 459
+ 0672           ;             Seconds = 60;
+ 0672 180B3C0000        movb #60,_Seconds
+ 0677                   .dbline 461
+ 0677           ;         
+ 0677           ;         }
+ 0677           L131:
+ 0677                   .dbline 462
+ 0677           ;       if ( CompressorTimer )
+ 0677 FD002C            ldy _CompressorTimer
+ 067A 8D0000            cpy #0
+ 067D 2707              beq L133
+ 067F                   .dbline 463
+ 067F           ;       {
+ 067F                   .dbline 464
+ 067F           ;           CompressorTimer--;
+ 067F FD002C            ldy _CompressorTimer
+ 0682 03                dey
+ 0683 7D002C            sty _CompressorTimer
+ 0686                   .dbline 465
+ 0686           ;       }
+ 0686           L133:
+ 0686                   .dbline 466
+ 0686           ;               if ( updatePressureTimer )
+ 0686 FD002A            ldy _updatePressureTimer
+ 0689 8D0000            cpy #0
+ 068C 2707              beq L135
+ 068E                   .dbline 467
+ 068E           ;               {
+ 068E                   .dbline 468
+ 068E           ;                  updatePressureTimer--;
+ 068E FD002A            ldy _updatePressureTimer
+ 0691 03                dey
+ 0692 7D002A            sty _updatePressureTimer
+ 0695                   .dbline 469
+ 0695           ;               }
+ 0695           L135:
+ 0695                   .dbline 470
+ 0695           ;               if ( SequenceTimer )
+ 0695 FD002E            ldy _SequenceTimer
+ 0698 8D0000            cpy #0
+ 069B 2714              beq L137
+ 069D                   .dbline 471
+ 069D           ;               {
+ 069D                   .dbline 472
+ 069D           ;                   SequenceTimer--;
+ 069D FD002E            ldy _SequenceTimer
+ 06A0 03                dey
+ 06A1 7D002E            sty _SequenceTimer
+ 06A4                   .dbline 473
+ 06A4           ;                       if ( !SequenceTimer )
+ 06A4 FD002E            ldy _SequenceTimer
+ 06A7 8D0000            cpy #0
+ 06AA 2605              bne L139
+ 06AC                   .dbline 474
+ 06AC           ;                           State = ErrorState;
+ 06AC 180B630000        movb #99,_State
+ 06B1           L139:
+ 06B1                   .dbline 475
+ 06B1           ;               }
+ 06B1           L137:
+ 06B1                   .dbline 476
+ 06B1           ;     }
+ 06B1           L129:
+ 06B1                   .dbline -2
+ 06B1           L72:
+ 06B1                   .dbline 0 ; func end
+ 06B1 1B8E              leas 14,S
+ 06B3 0B                rti
+ 06B4                   .dbend
+ 06B4                   .dbfunc e SCI0_Int_Handler _SCI0_Int_Handler fV
+ 06B4           ;        tmpchar -> 4,SP
+ 06B4           _SCI0_Int_Handler::
+ 06B4 1B9B              leas -5,S
+ 06B6                   .dbline -1
+ 06B6                   .dbline 480
+ 06B6           ; }
+ 06B6           ; 
+ 06B6           ; void SCI0_Int_Handler ( void ) 
+ 06B6           ; {
+ 06B6                   .dbline 483
+ 06B6           ;        char tmpchar;
+ 06B6           ;        
+ 06B6           ;        if ( SCI0SR1 & SCI0SR1_RDRF )
+ 06B6 1F00CC2002        brclr 0xcc,#32,X0
+ 06BB 2004              bra X1
+ 06BD 1820006C  X0: lbra L142
+ 06C1           X1:
+ 06C1                   .dbline 484
+ 06C1           ;        {
+ 06C1                   .dbline 485
+ 06C1           ;        tmpchar = SCI0DRL;
+ 06C1 18098400CF        movb 0xcf,4,S
+ 06C6                   .dbline 486
+ 06C6           ;            if ( !(Gen_Flags & Gen_Flags_SIN0Rcvd) )
+ 06C6 F60046            ldab _Gen_Flags
+ 06C9 C502              bitb #2
+ 06CB 1826005E          lbne L144
+ 06CF                   .dbline 487
+ 06CF           ;                {
+ 06CF                   .dbline 488
+ 06CF           ;                       if ( tmpchar != '\n' )
+ 06CF E684              ldab 4,S
+ 06D1 C10A              cmpb #10
+ 06D3 2758              beq L146
+ 06D5                   .dbline 489
+ 06D5           ;                       {
+ 06D5                   .dbline 490
+ 06D5           ;                           SIN0Buf [SIN0Bufptr++] = tmpchar;
+ 06D5 1801820099        movw _SIN0Bufptr,2,S
+ 06DA EC82              ldd 2,S
+ 06DC ED82              ldy 2,S
+ 06DE 02                iny
+ 06DF 7D0099            sty _SIN0Bufptr
+ 06E2 CD0003            ldy #_SIN0Buf
+ 06E5 6D80              sty 0,S
+ 06E7 E380              addd 0,S
+ 06E9 B746              tfr D,Y
+ 06EB E684              ldab 4,S
+ 06ED 6B40              stab 0,Y
+ 06EF                   .dbline 491
+ 06EF           ;                       if ( SIN0Bufptr == SIN0BufLen-1 )
+ 06EF FD0099            ldy _SIN0Bufptr
+ 06F2 8D0095            cpy #149
+ 06F5 2615              bne L148
+ 06F7                   .dbline 492
+ 06F7           ;                       {
+ 06F7                   .dbline 493
+ 06F7           ;                       Gen_Flags |= Gen_Flags_SIN0Rcvd;
+ 06F7 1C004602          bset _Gen_Flags,#2
+ 06FB                   .dbline 494
+ 06FB           ;                               SIN0Buf [SIN0Bufptr] = '\0';
+ 06FB FC0099            ldd _SIN0Bufptr
+ 06FE CD0003            ldy #_SIN0Buf
+ 0701 6D80              sty 0,S
+ 0703 E380              addd 0,S
+ 0705 B746              tfr D,Y
+ 0707 CC0000            ldd #0
+ 070A 6B40              stab 0,Y
+ 070C                   .dbline 495
+ 070C           ;                       }
+ 070C           L148:
+ 070C                   .dbline 496
+ 070C           ;                       if ( tmpchar == '\r' )
+ 070C E684              ldab 4,S
+ 070E C10D              cmpb #13
+ 0710 261B              bne L150
+ 0712                   .dbline 497
+ 0712           ;                       {
+ 0712                   .dbline 498
+ 0712           ;                       Gen_Flags |= Gen_Flags_SIN0Rcvd;
+ 0712 1C004602          bset _Gen_Flags,#2
+ 0716                   .dbline 499
+ 0716           ;                               SIN0Buf [SIN0Bufptr] = '\0';
+ 0716 FC0099            ldd _SIN0Bufptr
+ 0719 CD0003            ldy #_SIN0Buf
+ 071C 6D80              sty 0,S
+ 071E E380              addd 0,S
+ 0720 B746              tfr D,Y
+ 0722 CC0000            ldd #0
+ 0725 6B40              stab 0,Y
+ 0727                   .dbline 500
+ 0727           ;                                       SIN0Bufptr = 0;
+ 0727 180300000099      movw #0,_SIN0Bufptr
+ 072D                   .dbline 501
+ 072D           ;                       }
+ 072D           L150:
+ 072D                   .dbline 502
+ 072D           ;                       }
+ 072D           L146:
+ 072D                   .dbline 503
+ 072D           ;                 } 
+ 072D           L144:
+ 072D                   .dbline 504
+ 072D           ;        }
+ 072D           L142:
+ 072D                   .dbline 505
+ 072D           ;        if ( SCI0SR1 & SCI0SR1_TDRE )
+ 072D 1F00CC8000        brclr 0xcc,#128,L152
+ 0732                   .dbline 506
+ 0732           ;        {
+ 0732                   .dbline 508
+ 0732           ;                  
+ 0732           ;        }
+ 0732           L152:
+ 0732                   .dbline -2
+ 0732           L141:
+ 0732                   .dbline 0 ; func end
+ 0732 1B85              leas 5,S
+ 0734 0B                rti
+ 0735                   .dbsym l tmpchar 4 c
+ 0735                   .dbend
+ 0735                   .dbfunc e SCI1_Int_Handler _SCI1_Int_Handler fV
+ 0735           _SCI1_Int_Handler::
+ 0735                   .dbline -1
+ 0735                   .dbline 513
+ 0735           ; }
+ 0735           ; 
+ 0735           ; 
+ 0735           ; void SCI1_Int_Handler ( void ) 
+ 0735           ; {
+ 0735                   .dbline -2
+ 0735           L154:
+ 0735                   .dbline 0 ; func end
+ 0735 0B                rti
+ 0736                   .dbend
+                        .area memory(abs)
+                        .org 0xff80
+ FF80                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ FF80           _interrupt_vectors::
+ FF80 0000              .word _DUMMY_ENTRY
+ FF82 0000              .word _DUMMY_ENTRY
+ FF84 0000              .word _DUMMY_ENTRY
+ FF86 0000              .word _DUMMY_ENTRY
+ FF88 0000              .word _DUMMY_ENTRY
+ FF8A 0000              .word _DUMMY_ENTRY
+ FF8C 0000              .word _DUMMY_ENTRY
+ FF8E 0000              .word _DUMMY_ENTRY
+ FF90 0000              .word _DUMMY_ENTRY
+ FF92 0000              .word _DUMMY_ENTRY
+ FF94 0000              .word _DUMMY_ENTRY
+ FF96 0000              .word _DUMMY_ENTRY
+ FF98 0000              .word _DUMMY_ENTRY
+ FF9A 0000              .word _DUMMY_ENTRY
+ FF9C 0000              .word _DUMMY_ENTRY
+ FF9E 0000              .word _DUMMY_ENTRY
+ FFA0 0000              .word _DUMMY_ENTRY
+ FFA2 0000              .word _DUMMY_ENTRY
+ FFA4 0000              .word _DUMMY_ENTRY
+ FFA6 0000              .word _DUMMY_ENTRY
+ FFA8 0000              .word _DUMMY_ENTRY
+ FFAA 0000              .word _DUMMY_ENTRY
+ FFAC 0000              .word _DUMMY_ENTRY
+ FFAE 0000              .word _DUMMY_ENTRY
+ FFB0 0000              .word _DUMMY_ENTRY
+ FFB2 0001              .word _CANRxISR
+ FFB4 0000              .word _DUMMY_ENTRY
+ FFB6 0000              .word _DUMMY_ENTRY
+ FFB8 0000              .word _DUMMY_ENTRY
+ FFBA 0000              .word _DUMMY_ENTRY
+ FFBC 0000              .word _DUMMY_ENTRY
+ FFBE 0000              .word _DUMMY_ENTRY
+ FFC0 0000              .word _DUMMY_ENTRY
+ FFC2 0000              .word _DUMMY_ENTRY
+ FFC4 0000              .word _DUMMY_ENTRY
+ FFC6 0000              .word _DUMMY_ENTRY
+ FFC8 0000              .word _DUMMY_ENTRY
+ FFCA 0000              .word _DUMMY_ENTRY
+ FFCC 0000              .word _DUMMY_ENTRY
+ FFCE 0000              .word _DUMMY_ENTRY
+ FFD0 0000              .word _DUMMY_ENTRY
+ FFD2 0000              .word _DUMMY_ENTRY
+ FFD4 0735              .word _SCI1_Int_Handler
+ FFD6 06B4              .word _SCI0_Int_Handler
+ FFD8 0000              .word _DUMMY_ENTRY
+ FFDA 0000              .word _DUMMY_ENTRY
+ FFDC 0000              .word _DUMMY_ENTRY
+ FFDE 0000              .word _DUMMY_ENTRY
+ FFE0 0000              .word _DUMMY_ENTRY
+ FFE2 035B              .word _TC6_Int_Handler
+ FFE4 0348              .word _TC5_Int_Handler
+ FFE6 0000              .word _DUMMY_ENTRY
+ FFE8 01C3              .word _TC3_Int_Handler
+ FFEA 00CC              .word _TC2_Int_Handler
+ FFEC 00C6              .word _TC1_Int_Handler
+ FFEE 00C0              .word _TC0_Int_Handler
+ FFF0 0462              .word _RTI_Int_Handler
+ FFF2 00BF              .word _IRQ_Int_Handler
+ FFF4 0000              .word _DUMMY_ENTRY
+ FFF6 0000              .word _DUMMY_ENTRY
+ FFF8 0000              .word _DUMMY_ENTRY
+ FFFA 0000              .word __start
+ FFFC 0000              .word _DUMMY_ENTRY
+ FFFE 0000              .word __start
+ 10000                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\vectors.h
+ 10000                   .dbsym e interrupt_vectors _interrupt_vectors A[128:64]pfV
+                        .area data
+ 01A8                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\vectors.h
+                        .area bss
+ 0010                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\vectors.h
+ 0010           _LA_speed::
+ 0010                   .blkb 4
+ 0014                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Interrupts.c
+ 0014                   .dbsym e LA_speed _LA_speed L
+ 0014           _TC2_cap::
+ 0014                   .blkb 2
+ 0016                   .dbsym e TC2_cap _TC2_cap i
+ 0016           _TC2_prev::
+ 0016                   .blkb 2
+ 0018                   .dbsym e TC2_prev _TC2_prev i
+ 0018           _LA_speed_timer::
+ 0018                   .blkb 2
+ 001A                   .dbsym e LA_speed_timer _LA_speed_timer i
+ 001A           _HdOffTimer::
+ 001A                   .blkb 2
+ 001C                   .dbsym e HdOffTimer _HdOffTimer i
+ 001C           _PID_Timer::
+ 001C                   .blkb 2
+ 001E                   .dbsym e PID_Timer _PID_Timer i
+ 001E           _HD_PWM_Out::
+ 001E                   .blkb 1
+ 001F                   .dbsym e HD_PWM_Out _HD_PWM_Out c
+ 001F           _HD_PWM_Bit::
+ 001F                   .blkb 1
+ 0020                   .dbsym e HD_PWM_Bit _HD_PWM_Bit c
+ 0020           _LA_PWM_Out::
+ 0020                   .blkb 1
+ 0021                   .dbsym e LA_PWM_Out _LA_PWM_Out c
+ 0021           _LAspd::
+ 0021                   .blkb 1
+ 0022                   .dbsym e LAspd _LAspd c
+ 0022           _LA_PWM_Bit::
+ 0022                   .blkb 1
+ 0023                   .dbsym e LA_PWM_Bit _LA_PWM_Bit c
+ 0023           _IncSpeedUpCntr::
+ 0023                   .blkb 1
+ 0024                   .dbsym e IncSpeedUpCntr _IncSpeedUpCntr c
+ 0024           _IncSpeedUpTimer::
+ 0024                   .blkb 2
+ 0026                   .dbsym e IncSpeedUpTimer _IncSpeedUpTimer i
+ 0026           _StateTime::
+ 0026                   .blkb 4
+ 002A                   .dbsym e StateTime _StateTime l
+ 002A           _updatePressureTimer::
+ 002A                   .blkb 2
+ 002C                   .dbsym e updatePressureTimer _updatePressureTimer I
+ 002C           _CompressorTimer::
+ 002C                   .blkb 2
+ 002E                   .dbsym e CompressorTimer _CompressorTimer i
+ 002E           _SequenceTimer::
+ 002E                   .blkb 2
+ 0030                   .dbsym e SequenceTimer _SequenceTimer i
+ 0030           _Update_Menu_Timer::
+ 0030                   .blkb 2
+ 0032                   .dbsym e Update_Menu_Timer _Update_Menu_Timer I
+ 0032           _AdvanceTimer::
+ 0032                   .blkb 2
+ 0034                   .dbsym e AdvanceTimer _AdvanceTimer i
+ 0034           _FocusZoomTimer::
+ 0034                   .blkb 2
+ 0036                   .dbsym e FocusZoomTimer _FocusZoomTimer i
+ 0036           _MenuTimer::
+ 0036                   .blkb 2
+ 0038                   .dbsym e MenuTimer _MenuTimer i
+ 0038           _LineupTimeCapture::
+ 0038                   .blkb 4
+ 003C                   .dbsym e LineupTimeCapture _LineupTimeCapture l
+ 003C           _LineupTimer::
+ 003C                   .blkb 4
+ 0040                   .dbsym e LineupTimer _LineupTimer l
+ 0040           _LA_Wait_Timer::
+ 0040                   .blkb 2
+ 0042                   .dbsym e LA_Wait_Timer _LA_Wait_Timer i
+ 0042           _Timer2::
+ 0042                   .blkb 2
+ 0044                   .dbsym e Timer2 _Timer2 i
+ 0044           _Timer1::
+ 0044                   .blkb 2
+ 0046                   .dbsym e Timer1 _Timer1 i
+ 0046           _Gen_Flags::
+ 0046                   .blkb 1
+ 0047                   .dbsym e Gen_Flags _Gen_Flags c
+ 0047           _TC0_RCVD_Data::
+ 0047                   .blkb 2
+ 0049                   .dbsym e TC0_RCVD_Data _TC0_RCVD_Data i

@@ -1,0 +1,410 @@
+                        .module Flash.c
+                        .area text
+ 0000                   .dbfile ..\..\REV3~1.25\SOURCE~1\Flash.c
+                        .area extcode(paged)
+ 0000                   .dbfile ..\..\REV3~1.25\SOURCE~1\Flash.c
+ 0000                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Flash.c
+ 0000                   .dbfunc e FlashInit _FlashInit fV
+ 0000           $_FlashInit::
+ 0000                   .dbline -1
+ 0000                   .dbline 9
+ 0000           ; #include "Flash.h"
+ 0000           ; #include "mc9s12a128.h"
+ 0000           ; #include "Subroutines.h"
+ 0000           ; 
+ 0000           ; //Caution Flash.c should be the first file in the files section under the project browser
+ 0000           ; 
+ 0000           ; 
+ 0000           ; void FlashInit ( void )
+ 0000           ; {
+ 0000                   .dbline 10
+ 0000           ;        FCLKDIV = (char)(OscClk * (5 + Tbus));
+ 0000 180B280100        movb #40,0x100
+ 0005                   .dbline -2
+ 0005           L1:
+ 0005                   .dbline 0 ; func end
+ 0005 0A                rtc
+ 0006                   .dbend
+                        .area data
+ 0000                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Flash.c
+ 0000           _FlashCmd::
+ 0000                   .blkb 2
+                        .area idata
+ 0000 7B01              .byte 123,1
+                        .area data
+ 0002                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Flash.c
+ 0002                   .blkb 2
+                        .area idata
+ 0002 06C6              .byte 6,198
+                        .area data
+ 0004                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Flash.c
+ 0004                   .blkb 2
+                        .area idata
+ 0004 807B              .byte 128,123
+                        .area data
+ 0006                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Flash.c
+ 0006                   .blkb 2
+                        .area idata
+ 0006 0105              .byte 1,5
+                        .area data
+ 0008                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Flash.c
+ 0008                   .blkb 2
+                        .area idata
+ 0008 1F01              .byte 31,1
+                        .area data
+ 000A                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Flash.c
+ 000A                   .blkb 2
+                        .area idata
+ 000A 0540              .byte 5,64
+                        .area data
+ 000C                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Flash.c
+ 000C                   .blkb 2
+                        .area idata
+ 000C FB3D              .byte 251,61
+                        .area data
+ 000E                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Flash.c
+ 000E                   .dbsym e FlashCmd _FlashCmd A[14:14]c
+                        .area extcode(paged)
+ 0006                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Flash.c
+ 0006                   .dbfunc e FlashWrite _FlashWrite fV
+ 0006           ;       tempAddr -> 4,SP
+ 0006           ;        TmpData -> 6,SP
+ 0006           ;      tempArray -> 8,SP
+ 0006           ;              j -> 1032,SP
+ 0006           ;              i -> 1034,SP
+ 0006           ;      WriteAddr -> 1043,SP
+ 0006           ;      WriteData -> 1041,SP
+ 0006           ;      ArraySize -> 1036,SP
+ 0006           $_FlashWrite::
+ 0006 3B                pshd
+ 0007 1BF2FBF4          leas -1036,S
+ 000B                   .dbline -1
+ 000B                   .dbline 32
+ 000B           ; }
+ 000B           ; 
+ 000B           ; char FlashCmd[] = {0x7b,0x01,0x06,0xc6,0x80,0x7b,0x01,0x05,
+ 000B           ;                                  0x1f,0x01,0x05,0x40,0xfb,0x3d};
+ 000B           ; //FlashCmd   7B0106         STAB    0106
+ 000B           ; //             C680           LDAB    #80
+ 000B           ; //             7B0105         STAB    0105
+ 000B           ; //             1F010540FB     BRCLR   0105 #40 1009
+ 000B           ; //             3D             RTS     
+ 000B           ; 
+ 000B           ; 
+ 000B           ; 
+ 000B           ; 
+ 000B           ; //  char TmpStr2[] = "Hello World!\r\n";
+ 000B           ; //  int *intptr;
+ 000B           ; 
+ 000B           ; //    intptr = (int*)0xc1f0;
+ 000B           ; //    FlashWrite ( sizeof (TmpStr2), TmpStr2, intptr );       
+ 000B           ; 
+ 000B           ; 
+ 000B           ; void FlashWrite ( int ArraySize, char WriteData[], int *WriteAddr )
+ 000B           ; {
+ 000B                   .dbline 44
+ 000B           ;        //Erases and Writes an array of up to 512 char to Flash
+ 000B           ;        
+ 000B           ;        int i, j, TmpData;
+ 000B           ;        char *tempAddr;
+ 000B           ;        char tempArray[1024];
+ 000B           ;        
+ 000B           ;      
+ 000B           ;        
+ 000B           ;        //Add up to 511 more data bytes to beginning of array
+ 000B           ;        //Addr must be divisible by 512 for erase operation
+ 000B           ;        
+ 000B           ;        tempAddr = (char*)WriteAddr;
+ 000B 19F20413          leay 1043,S
+ 000F 18024084          movw 0,y,4,S
+ 0013                   .dbline 45
+ 0013           ;      tempAddr = (char*)((int)tempAddr & ~0x1ff);
+ 0013 EC84              ldd 4,S
+ 0015 84FE              anda #-2
+ 0017 C400              andb #0
+ 0019 6C84              std 4,S
+ 001B                   .dbline 47
+ 001B           ;        
+ 001B           ;        j = 0;
+ 001B 19F20408          leay 1032,S
+ 001F 1800400000        movw #0,0,y
+ 0024                   .dbline 48
+ 0024           ;        if ( (int)WriteAddr != (int)tempAddr )
+ 0024 EDF20413          ldy 1043,S
+ 0028 AD84              cpy 4,S
+ 002A 2733              beq L3
+ 002C                   .dbline 49
+ 002C           ;        {
+ 002C                   .dbline 50
+ 002C           ;               for ( j=0;(int)tempAddr != (int)WriteAddr;tempAddr++, j++)
+ 002C 1AF20408          leax 1032,S
+ 0030 1800000000        movw #0,0,x
+ 0035 2020              bra L8
+ 0037           L5:
+ 0037                   .dbline 51
+ 0037           ;               {
+ 0037                   .dbline 52
+ 0037           ;                       tempArray[j] = *tempAddr;
+ 0037 ECF20408          ldd 1032,S
+ 003B 1988              leay 8,S
+ 003D 6D80              sty 0,S
+ 003F E380              addd 0,S
+ 0041 B746              tfr D,Y
+ 0043 E6F30004          ldab [4,S]
+ 0047 6B40              stab 0,Y
+ 0049                   .dbline 53
+ 0049           ;               }       
+ 0049           L6:
+ 0049                   .dbline 50
+ 0049 ED84              ldy 4,S
+ 004B 02                iny
+ 004C 6D84              sty 4,S
+ 004E EDF20408          ldy 1032,S
+ 0052 02                iny
+ 0053 6DF20408          sty 1032,S
+ 0057           L8:
+ 0057                   .dbline 50
+ 0057 ED84              ldy 4,S
+ 0059 ADF20413          cpy 1043,S
+ 005D 26D8              bne L5
+ 005F                   .dbline 54
+ 005F           ;        } 
+ 005F           L3:
+ 005F                   .dbline 58
+ 005F           ; 
+ 005F           ;        //transfer the rest of the data to tempArray
+ 005F           ; 
+ 005F           ;      for (i=0 ;i < ArraySize;i++, j++)
+ 005F 1AF2040A          leax 1034,S
+ 0063 1800000000        movw #0,0,x
+ 0068 202C              bra L12
+ 006A           L9:
+ 006A                   .dbline 59
+ 006A           ;      {
+ 006A                   .dbline 60
+ 006A           ;         tempArray[j] = WriteData[i];
+ 006A ECF20408          ldd 1032,S
+ 006E 1988              leay 8,S
+ 0070 6D80              sty 0,S
+ 0072 E380              addd 0,S
+ 0074 B746              tfr D,Y
+ 0076 ECF2040A          ldd 1034,S
+ 007A E3F20411          addd 1041,S
+ 007E B745              tfr D,X
+ 0080 E600              ldab 0,X
+ 0082 6B40              stab 0,Y
+ 0084                   .dbline 61
+ 0084           ;      }
+ 0084           L10:
+ 0084                   .dbline 58
+ 0084 EDF2040A          ldy 1034,S
+ 0088 02                iny
+ 0089 6DF2040A          sty 1034,S
+ 008D EDF20408          ldy 1032,S
+ 0091 02                iny
+ 0092 6DF20408          sty 1032,S
+ 0096           L12:
+ 0096                   .dbline 58
+ 0096 EDF2040A          ldy 1034,S
+ 009A ADF2040C          cpy 1036,S
+ 009E 2DCA              blt L9
+ 00A0                   .dbline 65
+ 00A0           ; 
+ 00A0           ;        //pad end of array to make divisible by 512
+ 00A0           ; 
+ 00A0           ;      if ( (j & 0x1ff) )
+ 00A0 ECF20408          ldd 1032,S
+ 00A4 8401              anda #1
+ 00A6 C4FF              andb #-1
+ 00A8 8C0000            cpd #0
+ 00AB 2740              beq L13
+ 00AD                   .dbline 66
+ 00AD           ;      {
+ 00AD                   .dbline 67
+ 00AD           ;               tempAddr = (char*)WriteAddr;
+ 00AD 1AF20413          leax 1043,S
+ 00B1 18020084          movw 0,x,4,S
+ 00B5                   .dbline 68
+ 00B5           ;       tempAddr = (char*)((int)tempAddr & ~0x1ff);
+ 00B5 EC84              ldd 4,S
+ 00B7 84FE              anda #-2
+ 00B9 C400              andb #0
+ 00BB 6C84              std 4,S
+ 00BD                   .dbline 69
+ 00BD           ;               for ( ;j & 0x1ff;j++ )
+ 00BD 2021              bra L18
+ 00BF           L15:
+ 00BF                   .dbline 70
+ 00BF           ;               {
+ 00BF                   .dbline 71
+ 00BF           ;               tempArray[j] = *(tempAddr + j);
+ 00BF ECF20408          ldd 1032,S
+ 00C3 1988              leay 8,S
+ 00C5 6D80              sty 0,S
+ 00C7 E380              addd 0,S
+ 00C9 B746              tfr D,Y
+ 00CB ECF20408          ldd 1032,S
+ 00CF E384              addd 4,S
+ 00D1 B745              tfr D,X
+ 00D3 E600              ldab 0,X
+ 00D5 6B40              stab 0,Y
+ 00D7                   .dbline 72
+ 00D7           ;               }
+ 00D7           L16:
+ 00D7                   .dbline 69
+ 00D7 EDF20408          ldy 1032,S
+ 00DB 02                iny
+ 00DC 6DF20408          sty 1032,S
+ 00E0           L18:
+ 00E0                   .dbline 69
+ 00E0 ECF20408          ldd 1032,S
+ 00E4 8401              anda #1
+ 00E6 C4FF              andb #-1
+ 00E8 8C0000            cpd #0
+ 00EB 26D2              bne L15
+ 00ED                   .dbline 73
+ 00ED           ;      }
+ 00ED           L13:
+ 00ED                   .dbline 78
+ 00ED           ; 
+ 00ED           ;        
+ 00ED           ;        //Erase Flash
+ 00ED           ;        
+ 00ED           ;        tempAddr = (char*)WriteAddr;
+ 00ED 1AF20413          leax 1043,S
+ 00F1 18020084          movw 0,x,4,S
+ 00F5                   .dbline 79
+ 00F5           ;        WriteAddr = (int*)((int)WriteAddr & ~0x1ff);
+ 00F5 ECF20413          ldd 1043,S
+ 00F9 84FE              anda #-2
+ 00FB C400              andb #0
+ 00FD 6CF20413          std 1043,S
+ 0101                   .dbline 81
+ 0101           ; 
+ 0101           ;      for (i=0; i<j; i += 512, WriteAddr +=256 )
+ 0101 1AF2040A          leax 1034,S
+ 0105 1800000000        movw #0,0,x
+ 010A 2023              bra L22
+ 010C           L19:
+ 010C                   .dbline 82
+ 010C           ;      {
+ 010C                   .dbline 83
+ 010C           ;                *WriteAddr = TmpData;
+ 010C ED86              ldy 6,S
+ 010E EEF20413          ldx 1043,S
+ 0112 6D00              sty 0,X
+ 0114                   .dbline 84
+ 0114           ;                asm ("ldab #0x40");
+ 0114 C640              ldab #0x40
+ 0116                   .dbline 85
+ 0116           ;                asm ("jsr _FlashCmd");
+ 0116 160000            jsr _FlashCmd
+ 0119                   .dbline 89
+ 0119           ; //             FCMD = 0x40;
+ 0119           ; //             FSTAT = FSTAT_CCIF;
+ 0119           ; //             while (!(FSTAT & FSTAT_CCIF) );
+ 0119           ;        }
+ 0119           L20:
+ 0119                   .dbline 81
+ 0119 ECF2040A          ldd 1034,S
+ 011D C30200            addd #512
+ 0120 6CF2040A          std 1034,S
+ 0124 ECF20413          ldd 1043,S
+ 0128 C30200            addd #512
+ 012B 6CF20413          std 1043,S
+ 012F           L22:
+ 012F                   .dbline 81
+ 012F EDF2040A          ldy 1034,S
+ 0133 ADF20408          cpy 1032,S
+ 0137 2DD3              blt L19
+ 0139                   .dbline 94
+ 0139           ;        
+ 0139           ; 
+ 0139           ;        //Write to Flash
+ 0139           ;        
+ 0139           ;        WriteAddr = (int*)tempAddr;     
+ 0139 1AF20413          leax 1043,S
+ 013D 18028400          movw 4,S,0,x
+ 0141                   .dbline 95
+ 0141           ;        WriteAddr = (int*)((int)WriteAddr & ~0x1ff);
+ 0141 ECF20413          ldd 1043,S
+ 0145 84FE              anda #-2
+ 0147 C400              andb #0
+ 0149 6CF20413          std 1043,S
+ 014D                   .dbline 97
+ 014D           ; 
+ 014D           ;      for (i=0;i<j;i+=2, WriteAddr++)
+ 014D 1AF2040A          leax 1034,S
+ 0151 1800000000        movw #0,0,x
+ 0156 2053              bra L26
+ 0158           L23:
+ 0158                   .dbline 98
+ 0158           ;      {
+ 0158                   .dbline 99
+ 0158           ;                TmpData = tempArray[i]*256 + tempArray[i+1];
+ 0158 ECF2040A          ldd 1034,S
+ 015C 1988              leay 8,S
+ 015E 6D80              sty 0,S
+ 0160 E380              addd 0,S
+ 0162 B746              tfr D,Y
+ 0164 E640              ldab 0,Y
+ 0166 87                clra
+ 0167 B746              tfr D,Y
+ 0169 CC0100            ldd #256
+ 016C 13                emul
+ 016D 6C82              std 2,S
+ 016F ECF2040A          ldd 1034,S
+ 0173 1A89              leax 9,S
+ 0175 6E80              stx 0,S
+ 0177 E380              addd 0,S
+ 0179 B746              tfr D,Y
+ 017B E640              ldab 0,Y
+ 017D 87                clra
+ 017E B746              tfr D,Y
+ 0180 EC82              ldd 2,S
+ 0182 6D80              sty 0,S
+ 0184 E380              addd 0,S
+ 0186 6C86              std 6,S
+ 0188                   .dbline 100
+ 0188           ;                *WriteAddr = TmpData;
+ 0188 B746              tfr D,Y
+ 018A EEF20413          ldx 1043,S
+ 018E 6D00              sty 0,X
+ 0190                   .dbline 101
+ 0190           ;                asm ("ldab #0x20");
+ 0190 C620              ldab #0x20
+ 0192                   .dbline 102
+ 0192           ;                asm ("jsr _FlashCmd");
+ 0192 160000            jsr _FlashCmd
+ 0195                   .dbline 106
+ 0195           ; //             FCMD = 0x20;
+ 0195           ; //             FSTAT = FSTAT_CCIF;
+ 0195           ; //             while (!(FSTAT & FSTAT_CCIF) );
+ 0195           ;      }
+ 0195           L24:
+ 0195                   .dbline 97
+ 0195 ECF2040A          ldd 1034,S
+ 0199 C30002            addd #2
+ 019C 6CF2040A          std 1034,S
+ 01A0 ECF20413          ldd 1043,S
+ 01A4 C30002            addd #2
+ 01A7 6CF20413          std 1043,S
+ 01AB           L26:
+ 01AB                   .dbline 97
+ 01AB EDF2040A          ldy 1034,S
+ 01AF ADF20408          cpy 1032,S
+ 01B3 2DA3              blt L23
+ 01B5                   .dbline -2
+ 01B5           L2:
+ 01B5                   .dbline 0 ; func end
+ 01B5 1BF2040E          leas 1038,S
+ 01B9 0A                rtc
+ 01BA                   .dbsym l tempAddr 4 pc
+ 01BA                   .dbsym l TmpData 6 I
+ 01BA                   .dbsym l tempArray 8 A[1024:1024]c
+ 01BA                   .dbsym l j 1032 I
+ 01BA                   .dbsym l i 1034 I
+ 01BA                   .dbsym l WriteAddr 1043 pI
+ 01BA                   .dbsym l WriteData 1041 pc
+ 01BA                   .dbsym l ArraySize 1036 I
+ 01BA                   .dbend

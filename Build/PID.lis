@@ -1,0 +1,284 @@
+                        .module PID.c
+                        .area text
+ 0000                   .dbfile ..\..\REV3~1.25\SOURCE~1\PID.c
+                        .area data
+ 0000                   .dbfile ..\..\REV3~1.25\SOURCE~1\PID.c
+ 0000           _initPID::
+ 0000                   .blkb 1
+                        .area idata
+ 0000 01                .byte 1
+                        .area data
+ 0001                   .dbfile ..\..\REV3~1.25\SOURCE~1\PID.c
+ 0001                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\PID.c
+ 0001                   .dbsym e initPID _initPID c
+                        .area extcode(paged)
+ 0000                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\PID.c
+ 0000                   .dbfunc e UDPID _UDPID fD
+ 0000                   .dbstruct 0 32 .1
+ 0000                   .dbfield 0 dState D
+ 0000                   .dbfield 4 iState D
+ 0000                   .dbfield 8 iState_sgn D
+ 0000                   .dbfield 12 iMax D
+ 0000                   .dbfield 16 iMin D
+ 0000                   .dbfield 20 iGain D
+ 0000                   .dbfield 24 pGain D
+ 0000                   .dbfield 28 dGain D
+ 0000                   .dbend
+ 0000           ;           xout -> 2,SP
+ 0000           ;          iTerm -> 6,SP
+ 0000           ;          dTerm -> 10,SP
+ 0000           ;          pTerm -> 14,SP
+ 0000           ;     currentVal -> 27,SP
+ 0000           ;          error -> 23,SP
+ 0000           ;            pid -> 18,SP
+ 0000           $_UDPID::
+ 0000 3B                pshd
+ 0001 1BF1EE            leas -18,S
+ 0004                   .dbline -1
+ 0004                   .dbline 16
+ 0004           ; #include <stdio.h>
+ 0004           ; #include <string.h>
+ 0004           ; #include <stdlib.h>
+ 0004           ; #include <math.h>
+ 0004           ; #include "PID.h"
+ 0004           ; 
+ 0004           ; 
+ 0004           ; //SPid *posPID;
+ 0004           ; SPid *spdPID;
+ 0004           ; 
+ 0004           ; //SPid positionPID;
+ 0004           ; SPid speedPID;
+ 0004           ; 
+ 0004           ; char initPID=1;
+ 0004           ; 
+ 0004           ; float UDPID(SPid *pid, float error, float currentVal){
+ 0004                   .dbline 20
+ 0004           ;       
+ 0004           ;       float pTerm, dTerm, iTerm, xout;
+ 0004           ;       
+ 0004           ;       pTerm = pid->pGain*error;
+ 0004 ECF012            ldd 18,S
+ 0007 C30018            addd #24
+ 000A B746              tfr D,Y
+ 000C 180242AE          movw 2,Y,2,-S
+ 0010 180240AE          movw 0,Y,2,-S
+ 0014 ECF01D            ldd 29,S
+ 0017 3B                pshd
+ 0018 ECF01D            ldd 29,S
+ 001B 3B                pshd
+ 001C 160000            jsr mulf4
+ 001F 3A                puld
+ 0020 6CF010            std 16,S
+ 0023 3A                puld
+ 0024 6CF010            std 16,S
+ 0027                   .dbline 21
+ 0027           ;       pid->iState += error;
+ 0027 ECF012            ldd 18,S
+ 002A C30004            addd #4
+ 002D 6C80              std 0,S
+ 002F B746              tfr D,Y
+ 0031 EE80              ldx 0,S
+ 0033 180202AE          movw 2,X,2,-S
+ 0037 180200AE          movw 0,X,2,-S
+ 003B ECF01D            ldd 29,S
+ 003E 3B                pshd
+ 003F ECF01D            ldd 29,S
+ 0042 3B                pshd
+ 0043 160000            jsr addf4
+ 0046 30                pulx
+ 0047 6E40              stx 0,Y
+ 0049 30                pulx
+ 004A 6E42              stx 2,Y
+ 004C                   .dbline 23
+ 004C           ;       
+ 004C           ;       if(pid->iState > pid->iMax){
+ 004C ECF012            ldd 18,S
+ 004F C30004            addd #4
+ 0052 B746              tfr D,Y
+ 0054 180242AE          movw 2,Y,2,-S
+ 0058 180240AE          movw 0,Y,2,-S
+ 005C ECF016            ldd 22,S
+ 005F C3000C            addd #12
+ 0062 B746              tfr D,Y
+ 0064 180242AE          movw 2,Y,2,-S
+ 0068 180240AE          movw 0,Y,2,-S
+ 006C 160000            jsr cmpf4
+ 006F 2F3C              ble L3
+ 0071                   .dbline 23
+ 0071                   .dbline 25
+ 0071           ;               
+ 0071           ;               pid->iState_sgn = pid->iState;
+ 0071 ECF012            ldd 18,S
+ 0074 C30008            addd #8
+ 0077 B746              tfr D,Y
+ 0079 ECF012            ldd 18,S
+ 007C C30004            addd #4
+ 007F B745              tfr D,X
+ 0081 180202AE          movw 2,X,2,-S
+ 0085 180200AE          movw 0,X,2,-S
+ 0089 30                pulx
+ 008A 6E40              stx 0,Y
+ 008C 30                pulx
+ 008D 6E42              stx 2,Y
+ 008F                   .dbline 26
+ 008F           ;               pid->iState = pid->iMax;
+ 008F ECF012            ldd 18,S
+ 0092 C30004            addd #4
+ 0095 B746              tfr D,Y
+ 0097 ECF012            ldd 18,S
+ 009A C3000C            addd #12
+ 009D B745              tfr D,X
+ 009F 180202AE          movw 2,X,2,-S
+ 00A3 180200AE          movw 0,X,2,-S
+ 00A7 30                pulx
+ 00A8 6E40              stx 0,Y
+ 00AA 30                pulx
+ 00AB 6E42              stx 2,Y
+ 00AD                   .dbline 27
+ 00AD           ;       }
+ 00AD           L3:
+ 00AD                   .dbline 29
+ 00AD           ;       
+ 00AD           ;       if(pid->iState < pid->iMin){
+ 00AD ECF012            ldd 18,S
+ 00B0 C30004            addd #4
+ 00B3 B746              tfr D,Y
+ 00B5 180242AE          movw 2,Y,2,-S
+ 00B9 180240AE          movw 0,Y,2,-S
+ 00BD ECF016            ldd 22,S
+ 00C0 C30010            addd #16
+ 00C3 B746              tfr D,Y
+ 00C5 180242AE          movw 2,Y,2,-S
+ 00C9 180240AE          movw 0,Y,2,-S
+ 00CD 160000            jsr cmpf4
+ 00D0 2C3C              bge L5
+ 00D2                   .dbline 29
+ 00D2                   .dbline 31
+ 00D2           ;               
+ 00D2           ;               pid->iState_sgn = pid->iState;
+ 00D2 ECF012            ldd 18,S
+ 00D5 C30008            addd #8
+ 00D8 B746              tfr D,Y
+ 00DA ECF012            ldd 18,S
+ 00DD C30004            addd #4
+ 00E0 B745              tfr D,X
+ 00E2 180202AE          movw 2,X,2,-S
+ 00E6 180200AE          movw 0,X,2,-S
+ 00EA 30                pulx
+ 00EB 6E40              stx 0,Y
+ 00ED 30                pulx
+ 00EE 6E42              stx 2,Y
+ 00F0                   .dbline 32
+ 00F0           ;               pid->iState = pid->iMin;
+ 00F0 ECF012            ldd 18,S
+ 00F3 C30004            addd #4
+ 00F6 B746              tfr D,Y
+ 00F8 ECF012            ldd 18,S
+ 00FB C30010            addd #16
+ 00FE B745              tfr D,X
+ 0100 180202AE          movw 2,X,2,-S
+ 0104 180200AE          movw 0,X,2,-S
+ 0108 30                pulx
+ 0109 6E40              stx 0,Y
+ 010B 30                pulx
+ 010C 6E42              stx 2,Y
+ 010E                   .dbline 33
+ 010E           ;       }
+ 010E           L5:
+ 010E                   .dbline 35
+ 010E           ;       
+ 010E           ;       iTerm = pid->iGain * pid->iState;
+ 010E ECF012            ldd 18,S
+ 0111 C30014            addd #20
+ 0114 B746              tfr D,Y
+ 0116 180242AE          movw 2,Y,2,-S
+ 011A 180240AE          movw 0,Y,2,-S
+ 011E ECF016            ldd 22,S
+ 0121 C30004            addd #4
+ 0124 B746              tfr D,Y
+ 0126 180242AE          movw 2,Y,2,-S
+ 012A 180240AE          movw 0,Y,2,-S
+ 012E 160000            jsr mulf4
+ 0131 3A                puld
+ 0132 6C88              std 8,S
+ 0134 3A                puld
+ 0135 6C88              std 8,S
+ 0137                   .dbline 36
+ 0137           ;       dTerm = pid->dGain * (currentVal - pid->dState);
+ 0137 ECF012            ldd 18,S
+ 013A C3001C            addd #28
+ 013D B746              tfr D,Y
+ 013F 180242AE          movw 2,Y,2,-S
+ 0143 180240AE          movw 0,Y,2,-S
+ 0147 ECF021            ldd 33,S
+ 014A 3B                pshd
+ 014B ECF021            ldd 33,S
+ 014E 3B                pshd
+ 014F EDF01A            ldy 26,S
+ 0152 180242AE          movw 2,Y,2,-S
+ 0156 180240AE          movw 0,Y,2,-S
+ 015A 160000            jsr subf4
+ 015D 160000            jsr mulf4
+ 0160 3A                puld
+ 0161 6C8C              std 12,S
+ 0163 3A                puld
+ 0164 6C8C              std 12,S
+ 0166                   .dbline 37
+ 0166           ;       pid->dState = currentVal;
+ 0166 EDF012            ldy 18,S
+ 0169 ECF01D            ldd 29,S
+ 016C 3B                pshd
+ 016D ECF01D            ldd 29,S
+ 0170 3B                pshd
+ 0171 30                pulx
+ 0172 6E40              stx 0,Y
+ 0174 30                pulx
+ 0175 6E42              stx 2,Y
+ 0177                   .dbline 38
+ 0177           ;       xout = pTerm + iTerm - dTerm;
+ 0177 ECF010            ldd 16,S
+ 017A 3B                pshd
+ 017B ECF010            ldd 16,S
+ 017E 3B                pshd
+ 017F EC8C              ldd 12,S
+ 0181 3B                pshd
+ 0182 EC8C              ldd 12,S
+ 0184 3B                pshd
+ 0185 160000            jsr addf4
+ 0188 ECF010            ldd 16,S
+ 018B 3B                pshd
+ 018C ECF010            ldd 16,S
+ 018F 3B                pshd
+ 0190 160000            jsr subf4
+ 0193 3A                puld
+ 0194 6C84              std 4,S
+ 0196 3A                puld
+ 0197 6C84              std 4,S
+ 0199                   .dbline 40
+ 0199           ;       
+ 0199           ;       return xout;
+ 0199 EC84              ldd 4,S
+ 019B 3B                pshd
+ 019C EC84              ldd 4,S
+ 019E 3B                pshd
+ 019F                   .dbline -2
+ 019F           L2:
+ 019F                   .dbline 0 ; func end
+ 019F CC0014            ldd #20
+ 01A2 060000            jmp lret_paged
+ 01A5                   .dbsym l xout 2 D
+ 01A5                   .dbsym l iTerm 6 D
+ 01A5                   .dbsym l dTerm 10 D
+ 01A5                   .dbsym l pTerm 14 D
+ 01A5                   .dbsym l currentVal 27 D
+ 01A5                   .dbsym l error 23 D
+ 01A5                   .dbsym l pid 18 pS[.1]
+ 01A5                   .dbend
+                        .area bss
+ 0000                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\PID.c
+ 0000           _speedPID::
+ 0000                   .blkb 32
+ 0020                   .dbsym e speedPID _speedPID S[.1]
+ 0020           _spdPID::
+ 0020                   .blkb 2
+ 0022                   .dbsym e spdPID _spdPID pS[.1]

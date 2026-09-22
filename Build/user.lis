@@ -1,0 +1,524 @@
+                        .module user.c
+                        .area text
+ 0000                   .dbfile ..\..\REV3~1.25\SOURCE~1\user.c
+                        .area data
+ 0000                   .dbfile ..\..\REV3~1.25\SOURCE~1\user.c
+ 0000           _clearProc::
+ 0000                   .blkb 1
+                        .area idata
+ 0000 01                .byte 1
+                        .area data
+ 0001                   .dbfile ..\..\REV3~1.25\SOURCE~1\user.c
+ 0001                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\user.c
+ 0001                   .dbsym e clearProc _clearProc c
+                        .area text
+ 0000                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\user.c
+ 0000           _SDOResponseTable::
+ 0000 4300              .byte 'C,0
+ 0002 1000              .byte 16,0
+ 0004 9101              .byte 145,1
+ 0006 0F00              .byte 15,0
+ 0008 4F18              .byte 'O,24
+ 000A 1000              .byte 16,0
+ 000C 0400              .byte 4,0
+ 000E 0000              .byte 0,0
+ 0010 4318              .byte 'C,24
+ 0012 1001              .byte 16,1
+ 0014 5354              .byte 'S,'T
+ 0016 5243              .byte 'R,'C
+ 0018 4318              .byte 'C,24
+ 001A 1002              .byte 16,2
+ 001C 0200              .byte 2,0
+ 001E 0100              .byte 1,0
+ 0020 4318              .byte 'C,24
+ 0022 1003              .byte 16,3
+ 0024 0000              .byte 0,0
+ 0026 0100              .byte 1,0
+ 0028 4318              .byte 'C,24
+ 002A 1004              .byte 16,4
+ 002C FFFF              .byte 255,255
+ 002E FFFF              .byte 255,255
+ 0030 4F18              .byte 'O,24
+ 0032 2000              .byte 32,0
+ 0034 0300              .byte 3,0
+ 0036 0000              .byte 0,0
+ 0038 4318              .byte 'C,24
+ 003A 2001              .byte 32,1
+ 003C 4153              .byte 'A,'S
+ 003E 4501              .byte 'E,1
+ 0040 4318              .byte 'C,24
+ 0042 2002              .byte 32,2
+ 0044 504F              .byte 'P,'O
+ 0046 434D              .byte 'C,'M
+ 0048 4318              .byte 'C,24
+ 004A 2003              .byte 32,3
+ 004C 2000              .byte 32,0
+ 004E 0100              .byte 1,0
+ 0050 4F00              .byte 'O,0
+ 0052 2100              .byte 33,0
+ 0054 0400              .byte 4,0
+ 0056 0000              .byte 0,0
+ 0058 4300              .byte 'C,0
+ 005A 2101              .byte 33,1
+ 005C 434C              .byte 'C,'L
+ 005E 4541              .byte 'E,'A
+ 0060 4300              .byte 'C,0
+ 0062 2102              .byte 33,2
+ 0064 4E45              .byte 'N,'E
+ 0066 522D              .byte 'R,45
+ 0068 4300              .byte 'C,0
+ 006A 2103              .byte 33,3
+ 006C 5641              .byte 'V,'A
+ 006E 4355              .byte 'C,'U
+ 0070 4300              .byte 'C,0
+ 0072 2104              .byte 33,4
+ 0074 554D              .byte 'U,'M
+ 0076 2032              .byte 32,50
+ 0078 57FF              .byte 'W,255
+ 007A FFFF              .byte 255,255
+ 007C FFFF              .byte 255,255
+ 007E FFFF              .byte 255,255
+ 0080                   .dbsym e SDOResponseTable _SDOResponseTable A[128:128]c
+                        .area extcode(paged)
+ 0000                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\user.c
+ 0000                   .dbfunc e MCOUSER_FatalError _MCOUSER_FatalError fV
+ 0000           ;        ErrCode -> 0,SP
+ 0000           $_MCOUSER_FatalError::
+ 0000 3B                pshd
+ 0001                   .dbline -1
+ 0001                   .dbline 141
+ 0001           ; /**************************************************************************
+ 0001           ; MODULE:    USER
+ 0001           ; CONTAINS:  MicroCANopen Object Dictionary and Process Image implementation
+ 0001           ; COPYRIGHT: Embedded Systems Academy, Inc. 2002-2005.
+ 0001           ;            All rights reserved. www.microcanopen.com
+ 0001           ;            This software was written in accordance to the guidelines at
+ 0001           ;            www.esacademy.com/software/softwarestyleguide.pdf
+ 0001           ; DISCLAIM:  Read and understand our disclaimer before using this code!
+ 0001           ;            www.esacademy.com/disclaim.htm
+ 0001           ; LICENSE:   THIS IS THE EDUCATIONAL VERSION OF MICROCANOPEN
+ 0001           ;            See file license_educational.txt or
+ 0001           ;            www.microcanopen.com/license_educational.txt
+ 0001           ;            A commercial MicroCANopen license is available at
+ 0001           ;            www.CANopenStore.com
+ 0001           ; VERSION:   2.10, ESA 12-JAN-05
+ 0001           ;            $LastChangedDate: 2005-01-12 13:53:59 -0700 (Wed, 12 Jan 2005) $
+ 0001           ;            $LastChangedRevision: 48 $
+ 0001           ; ***************************************************************************/ 
+ 0001           ; 
+ 0001           ; #include <string.h>
+ 0001           ; 
+ 0001           ; #include "Controller.h"
+ 0001           ; #include "mco.h"
+ 0001           ; #include "mcohw.h"
+ 0001           ; #include "mc9s12a128.h"
+ 0001           ; #include "subroutines.h"
+ 0001           ; 
+ 0001           ; // ensure the number of tpdos and rpdos is correct
+ 0001           ; #if (NR_OF_RPDOS != 8)
+ 0001           ;   #if (NR_OF_TPDOS != 8)
+ 0001           ; #error This example is for 8 TPDOs and 8 RPDOs only
+ 0001           ;   #endif
+ 0001           ; #endif
+ 0001           ; 
+ 0001           ; // global variables
+ 0001           ; 
+ 0001           ; // This structure holds all node specific configuration
+ 0001           ; UNSIGNED8 gProcImg[PROCIMG_SIZE];
+ 0001           ; extern UNSIGNED8 setFilters[];
+ 0001           ; char clearProc = 1;
+ 0001           ; // Table with SDO Responses for read requests to OD
+ 0001           ; // Each Row has 8 Bytes:
+ 0001           ; // Command Specifier for SDO Response (1 byte)
+ 0001           ; //   bits 2+3 contain: '4' � {number of data bytes}
+ 0001           ; // Object Dictionary Index (2 bytes, low first)
+ 0001           ; // Object Dictionary Subindex (1 byte)
+ 0001           ; // Data (4 bytes, lowest bytes first)
+ 0001           ; UNSIGNED8 MEM_CONST SDOResponseTable[] = {
+ 0001           ; 
+ 0001           ;   // [1000h,00]: Device Type
+ 0001           ;   SDOREPLY(0x1000, 0x00, 4, OD_DEVICE_TYPE),
+ 0001           ; 
+ 0001           ; #ifdef OD_SERIAL
+ 0001           ;   // [1018h,00]: Identity Object, Number of Entries = 4
+ 0001           ;   SDOREPLY(0x1018, 0x00, 1, 0x00000004L),
+ 0001           ; #else
+ 0001           ;   // [1018h,00]: Identity Object, Number of Entries = 3
+ 0001           ;   SDOREPLY(0x1018, 0x00, 1, 0x00000003L),
+ 0001           ; #endif
+ 0001           ; 
+ 0001           ;   // [1018h,01]: Identity Object, Vendor ID
+ 0001           ;   SDOREPLY(0x1018, 0x01, 4, OD_VENDOR_ID),
+ 0001           ; 
+ 0001           ;   // [1018h,02]: Identity Object, Product Code
+ 0001           ;   SDOREPLY(0x1018, 0x02, 4, OD_PRODUCT_CODE),
+ 0001           ; 
+ 0001           ;   // [1018h,03]: Identity Object, Revision
+ 0001           ;   SDOREPLY(0x1018, 0x03, 4, OD_REVISION),
+ 0001           ; 
+ 0001           ; #ifdef OD_SERIAL
+ 0001           ;   // [1018h,04]: Identity Object, Serial
+ 0001           ;   SDOREPLY(0x1018, 0x04, 4, OD_SERIAL),
+ 0001           ; #endif
+ 0001           ; 
+ 0001           ;   // [2018h,00]: MicroCANopen Identity Object, Number of Entries = 3
+ 0001           ;   SDOREPLY(0x2018, 0x00, 1, 0x00000003L),
+ 0001           ; 
+ 0001           ;   // [2018h,01]: MicroCANopen Identity Object, Vendor ID = 01455341, ESA Inc.
+ 0001           ;   SDOREPLY(0x2018, 0x01, 4, 0x01455341L),
+ 0001           ; 
+ 0001           ;   // [2018h,02]: MicroCANopen Identity Object, Product Code = "MCOP"
+ 0001           ;   SDOREPLY4(0x2018, 0x02, 4, 'P', 'O', 'C', 'M'),
+ 0001           ; 
+ 0001           ;   // [2018h,03]: MicroCANopen Identity Object, Revision = 1.20
+ 0001           ;   SDOREPLY(0x2018, 0x03, 4, 0x00010020L),
+ 0001           ; 
+ 0001           ;   // [2100h,00]: MicroCANopen Identity Object, Number of Entries = 3
+ 0001           ;   SDOREPLY(0x2100, 0x00, 1, 0x00000004L),
+ 0001           ; 
+ 0001           ;   // [2100h,01]: MicroCANopen Identity Object, Vendor ID = 01455341, ESA Inc.
+ 0001           ;   SDOREPLY4(0x2100, 0x01, 4, 'C', 'L', 'E', 'A'),
+ 0001           ; 
+ 0001           ;   // [2100h,02]: MicroCANopen Identity Object, Product Code = "MCOP"
+ 0001           ;   SDOREPLY4(0x2100, 0x02, 4, 'N', 'E', 'R', '-'),
+ 0001           ; 
+ 0001           ;   // [2100h,03]: MicroCANopen Identity Object, Revision = 1.20
+ 0001           ;   SDOREPLY4(0x2100, 0x03, 4, 'V', 'A', 'C', 'U'),
+ 0001           ; 
+ 0001           ;   // [2100h,04]: MicroCANopen Identity Object, Revision = 1.20
+ 0001           ;   SDOREPLY4(0x2100, 0x04, 4, 'U', 'M', ' ', 0x32),
+ 0001           ; 
+ 0001           ; #ifdef PDO_IN_OD
+ 0001           ;   // NOTE: These entries must be added manually. The parameters must match
+ 0001           ;   // the parameters used to call the functions MCO_InitRPDO and MCO_InitTPDO.
+ 0001           ; 
+ 0001           ;   // These entries are necessary to be fully CANopen compliant.
+ 0001           ;   // Suppported in commercial version of MicroCANopen available from
+ 0001           ;   // www.CANopenStore.com
+ 0001           ; 
+ 0001           ;   // Warning: This version is not fully CANopen compliant - PDO_IN_OD must not be defined
+ 0001           ;   #error Warning: This version of MicroCANopen has a limited Object Dictionary! Un-define PDO_IN_OD to confirm!
+ 0001           ; #endif // PDO_IN_OD
+ 0001           ; 
+ 0001           ;   // End-of-table marker
+ 0001           ;   SDOREPLY(0xFFFF, 0xFF, 0xFF, 0xFFFFFFFFL)
+ 0001           ; };
+ 0001           ; 
+ 0001           ; #ifdef PROCIMG_IN_OD
+ 0001           ;   // Table with Object Dictionary entries to process data.
+ 0001           ; 
+ 0001           ;   // These entries are necessary to be fully CANopen compliant.
+ 0001           ;   // Suppported in commercial version of MicroCANopen available from
+ 0001           ;   // www.CANopenStore.com
+ 0001           ; 
+ 0001           ;   // Warning: This version is not fully CANopen compliant - PROCIMG_IN_OD must not be defined
+ 0001           ;   #error Warning: This version of MicroCANopen has a limited Object Dictionary! Un-define PROCIMG_IN_OD to confirm!
+ 0001           ; #endif // PROCIMG_IN_OD
+ 0001           ; 
+ 0001           ; 
+ 0001           ; /**************************************************************************
+ 0001           ; DOES:    This function is called if a fatal error occurred. 
+ 0001           ;          Error codes of mcohwxxx.c are in the range of 0x8000 to 0x87FF.
+ 0001           ;          Error codes of mco.c are in the range of 0x8800 to 0x8FFF. 
+ 0001           ;          All other error codes may be used by the application.
+ 0001           ; RETURNS: nothing
+ 0001           ; **************************************************************************/
+ 0001           ; void MCOUSER_FatalError
+ 0001           ;   (
+ 0001           ;   UNSIGNED16 ErrCode  // the error code
+ 0001           ;   )
+ 0001           ; {
+ 0001                   .dbline 143
+ 0001           ;   //display blinking pattern on led
+ 0001           ;   InitCANopen();
+ 0001 4A000000          xcall $_InitCANopen
+ 0005                   .dbline -2
+ 0005           L5:
+ 0005                   .dbline 0 ; func end
+ 0005 1B82              leas 2,S
+ 0007 0A                rtc
+ 0008                   .dbsym l ErrCode 0 i
+ 0008                   .dbend
+ 0008                   .dbfunc e MCOUSER_ResetApplication _MCOUSER_ResetApplication fV
+ 0008           $_MCOUSER_ResetApplication::
+ 0008                   .dbline -1
+ 0008                   .dbline 155
+ 0008           ; }
+ 0008           ; 
+ 0008           ; /**************************************************************************
+ 0008           ; DOES:    Call-back function for reset application.
+ 0008           ;          Starts the watchdog and waits until watchdog causes a reset.
+ 0008           ; RETURNS: nothing
+ 0008           ; **************************************************************************/
+ 0008           ; void MCOUSER_ResetApplication
+ 0008           ;   (
+ 0008           ;   void
+ 0008           ;   )
+ 0008           ; {
+ 0008                   .dbline 156
+ 0008           ;     COPCTL = 0x01;                            //enable COP 
+ 0008 180B01003C        movb #1,0x3c
+ 000D           L7:
+ 000D                   .dbline 157
+ 000D           ;       while (1);                                      //wait for reset
+ 000D           L8:
+ 000D                   .dbline 157
+ 000D 20FE              bra L7
+ 000F           X0:
+ 000F                   .dbline -2
+ 000F           L6:
+ 000F                   .dbline 0 ; func end
+ 000F 0A                rtc
+ 0010                   .dbend
+ 0010                   .dbfunc e MCOUSER_ResetCommunication _MCOUSER_ResetCommunication fV
+ 0010           ;              i -> 12,SP
+ 0010           $_MCOUSER_ResetCommunication::
+ 0010 1B93              leas -13,S
+ 0012                   .dbline -1
+ 0012                   .dbline 174
+ 0012           ; 
+ 0012           ;   //MCOUSER_ResetCommunication();
+ 0012           ; }
+ 0012           ; 
+ 0012           ; /**************************************************************************
+ 0012           ; DOES:    This function both resets and initializes both the CAN interface
+ 0012           ;          and the CANopen protocol stack. It is called from within the
+ 0012           ;          CANopen protocol stack, if a NMT master message was received that
+ 0012           ;          demanded "Reset Communication".
+ 0012           ;          This function should call MCO_Init and MCO_InitTPDO/MCO_InitRPDO.
+ 0012           ; RETURNS: nothing
+ 0012           ; **************************************************************************/
+ 0012           ; void MCOUSER_ResetCommunication
+ 0012           ;   (
+ 0012           ;   void
+ 0012           ;   )
+ 0012           ; {
+ 0012                   .dbline 177
+ 0012           ; UNSIGNED8 i;
+ 0012           ; 
+ 0012           ;  INTR_OFF();
+ 0012 1410              sei
+ 0014                   .dbline 180
+ 0014           ; 
+ 0014           ;   // Initialize Process Variables
+ 0014           ;   if(clearProc == 1){ // Only clear gProcImg on startup.
+ 0014 F60000            ldab _clearProc
+ 0017 C101              cmpb #1
+ 0019 261D              bne L11
+ 001B                   .dbline 180
+ 001B                   .dbline 181
+ 001B           ;   for (i = 0; i < PROCIMG_SIZE; i++)
+ 001B 698C              clr 12,S
+ 001D 2013              bra L16
+ 001F           L13:
+ 001F                   .dbline 182
+ 001F           ;   {
+ 001F                   .dbline 183
+ 001F           ;     gProcImg[i] = 0;
+ 001F CD0000            ldy #_gProcImg
+ 0022 E68C              ldab 12,S
+ 0024 87                clra
+ 0025 6D8A              sty 10,S
+ 0027 E38A              addd 10,S
+ 0029 B746              tfr D,Y
+ 002B CC0000            ldd #0
+ 002E 6B40              stab 0,Y
+ 0030                   .dbline 184
+ 0030           ;   }
+ 0030           L14:
+ 0030                   .dbline 181
+ 0030 628C              inc 12,S
+ 0032           L16:
+ 0032                   .dbline 181
+ 0032 E68C              ldab 12,S
+ 0034 C122              cmpb #34
+ 0036 25E7              blo L13
+ 0038                   .dbline 185
+ 0038           ;   }
+ 0038           L11:
+ 0038                   .dbline 186
+ 0038           ;   clearProc = 0;
+ 0038 790000            clr _clearProc
+ 003B                   .dbline 188
+ 003B           ; 
+ 003B           ;   for(i = 0; i < 8; i++){
+ 003B 698C              clr 12,S
+ 003D 2013              bra L20
+ 003F           L17:
+ 003F                   .dbline 188
+ 003F                   .dbline 189
+ 003F           ;       setFilters[i] = 0x80;
+ 003F CD0000            ldy #_setFilters
+ 0042 E68C              ldab 12,S
+ 0044 87                clra
+ 0045 6D8A              sty 10,S
+ 0047 E38A              addd 10,S
+ 0049 B746              tfr D,Y
+ 004B CC0080            ldd #128
+ 004E 6B40              stab 0,Y
+ 0050                   .dbline 190
+ 0050           ;   }
+ 0050           L18:
+ 0050                   .dbline 188
+ 0050 628C              inc 12,S
+ 0052           L20:
+ 0052                   .dbline 188
+ 0052 E68C              ldab 12,S
+ 0054 C108              cmpb #8
+ 0056 25E7              blo L17
+ 0058                   .dbline 192
+ 0058           ; 
+ 0058           ;   INTR_ON();
+ 0058 10EF              cli
+ 005A                   .dbline 194
+ 005A           ;   // 125kbit, Node 1, No heartbeat
+ 005A           ;   MCO_Init(125,NODE_ID,0); 
+ 005A CD0000            ldy #0
+ 005D 6D82              sty 2,S
+ 005F CD0048            ldy #72
+ 0062 6D80              sty 0,S
+ 0064 CC007D            ldd #125
+ 0067 4A000000          xcall $_MCO_Init
+ 006B                   .dbline 199
+ 006B           ;   
+ 006B           ; 
+ 006B           ;   //Initiate Menu/Trigger
+ 006B           ;   // RPDO1, ID ($NODEID+0x200), 1 bytes
+ 006B           ;   MCO_InitRPDO(1,0,1,OUT_digi_0); 
+ 006B CD000E            ldy #14
+ 006E 6D84              sty 4,S
+ 0070 CD0001            ldy #1
+ 0073 6D82              sty 2,S
+ 0075 CD0000            ldy #0
+ 0078 6D80              sty 0,S
+ 007A CC0001            ldd #1
+ 007D 4A000000          xcall $_MCO_InitRPDO
+ 0081                   .dbline 202
+ 0081           ; 
+ 0081           ;   // RPDO2, ID ($NODEID+0x300), 2 bytes, Button Box data
+ 0081           ;   MCO_InitRPDO(2,0x180,3,OUT_digi_1); 
+ 0081 CD000F            ldy #15
+ 0084 6D84              sty 4,S
+ 0086 CD0003            ldy #3
+ 0089 6D82              sty 2,S
+ 008B CD0180            ldy #384
+ 008E 6D80              sty 0,S
+ 0090 CC0002            ldd #2
+ 0093 4A000000          xcall $_MCO_InitRPDO
+ 0097                   .dbline 206
+ 0097           ; 
+ 0097           ;   //camera address is received on out_digi_3 and out_digi_4
+ 0097           ;   // RPDO3, default ID (0x400+nodeID), 2 bytes
+ 0097           ;   MCO_InitRPDO(3,0x421,2,OUT_digi_4); 
+ 0097 CD0012            ldy #18
+ 009A 6D84              sty 4,S
+ 009C CD0002            ldy #2
+ 009F 6D82              sty 2,S
+ 00A1 CD0421            ldy #1057
+ 00A4 6D80              sty 0,S
+ 00A6 CC0003            ldd #3
+ 00A9 4A000000          xcall $_MCO_InitRPDO
+ 00AD                   .dbline 210
+ 00AD           ; 
+ 00AD           ;   // command from controller is received on out_digi_5, out...6,7 have data with command    
+ 00AD           ;   // RPDO4, default ID (0x500+nodeID), 5 bytes
+ 00AD           ;   MCO_InitRPDO(4,0x521,5,OUT_digi_6);       //command RPDO 
+ 00AD CD0014            ldy #20
+ 00B0 6D84              sty 4,S
+ 00B2 CD0005            ldy #5
+ 00B5 6D82              sty 2,S
+ 00B7 CD0521            ldy #1313
+ 00BA 6D80              sty 0,S
+ 00BC CC0004            ldd #4
+ 00BF 4A000000          xcall $_MCO_InitRPDO
+ 00C3                   .dbline 213
+ 00C3           ; 
+ 00C3           ;   // RPDO5, default ID (), 1 byte, Speed Control moving
+ 00C3           ;   MCO_InitRPDO(5,0x298,1,OUT_digi_12);       
+ 00C3 CD001A            ldy #26
+ 00C6 6D84              sty 4,S
+ 00C8 CD0001            ldy #1
+ 00CB 6D82              sty 2,S
+ 00CD CD0298            ldy #664
+ 00D0 6D80              sty 0,S
+ 00D2 CC0005            ldd #5
+ 00D5 4A000000          xcall $_MCO_InitRPDO
+ 00D9                   .dbline 216
+ 00D9           ;     
+ 00D9           ;   // RPDO6, default ID (), 2 byte, position actuator
+ 00D9           ;   MCO_InitRPDO(6,0x46a,3,OUT_digi_13);       
+ 00D9 CD001B            ldy #27
+ 00DC 6D84              sty 4,S
+ 00DE CD0003            ldy #3
+ 00E1 6D82              sty 2,S
+ 00E3 CD046A            ldy #1130
+ 00E6 6D80              sty 0,S
+ 00E8 CC0006            ldd #6
+ 00EB 4A000000          xcall $_MCO_InitRPDO
+ 00EF                   .dbline 223
+ 00EF           ;     
+ 00EF           ;   // TPDO1, default ID ($NODEID+0x180), 0ms event, 10ms inhibit, 1 bytes, Menu Status
+ 00EF           ; //  MCO_InitTPDO(1,0x200,0,100,1,IN_digi_0);
+ 00EF           ; // Manually send this 
+ 00EF           ; 
+ 00EF           ;   // TPDO2, default ID ($NODEID+0x280), 100ms event, 0ms inhibit, 5 bytes, Speed Control
+ 00EF           ;   MCO_InitTPDO(1,0x1ea,0,10,1,IN_digi_8);
+ 00EF CD0008            ldy #8
+ 00F2 6D88              sty 8,S
+ 00F4 CD0001            ldy #1
+ 00F7 6D86              sty 6,S
+ 00F9 CD000A            ldy #10
+ 00FC 6D84              sty 4,S
+ 00FE CD0000            ldy #0
+ 0101 6D82              sty 2,S
+ 0103 CD01EA            ldy #490
+ 0106 6D80              sty 0,S
+ 0108 CC0001            ldd #1
+ 010B 4A000000          xcall $_MCO_InitTPDO
+ 010F                   .dbline 226
+ 010F           ; 
+ 010F           ;   // TPDO3, default ID ($NODEID+0x380), 0ms event, 100ms inhibit, 1 bytes, actuator moving
+ 010F           ;   MCO_InitTPDO(2,0x1c8,0,100,1,IN_digi_15);
+ 010F CD0009            ldy #9
+ 0112 6D88              sty 8,S
+ 0114 CD0001            ldy #1
+ 0117 6D86              sty 6,S
+ 0119 CD0064            ldy #100
+ 011C 6D84              sty 4,S
+ 011E CD0000            ldy #0
+ 0121 6D82              sty 2,S
+ 0123 CD01C8            ldy #456
+ 0126 6D80              sty 0,S
+ 0128 CC0002            ldd #2
+ 012B 4A000000          xcall $_MCO_InitTPDO
+ 012F                   .dbline 232
+ 012F           ; 
+ 012F           ;   // TPDO4, default ID ($NODEID+), 100ms event, 0ms inhibit, 1 bytes, Cleaning process
+ 012F           ;   // This is initialized (and modified) in the cleaning sequence
+ 012F           ;   //MCO_InitTPDO(4,0x318,100,0,5,IN_digi_3); 
+ 012F           ;   //MCO_InitTPDO(4,0x318,100,100,5,IN_digi_3); 
+ 012F           ;   MCO_InitTPDO(4,0x318,0,100,5,IN_digi_3);
+ 012F CD0003            ldy #3
+ 0132 6D88              sty 8,S
+ 0134 CD0005            ldy #5
+ 0137 6D86              sty 6,S
+ 0139 CD0064            ldy #100
+ 013C 6D84              sty 4,S
+ 013E CD0000            ldy #0
+ 0141 6D82              sty 2,S
+ 0143 CD0318            ldy #792
+ 0146 6D80              sty 0,S
+ 0148 CC0004            ldd #4
+ 014B 4A000000          xcall $_MCO_InitTPDO
+ 014F                   .dbline -2
+ 014F           L10:
+ 014F                   .dbline 0 ; func end
+ 014F 1B8D              leas 13,S
+ 0151 0A                rtc
+ 0152                   .dbsym l i 12 c
+ 0152                   .dbend
+                        .area bss
+ 0000                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\user.c
+ 0000           _gProcImg::
+ 0000                   .blkb 34
+ 0022                   .dbsym e gProcImg _gProcImg A[34:34]c

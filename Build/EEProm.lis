@@ -1,0 +1,366 @@
+                        .module EEProm.c
+                        .area text
+ 0000                   .dbfile ..\..\REV3~1.25\SOURCE~1\EEProm.c
+                        .area extcode(paged)
+ 0000                   .dbfile ..\..\REV3~1.25\SOURCE~1\EEProm.c
+ 0000                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\EEProm.c
+ 0000                   .dbfunc e EEInit _EEInit fV
+ 0000           $_EEInit::
+ 0000                   .dbline -1
+ 0000                   .dbline 6
+ 0000           ; #include "EEProm.h"
+ 0000           ; #include "mc9s12a128.h"
+ 0000           ; #include "Subroutines.h"
+ 0000           ; 
+ 0000           ; void EEInit ( void )
+ 0000           ; {
+ 0000                   .dbline 7
+ 0000           ;        ECLKDIV = (char)(OscClk * (5 + Tbus));
+ 0000 180B280110        movb #40,0x110
+ 0005                   .dbline 8
+ 0005           ;        INITEE = INITEE_Init;
+ 0005 180B090012        movb #9,0x12
+ 000A                   .dbline -2
+ 000A           L1:
+ 000A                   .dbline 0 ; func end
+ 000A 0A                rtc
+ 000B                   .dbend
+ 000B                   .dbfunc e EEWrite _EEWrite fV
+ 000B           ;       tempAddr -> 4,SP
+ 000B           ;        TmpData -> 6,SP
+ 000B           ;      tempArray -> 8,SP
+ 000B           ;              j -> 136,SP
+ 000B           ;              i -> 138,SP
+ 000B           ;      WriteAddr -> 147,SP
+ 000B           ;      WriteData -> 145,SP
+ 000B           ;      ArraySize -> 140,SP
+ 000B           $_EEWrite::
+ 000B 3B                pshd
+ 000C 1BF174            leas -140,S
+ 000F                   .dbline -1
+ 000F                   .dbline 21
+ 000F           ; }
+ 000F           ; 
+ 000F           ; 
+ 000F           ; 
+ 000F           ; //  char TmpStr2[] = "Hello World!\r\n";
+ 000F           ; //  int *intptr;
+ 000F           ; 
+ 000F           ; //    intptr = (int*)0x461;
+ 000F           ; //    EEWrite ( sizeof (TmpStr2), TmpStr2, intptr );  
+ 000F           ;       
+ 000F           ; 
+ 000F           ; void EEWrite ( int ArraySize, char WriteData[], int *WriteAddr )
+ 000F           ; {
+ 000F                   .dbline 33
+ 000F           ;        //Erases and Writes an array of up to 128 char to EEPROM
+ 000F           ;        
+ 000F           ;        int i, j, TmpData;
+ 000F           ;        char *tempAddr;
+ 000F           ;        char tempArray[128];
+ 000F           ;        
+ 000F           ;      
+ 000F           ;        
+ 000F           ;        //Add up to 3 more data bytes to beginning of array
+ 000F           ;        //Addr must be divisible by 4 for erase operation
+ 000F           ;        
+ 000F           ;        tempAddr = (char*)WriteAddr;
+ 000F 19F093            leay 147,S
+ 0012 18024084          movw 0,y,4,S
+ 0016                   .dbline 34
+ 0016           ;      tempAddr = (char*)((int)tempAddr & ~0x03);
+ 0016 EC84              ldd 4,S
+ 0018 84FF              anda #-1
+ 001A C4FC              andb #-4
+ 001C 6C84              std 4,S
+ 001E                   .dbline 36
+ 001E           ;        
+ 001E           ;        j = 0;
+ 001E 19F088            leay 136,S
+ 0021 1800400000        movw #0,0,y
+ 0026                   .dbline 37
+ 0026           ;        if ( (int)WriteAddr != (int)tempAddr )
+ 0026 EDF093            ldy 147,S
+ 0029 AD84              cpy 4,S
+ 002B 272E              beq L3
+ 002D                   .dbline 38
+ 002D           ;        {
+ 002D                   .dbline 39
+ 002D           ;               for ( j=0;(int)tempAddr != (int)WriteAddr;tempAddr++, j++)
+ 002D 1AF088            leax 136,S
+ 0030 1800000000        movw #0,0,x
+ 0035 201D              bra L8
+ 0037           L5:
+ 0037                   .dbline 40
+ 0037           ;               {
+ 0037                   .dbline 41
+ 0037           ;                       tempArray[j] = *tempAddr;
+ 0037 ECF088            ldd 136,S
+ 003A 1988              leay 8,S
+ 003C 6D80              sty 0,S
+ 003E E380              addd 0,S
+ 0040 B746              tfr D,Y
+ 0042 E6F30004          ldab [4,S]
+ 0046 6B40              stab 0,Y
+ 0048                   .dbline 42
+ 0048           ;               }       
+ 0048           L6:
+ 0048                   .dbline 39
+ 0048 ED84              ldy 4,S
+ 004A 02                iny
+ 004B 6D84              sty 4,S
+ 004D EDF088            ldy 136,S
+ 0050 02                iny
+ 0051 6DF088            sty 136,S
+ 0054           L8:
+ 0054                   .dbline 39
+ 0054 ED84              ldy 4,S
+ 0056 ADF093            cpy 147,S
+ 0059 26DC              bne L5
+ 005B                   .dbline 43
+ 005B           ;        } 
+ 005B           L3:
+ 005B                   .dbline 47
+ 005B           ; 
+ 005B           ;        //transfer the rest of the data to tempArray
+ 005B           ; 
+ 005B           ;      for (i=0 ;i < ArraySize;i++, j++)
+ 005B 1AF08A            leax 138,S
+ 005E 1800000000        movw #0,0,x
+ 0063 2025              bra L12
+ 0065           L9:
+ 0065                   .dbline 48
+ 0065           ;      {
+ 0065                   .dbline 49
+ 0065           ;         tempArray[j] = WriteData[i];
+ 0065 ECF088            ldd 136,S
+ 0068 1988              leay 8,S
+ 006A 6D80              sty 0,S
+ 006C E380              addd 0,S
+ 006E B746              tfr D,Y
+ 0070 ECF08A            ldd 138,S
+ 0073 E3F091            addd 145,S
+ 0076 B745              tfr D,X
+ 0078 E600              ldab 0,X
+ 007A 6B40              stab 0,Y
+ 007C                   .dbline 50
+ 007C           ;      }
+ 007C           L10:
+ 007C                   .dbline 47
+ 007C EDF08A            ldy 138,S
+ 007F 02                iny
+ 0080 6DF08A            sty 138,S
+ 0083 EDF088            ldy 136,S
+ 0086 02                iny
+ 0087 6DF088            sty 136,S
+ 008A           L12:
+ 008A                   .dbline 47
+ 008A EDF08A            ldy 138,S
+ 008D ADF08C            cpy 140,S
+ 0090 2DD3              blt L9
+ 0092                   .dbline 54
+ 0092           ; 
+ 0092           ;        //pad end of array to make divisible by 4
+ 0092           ; 
+ 0092           ;      if ( (j & 0x03) )
+ 0092 ECF088            ldd 136,S
+ 0095 8400              anda #0
+ 0097 C403              andb #3
+ 0099 8C0000            cpd #0
+ 009C 273A              beq L13
+ 009E                   .dbline 55
+ 009E           ;      {
+ 009E                   .dbline 56
+ 009E           ;               tempAddr = (char*)WriteAddr;
+ 009E 1AF093            leax 147,S
+ 00A1 18020084          movw 0,x,4,S
+ 00A5                   .dbline 57
+ 00A5           ;       tempAddr = (char*)((int)tempAddr & ~0x03);
+ 00A5 EC84              ldd 4,S
+ 00A7 84FF              anda #-1
+ 00A9 C4FC              andb #-4
+ 00AB 6C84              std 4,S
+ 00AD                   .dbline 58
+ 00AD           ;               for ( ;j & 0x3;j++ )
+ 00AD 201D              bra L18
+ 00AF           L15:
+ 00AF                   .dbline 59
+ 00AF           ;               {
+ 00AF                   .dbline 60
+ 00AF           ;               tempArray[j] = *(tempAddr + j);
+ 00AF ECF088            ldd 136,S
+ 00B2 1988              leay 8,S
+ 00B4 6D80              sty 0,S
+ 00B6 E380              addd 0,S
+ 00B8 B746              tfr D,Y
+ 00BA ECF088            ldd 136,S
+ 00BD E384              addd 4,S
+ 00BF B745              tfr D,X
+ 00C1 E600              ldab 0,X
+ 00C3 6B40              stab 0,Y
+ 00C5                   .dbline 61
+ 00C5           ;               }
+ 00C5           L16:
+ 00C5                   .dbline 58
+ 00C5 EDF088            ldy 136,S
+ 00C8 02                iny
+ 00C9 6DF088            sty 136,S
+ 00CC           L18:
+ 00CC                   .dbline 58
+ 00CC ECF088            ldd 136,S
+ 00CF 8400              anda #0
+ 00D1 C403              andb #3
+ 00D3 8C0000            cpd #0
+ 00D6 26D7              bne L15
+ 00D8                   .dbline 62
+ 00D8           ;      }
+ 00D8           L13:
+ 00D8                   .dbline 67
+ 00D8           ; 
+ 00D8           ;        
+ 00D8           ;        //Erase EEprom
+ 00D8           ;        
+ 00D8           ;        tempAddr = (char*)WriteAddr;
+ 00D8 1AF093            leax 147,S
+ 00DB 18020084          movw 0,x,4,S
+ 00DF                   .dbline 68
+ 00DF           ;        WriteAddr = (int*)((int)WriteAddr & ~0x03);
+ 00DF ECF093            ldd 147,S
+ 00E2 84FF              anda #-1
+ 00E4 C4FC              andb #-4
+ 00E6 6CF093            std 147,S
+ 00E9                   .dbline 70
+ 00E9           ; 
+ 00E9           ;      for (i=0; i<j; i += 4, WriteAddr +=2 )
+ 00E9 1AF08A            leax 138,S
+ 00EC 1800000000        movw #0,0,x
+ 00F1 2028              bra L22
+ 00F3           L19:
+ 00F3                   .dbline 71
+ 00F3           ;      {
+ 00F3                   .dbline 72
+ 00F3           ;                *WriteAddr = TmpData;
+ 00F3 ED86              ldy 6,S
+ 00F5 EEF093            ldx 147,S
+ 00F8 6D00              sty 0,X
+ 00FA                   .dbline 73
+ 00FA           ;                ECMD = SecErase;
+ 00FA 180B400116        movb #64,0x116
+ 00FF                   .dbline 74
+ 00FF           ;                ESTAT = ESTAT_CBEIF;
+ 00FF 180B800115        movb #128,0x115
+ 0104           L23:
+ 0104                   .dbline 75
+ 0104           ;                while (!(ESTAT & ESTAT_CBEIF) );
+ 0104           L24:
+ 0104                   .dbline 75
+ 0104 1F011580FB        brclr 0x115,#128,L23
+ 0109                   .dbline 76
+ 0109           ;        }
+ 0109           L20:
+ 0109                   .dbline 70
+ 0109 ECF08A            ldd 138,S
+ 010C C30004            addd #4
+ 010F 6CF08A            std 138,S
+ 0112 ECF093            ldd 147,S
+ 0115 C30004            addd #4
+ 0118 6CF093            std 147,S
+ 011B           L22:
+ 011B                   .dbline 70
+ 011B EDF08A            ldy 138,S
+ 011E ADF088            cpy 136,S
+ 0121 2DD0              blt L19
+ 0123                   .dbline 81
+ 0123           ;        
+ 0123           ; 
+ 0123           ;        //Write to EEPROM
+ 0123           ;        
+ 0123           ;        WriteAddr = (int*)tempAddr;     
+ 0123 1AF093            leax 147,S
+ 0126 18028400          movw 4,S,0,x
+ 012A                   .dbline 82
+ 012A           ;        WriteAddr = (int*)((int)WriteAddr & ~0x03);
+ 012A ECF093            ldd 147,S
+ 012D 84FF              anda #-1
+ 012F C4FC              andb #-4
+ 0131 6CF093            std 147,S
+ 0134                   .dbline 84
+ 0134           ; 
+ 0134           ;      for (i=0;i<j;i+=2, WriteAddr++)
+ 0134 1AF08A            leax 138,S
+ 0137 1800000000        movw #0,0,x
+ 013C 18200056          lbra L29
+ 0140           L26:
+ 0140                   .dbline 85
+ 0140           ;      {
+ 0140                   .dbline 86
+ 0140           ;                TmpData = tempArray[i]*256 + tempArray[i+1];
+ 0140 ECF08A            ldd 138,S
+ 0143 1988              leay 8,S
+ 0145 6D80              sty 0,S
+ 0147 E380              addd 0,S
+ 0149 B746              tfr D,Y
+ 014B E640              ldab 0,Y
+ 014D 87                clra
+ 014E B746              tfr D,Y
+ 0150 CC0100            ldd #256
+ 0153 13                emul
+ 0154 6C82              std 2,S
+ 0156 ECF08A            ldd 138,S
+ 0159 1A89              leax 9,S
+ 015B 6E80              stx 0,S
+ 015D E380              addd 0,S
+ 015F B746              tfr D,Y
+ 0161 E640              ldab 0,Y
+ 0163 87                clra
+ 0164 B746              tfr D,Y
+ 0166 EC82              ldd 2,S
+ 0168 6D80              sty 0,S
+ 016A E380              addd 0,S
+ 016C 6C86              std 6,S
+ 016E                   .dbline 87
+ 016E           ;                *WriteAddr = TmpData;
+ 016E B746              tfr D,Y
+ 0170 EEF093            ldx 147,S
+ 0173 6D00              sty 0,X
+ 0175                   .dbline 88
+ 0175           ;                ECMD = WordPrg;
+ 0175 180B200116        movb #32,0x116
+ 017A                   .dbline 89
+ 017A           ;                ESTAT = ESTAT_CBEIF;
+ 017A 180B800115        movb #128,0x115
+ 017F           L31:
+ 017F                   .dbline 90
+ 017F           ;                while (!(ESTAT & ESTAT_CBEIF) );
+ 017F           L32:
+ 017F                   .dbline 90
+ 017F 1F011580FB        brclr 0x115,#128,L31
+ 0184                   .dbline 91
+ 0184           ;      }
+ 0184           L27:
+ 0184                   .dbline 84
+ 0184 ECF08A            ldd 138,S
+ 0187 C30002            addd #2
+ 018A 6CF08A            std 138,S
+ 018D ECF093            ldd 147,S
+ 0190 C30002            addd #2
+ 0193 6CF093            std 147,S
+ 0196           L29:
+ 0196                   .dbline 84
+ 0196 EDF08A            ldy 138,S
+ 0199 ADF088            cpy 136,S
+ 019C 182DFFA0          lblt L26
+ 01A0                   .dbline -2
+ 01A0           L2:
+ 01A0                   .dbline 0 ; func end
+ 01A0 1BF08E            leas 142,S
+ 01A3 0A                rtc
+ 01A4                   .dbsym l tempAddr 4 pc
+ 01A4                   .dbsym l TmpData 6 I
+ 01A4                   .dbsym l tempArray 8 A[128:128]c
+ 01A4                   .dbsym l j 136 I
+ 01A4                   .dbsym l i 138 I
+ 01A4                   .dbsym l WriteAddr 147 pI
+ 01A4                   .dbsym l WriteData 145 pc
+ 01A4                   .dbsym l ArraySize 140 I
+ 01A4                   .dbend

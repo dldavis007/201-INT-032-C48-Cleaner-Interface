@@ -1,0 +1,287 @@
+XH
+H 5 areas B global symbols
+M user.c
+S $_MCO_Init Ref0000
+S _setFilters Ref0000
+S $_MCO_InitRPDO Ref0000
+S $_MCO_InitTPDO Ref0000
+S $_InitCANopen Ref0000
+A text size 80 flags 0
+dbfile ..\..\REV3~1.25\SOURCE~1\user.c
+dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\user.c
+dbsym e SDOResponseTable 0 A[128:128]c
+S _SDOResponseTable Def0000
+A data size 1 flags 0
+dbfile ..\..\REV3~1.25\SOURCE~1\user.c
+dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\user.c
+dbsym e clearProc 0 c
+S _clearProc Def0000
+A idata size 1 flags 0
+A extcode size 152 flags 80
+dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\user.c
+dbfunc e MCOUSER_FatalError 0 fV
+dbsym l ErrCode 0 i
+dbline FFFFFFFF 1
+dbline 8D 1
+dbline 8F 1
+dbline FFFFFFFE 5
+dbline 0 5
+dbfunc e MCOUSER_ResetApplication 8 fV
+dbline FFFFFFFF 8
+dbline 9B 8
+dbline 9C 8
+dbline 9D D
+dbline 9D D
+dbline FFFFFFFE F
+dbline 0 F
+dbfunc e MCOUSER_ResetCommunication 10 fV
+dbsym l i C c
+dbline FFFFFFFF 12
+dbline AE 12
+dbline B1 12
+dbline B4 14
+dbline B4 1B
+dbline B5 1B
+dbline B6 1F
+dbline B7 1F
+dbline B8 30
+dbline B5 30
+dbline B5 32
+dbline B9 38
+dbline BA 38
+dbline BC 3B
+dbline BC 3F
+dbline BD 3F
+dbline BE 50
+dbline BC 50
+dbline BC 52
+dbline C0 58
+dbline C2 5A
+dbline C7 6B
+dbline CA 81
+dbline CE 97
+dbline D2 AD
+dbline D5 C3
+dbline D8 D9
+dbline DF EF
+dbline E2 10F
+dbline E8 12F
+dbline FFFFFFFE 14F
+dbline 0 14F
+dbfile user.s
+dbfunc 0 ? 0 I
+dbline 57 0
+dbline EA 1
+dbline EE 5
+dbline EF 7
+dbline 104 8
+dbline 10A D
+dbline 10F F
+dbline 114 10
+dbline 12C 12
+dbline 131 14
+dbline 132 17
+dbline 133 19
+dbline 137 1B
+dbline 138 1D
+dbline 13E 1F
+dbline 13F 22
+dbline 140 24
+dbline 141 25
+dbline 142 27
+dbline 143 29
+dbline 144 2B
+dbline 145 2E
+dbline 14A 30
+dbline 14D 32
+dbline 14E 34
+dbline 14F 36
+dbline 155 38
+dbline 159 3B
+dbline 15A 3D
+dbline 15F 3F
+dbline 160 42
+dbline 161 44
+dbline 162 45
+dbline 163 47
+dbline 164 49
+dbline 165 4B
+dbline 166 4E
+dbline 16B 50
+dbline 16E 52
+dbline 16F 54
+dbline 170 56
+dbline 174 58
+dbline 178 5A
+dbline 179 5D
+dbline 17A 5F
+dbline 17B 62
+dbline 17C 64
+dbline 17D 67
+dbline 184 6B
+dbline 185 6E
+dbline 186 70
+dbline 187 73
+dbline 188 75
+dbline 189 78
+dbline 18A 7A
+dbline 18B 7D
+dbline 190 81
+dbline 191 84
+dbline 192 86
+dbline 193 89
+dbline 194 8B
+dbline 195 8E
+dbline 196 90
+dbline 197 93
+dbline 19D 97
+dbline 19E 9A
+dbline 19F 9C
+dbline 1A0 9F
+dbline 1A1 A1
+dbline 1A2 A4
+dbline 1A3 A6
+dbline 1A4 A9
+dbline 1AA AD
+dbline 1AB B0
+dbline 1AC B2
+dbline 1AD B5
+dbline 1AE B7
+dbline 1AF BA
+dbline 1B0 BC
+dbline 1B1 BF
+dbline 1B6 C3
+dbline 1B7 C6
+dbline 1B8 C8
+dbline 1B9 CB
+dbline 1BA CD
+dbline 1BB D0
+dbline 1BC D2
+dbline 1BD D5
+dbline 1C2 D9
+dbline 1C3 DC
+dbline 1C4 DE
+dbline 1C5 E1
+dbline 1C6 E3
+dbline 1C7 E6
+dbline 1C8 E8
+dbline 1C9 EB
+dbline 1D2 EF
+dbline 1D3 F2
+dbline 1D4 F4
+dbline 1D5 F7
+dbline 1D6 F9
+dbline 1D7 FC
+dbline 1D8 FE
+dbline 1D9 101
+dbline 1DA 103
+dbline 1DB 106
+dbline 1DC 108
+dbline 1DD 10B
+dbline 1E2 10F
+dbline 1E3 112
+dbline 1E4 114
+dbline 1E5 117
+dbline 1E6 119
+dbline 1E7 11C
+dbline 1E8 11E
+dbline 1E9 121
+dbline 1EA 123
+dbline 1EB 126
+dbline 1EC 128
+dbline 1ED 12B
+dbline 1F5 12F
+dbline 1F6 132
+dbline 1F7 134
+dbline 1F8 137
+dbline 1F9 139
+dbline 1FA 13C
+dbline 1FB 13E
+dbline 1FC 141
+dbline 1FD 143
+dbline 1FE 146
+dbline 1FF 148
+dbline 200 14B
+dbline 204 14F
+dbline 205 151
+S $_MCOUSER_ResetCommunication Def0010
+S $_MCOUSER_ResetApplication Def0008
+S $_MCOUSER_FatalError Def0000
+A bss size 22 flags 0
+dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\user.c
+dbsym e gProcImg 0 A[34:34]c
+S _gProcImg Def0000
+T 00 00 01
+R 00 00 00 02
+T 00 00 43 00 10 00 91 01 0F 00 4F 18 10 00 04 00
+R 00 00 00 00
+T 00 0E 00 00 43 18 10 01 53 54 52 43 43 18 10 02
+R 00 00 00 00
+T 00 1C 02 00 01 00 43 18 10 03 00 00 01 00 43 18
+R 00 00 00 00
+T 00 2A 10 04 FF FF FF FF 4F 18 20 00 03 00 00 00
+R 00 00 00 00
+T 00 38 43 18 20 01 41 53 45 01 43 18 20 02 50 4F
+R 00 00 00 00
+T 00 46 43 4D 43 18 20 03 20 00 01 00 4F 00 21 00
+R 00 00 00 00
+T 00 54 04 00 00 00 43 00 21 01 43 4C 45 41 43 00
+R 00 00 00 00
+T 00 62 21 02 4E 45 52 2D 43 00 21 03 56 41 43 55
+R 00 00 00 00
+T 00 70 43 00 21 04 55 4D 20 32 57 FF FF FF FF FF
+R 00 00 00 00
+T 00 7E FF FF
+R 00 00 00 00
+T 00 00 3B 4A 00 00 00 00 1B 82 0A 18 0B 01 00 3C
+R 00 00 00 03 82 04 00 04 83 06 00 04
+T 00 0D 20 FE 0A 1B 93 14 10 F6 00 00 C1 01 26 1D
+R 00 00 00 03 00 0A 00 01
+T 00 1B 69 8C 20 13 CD 00 00 E6 8C 87 6D 8A E3 8A
+R 00 00 00 03 00 07 00 04
+T 00 29 B7 46 CC 00 00 6B 40 62 8C E6 8C C1 22 25
+R 00 00 00 03
+T 00 37 E7 79 00 00 69 8C 20 13 CD 00 00 E6 8C 87
+R 00 00 00 03 00 04 00 01 02 0B 00 01
+T 00 45 6D 8A E3 8A B7 46 CC 00 80 6B 40 62 8C E6
+R 00 00 00 03
+T 00 53 8C C1 08 25 E7 10 EF CD 00 00 6D 82 CD
+R 00 00 00 03
+T 00 60 00 48 6D 80 CC 00 7D 4A 00 00 00 00 CD
+R 00 00 00 03 82 0A 00 00 83 0C 00 00
+T 00 6C 00 0E 6D 84 CD 00 01 6D 82 CD 00 00 6D 80
+R 00 00 00 03
+T 00 7A CC 00 01 4A 00 00 00 00 CD 00 0F 6D 84 CD
+R 00 00 00 03 82 06 00 02 83 08 00 02
+T 00 87 00 03 6D 82 CD 01 80 6D 80 CC 00 02 4A
+R 00 00 00 03
+T 00 94 00 00 00 00 CD 00 12 6D 84 CD 00 02 6D 82
+R 00 00 00 03 82 02 00 02 83 04 00 02
+T 00 A1 CD 04 21 6D 80 CC 00 03 4A 00 00 00 00 CD
+R 00 00 00 03 82 0B 00 02 83 0D 00 02
+T 00 AE 00 14 6D 84 CD 00 05 6D 82 CD 05 21 6D 80
+R 00 00 00 03
+T 00 BC CC 00 04 4A 00 00 00 00 CD 00 1A 6D 84 CD
+R 00 00 00 03 82 06 00 02 83 08 00 02
+T 00 C9 00 01 6D 82 CD 02 98 6D 80 CC 00 05 4A
+R 00 00 00 03
+T 00 D6 00 00 00 00 CD 00 1B 6D 84 CD 00 03 6D 82
+R 00 00 00 03 82 02 00 02 83 04 00 02
+T 00 E3 CD 04 6A 6D 80 CC 00 06 4A 00 00 00 00 CD
+R 00 00 00 03 82 0B 00 02 83 0D 00 02
+T 00 F0 00 08 6D 88 CD 00 01 6D 86 CD 00 0A 6D 84
+R 00 00 00 03
+T 00 FE CD 00 00 6D 82 CD 01 EA 6D 80 CC 00 01 4A
+R 00 00 00 03
+T 01 0C 00 00 00 00 CD 00 09 6D 88 CD 00 01 6D 86
+R 00 00 00 03 82 02 00 03 83 04 00 03
+T 01 19 CD 00 64 6D 84 CD 00 00 6D 82 CD 01 C8 6D
+R 00 00 00 03
+T 01 27 80 CC 00 02 4A 00 00 00 00 CD 00 03 6D 88
+R 00 00 00 03 82 07 00 03 83 09 00 03
+T 01 34 CD 00 05 6D 86 CD 00 64 6D 84 CD 00 00 6D
+R 00 00 00 03
+T 01 42 82 CD 03 18 6D 80 CC 00 04 4A 00 00 00 00
+R 00 00 00 03 82 0C 00 03 83 0E 00 03
+T 01 4F 1B 8D 0A
+R 00 00 00 03

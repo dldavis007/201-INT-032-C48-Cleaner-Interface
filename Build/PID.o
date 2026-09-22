@@ -1,0 +1,300 @@
+XH
+H 5 areas 9 global symbols
+M PID.c
+S lret_paged Ref0000
+S addf4 Ref0000
+S cmpf4 Ref0000
+S subf4 Ref0000
+S mulf4 Ref0000
+A text size 0 flags 0
+dbfile ..\..\REV3~1.25\SOURCE~1\PID.c
+A data size 1 flags 0
+dbfile ..\..\REV3~1.25\SOURCE~1\PID.c
+dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\PID.c
+dbsym e initPID 0 c
+S _initPID Def0000
+A idata size 1 flags 0
+A extcode size 1A5 flags 80
+dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\PID.c
+dbstruct 32 .1
+dbfield 0 dState D
+dbfield 4 iState D
+dbfield 8 iState_sgn D
+dbfield 12 iMax D
+dbfield 16 iMin D
+dbfield 20 iGain D
+dbfield 24 pGain D
+dbfield 28 dGain D
+dbend
+dbfunc e UDPID 0 fD
+dbsym l xout 2 D
+dbsym l iTerm 6 D
+dbsym l dTerm A D
+dbsym l pTerm E D
+dbsym l currentVal 1B D
+dbsym l error 17 D
+dbsym l pid 12 pS[.1]
+dbline FFFFFFFF 4
+dbline 10 4
+dbline 14 4
+dbline 15 27
+dbline 17 4C
+dbline 17 71
+dbline 19 71
+dbline 1A 8F
+dbline 1B AD
+dbline 1D AD
+dbline 1D D2
+dbline 1F D2
+dbline 20 F0
+dbline 21 10E
+dbline 23 10E
+dbline 24 137
+dbline 25 166
+dbline 26 177
+dbline 28 199
+dbline FFFFFFFE 19F
+dbline 0 19F
+dbfile PID.s
+dbfunc 0 ? 0 I
+dbline 23 0
+dbline 24 1
+dbline 3C 4
+dbline 3D 7
+dbline 3E A
+dbline 3F C
+dbline 40 10
+dbline 41 14
+dbline 42 17
+dbline 43 18
+dbline 44 1B
+dbline 45 1C
+dbline 46 1F
+dbline 47 20
+dbline 48 23
+dbline 49 24
+dbline 4C 27
+dbline 4D 2A
+dbline 4E 2D
+dbline 4F 2F
+dbline 50 31
+dbline 51 33
+dbline 52 37
+dbline 53 3B
+dbline 54 3E
+dbline 55 3F
+dbline 56 42
+dbline 57 43
+dbline 58 46
+dbline 59 47
+dbline 5A 49
+dbline 5B 4A
+dbline 5F 4C
+dbline 60 4F
+dbline 61 52
+dbline 62 54
+dbline 63 58
+dbline 64 5C
+dbline 65 5F
+dbline 66 62
+dbline 67 64
+dbline 68 68
+dbline 69 6C
+dbline 6A 6F
+dbline 6F 71
+dbline 70 74
+dbline 71 77
+dbline 72 79
+dbline 73 7C
+dbline 74 7F
+dbline 75 81
+dbline 76 85
+dbline 77 89
+dbline 78 8A
+dbline 79 8C
+dbline 7A 8D
+dbline 7D 8F
+dbline 7E 92
+dbline 7F 95
+dbline 80 97
+dbline 81 9A
+dbline 82 9D
+dbline 83 9F
+dbline 84 A3
+dbline 85 A7
+dbline 86 A8
+dbline 87 AA
+dbline 88 AB
+dbline 8F AD
+dbline 90 B0
+dbline 91 B3
+dbline 92 B5
+dbline 93 B9
+dbline 94 BD
+dbline 95 C0
+dbline 96 C3
+dbline 97 C5
+dbline 98 C9
+dbline 99 CD
+dbline 9A D0
+dbline 9F D2
+dbline A0 D5
+dbline A1 D8
+dbline A2 DA
+dbline A3 DD
+dbline A4 E0
+dbline A5 E2
+dbline A6 E6
+dbline A7 EA
+dbline A8 EB
+dbline A9 ED
+dbline AA EE
+dbline AD F0
+dbline AE F3
+dbline AF F6
+dbline B0 F8
+dbline B1 FB
+dbline B2 FE
+dbline B3 100
+dbline B4 104
+dbline B5 108
+dbline B6 109
+dbline B7 10B
+dbline B8 10C
+dbline BF 10E
+dbline C0 111
+dbline C1 114
+dbline C2 116
+dbline C3 11A
+dbline C4 11E
+dbline C5 121
+dbline C6 124
+dbline C7 126
+dbline C8 12A
+dbline C9 12E
+dbline CA 131
+dbline CB 132
+dbline CC 134
+dbline CD 135
+dbline D0 137
+dbline D1 13A
+dbline D2 13D
+dbline D3 13F
+dbline D4 143
+dbline D5 147
+dbline D6 14A
+dbline D7 14B
+dbline D8 14E
+dbline D9 14F
+dbline DA 152
+dbline DB 156
+dbline DC 15A
+dbline DD 15D
+dbline DE 160
+dbline DF 161
+dbline E0 163
+dbline E1 164
+dbline E4 166
+dbline E5 169
+dbline E6 16C
+dbline E7 16D
+dbline E8 170
+dbline E9 171
+dbline EA 172
+dbline EB 174
+dbline EC 175
+dbline EF 177
+dbline F0 17A
+dbline F1 17B
+dbline F2 17E
+dbline F3 17F
+dbline F4 181
+dbline F5 182
+dbline F6 184
+dbline F7 185
+dbline F8 188
+dbline F9 18B
+dbline FA 18C
+dbline FB 18F
+dbline FC 190
+dbline FD 193
+dbline FE 194
+dbline FF 196
+dbline 100 197
+dbline 104 199
+dbline 105 19B
+dbline 106 19C
+dbline 107 19E
+dbline 10B 19F
+dbline 10C 1A2
+S $_UDPID Def0000
+A bss size 22 flags 0
+dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\PID.c
+dbsym e speedPID 0 S[.1]
+dbsym e spdPID 20 pS[.1]
+S _speedPID Def0000
+S _spdPID Def0020
+T 00 00 01
+R 00 00 00 02
+T 00 00 3B 1B F1 EE EC F0 12 C3 00 18 B7 46 18 02
+R 00 00 00 03
+T 00 0E 42 AE 18 02 40 AE EC F0 1D 3B EC F0 1D 3B
+R 00 00 00 03
+T 00 1C 16 00 00 3A 6C F0 10 3A 6C F0 10 EC F0 12
+R 00 00 00 03 02 03 00 04
+T 00 2A C3 00 04 6C 80 B7 46 EE 80 18 02 02 AE 18
+R 00 00 00 03
+T 00 38 02 00 AE EC F0 1D 3B EC F0 1D 3B 16 00 00
+R 00 00 00 03 02 0E 00 01
+T 00 46 30 6E 40 30 6E 42 EC F0 12 C3 00 04 B7 46
+R 00 00 00 03
+T 00 54 18 02 42 AE 18 02 40 AE EC F0 16 C3 00 0C
+R 00 00 00 03
+T 00 62 B7 46 18 02 42 AE 18 02 40 AE 16 00 00 2F
+R 00 00 00 03 02 0D 00 02
+T 00 70 3C EC F0 12 C3 00 08 B7 46 EC F0 12 C3
+R 00 00 00 03
+T 00 7D 00 04 B7 45 18 02 02 AE 18 02 00 AE 30 6E
+R 00 00 00 03
+T 00 8B 40 30 6E 42 EC F0 12 C3 00 04 B7 46 EC F0
+R 00 00 00 03
+T 00 99 12 C3 00 0C B7 45 18 02 02 AE 18 02 00 AE
+R 00 00 00 03
+T 00 A7 30 6E 40 30 6E 42 EC F0 12 C3 00 04 B7 46
+R 00 00 00 03
+T 00 B5 18 02 42 AE 18 02 40 AE EC F0 16 C3 00 10
+R 00 00 00 03
+T 00 C3 B7 46 18 02 42 AE 18 02 40 AE 16 00 00 2C
+R 00 00 00 03 02 0D 00 02
+T 00 D1 3C EC F0 12 C3 00 08 B7 46 EC F0 12 C3
+R 00 00 00 03
+T 00 DE 00 04 B7 45 18 02 02 AE 18 02 00 AE 30 6E
+R 00 00 00 03
+T 00 EC 40 30 6E 42 EC F0 12 C3 00 04 B7 46 EC F0
+R 00 00 00 03
+T 00 FA 12 C3 00 10 B7 45 18 02 02 AE 18 02 00 AE
+R 00 00 00 03
+T 01 08 30 6E 40 30 6E 42 EC F0 12 C3 00 14 B7 46
+R 00 00 00 03
+T 01 16 18 02 42 AE 18 02 40 AE EC F0 16 C3 00 04
+R 00 00 00 03
+T 01 24 B7 46 18 02 42 AE 18 02 40 AE 16 00 00 3A
+R 00 00 00 03 02 0D 00 04
+T 01 32 6C 88 3A 6C 88 EC F0 12 C3 00 1C B7 46 18
+R 00 00 00 03
+T 01 40 02 42 AE 18 02 40 AE EC F0 21 3B EC F0 21
+R 00 00 00 03
+T 01 4E 3B ED F0 1A 18 02 42 AE 18 02 40 AE 16
+R 00 00 00 03
+T 01 5B 00 00 16 00 00 3A 6C 8C 3A 6C 8C ED F0 12
+R 00 00 00 03 02 02 00 03 02 05 00 04
+T 01 69 EC F0 1D 3B EC F0 1D 3B 30 6E 40 30 6E 42
+R 00 00 00 03
+T 01 77 EC F0 10 3B EC F0 10 3B EC 8C 3B EC 8C 3B
+R 00 00 00 03
+T 01 85 16 00 00 EC F0 10 3B EC F0 10 3B 16 00 00
+R 00 00 00 03 02 03 00 01 02 0E 00 03
+T 01 93 3A 6C 84 3A 6C 84 EC 84 3B EC 84 3B CC
+R 00 00 00 03
+T 01 A0 00 14 06 00 00
+R 00 00 00 03 02 05 00 00

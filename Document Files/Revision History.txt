@@ -1,0 +1,369 @@
+Revision 1.00  1-9-12
+
+    Initial release, made from Compressor Controller 1.01
+	
+Revision 1.01  1-25-02
+
+    Added Vacuum movement functions.  Corrected camera RPDO 0x1A1 to 0x2A1
+	
+Revision 1.02   2-10-12
+
+	Added code to DeSelect() to indicate menu inactive before variables are saved to speed up menus
+	Added code to make the menu behave better
+	Re-Enabled COP
+
+Revision 1.03   3-21-12
+
+	Added Test Mode to menu to disable the Head and Blower.
+	Changed Vacuum Speeds to ExSlow, Slow, Fast.
+	Removed up and down arrows ('v' 'A') from the menus when there were more entries than displayed.
+	
+Revision 1.04   4-20-12
+
+	Added delays to stop_LA function
+	
+Revision 1.05   5-7-12
+
+	Disabled PWM0 & PWM2 completely during L.A. Stop to prevent problems caused by double buffering,
+	that may be making the PWM outputs continue to run on rare occasions.
+	
+Revision 2.00   10-3-2012
+    change TxHoritaID 0x210 to WIM_ID 0x310
+	change format of menu tag to <0x02>0028\r
+	changed Button Box RPDO to 3 bytes
+	Added Menu:, Proc: and Warn: to messages
+
+Revision 2.01	11-28-12
+
+    Changed RPDO 2 from 2 digits to 3 digits for button box (procimg was already setup for 3 bytes.
+    Changed RPDO 6 from 6 bytes to 5 bytes, 6th byte was needed for store serial number command (no longer used)
+    Added Serial Number function
+	Added function to advance the film (Button box PLC_Trigger and Camera Toggle 2)
+	Removed Command.c
+	Added ability to turn pressure warning off
+	Added Camera Tag
+	Changed variable length from 9 to 11 in loadmenu
+	Changed range of Pressure was 0-5V = 0-100psi, now .5V-4.5V = 0-100psi
+	Changed Linear to ignore the Direction input and set Direction with the Extend/Retract function. Disabled TC1	
+	Added code to turn off other cameras when the menu for this camera is activated
+	Added Pressure reading to Diagnostic Menu
+	Cleared up/down/select in camera menu
+	Changed Blowers to Grit in Cleaner diagnostic and Vacuum diagnostics Menus 
+    In DeSelect() - gProcImg[IN_digi_0] &= ~0x01; needs to be after Save_Variables();
+        because SaveVariables() is a slow process
+    In DeSelect() - include ClearTitler ();
+    
+Revision 2.02   1-2-13
+    move gProcImg[IN_digi_0] &= ~0x01; and ClearTitler (); to before SaveVariables() to speed up return from menu
+    
+Revision 2.03   2-4-2013
+    save TestModeOnOff[]	 = "OFF";  in non-volitale memory
+    send Warn message when "cleaning" starts and TestModeOnOff[]= " ON"
+
+Revision 2.04   3-22-13
+    add variable "updatePressureTimer" set to 5 seconds, limits updates to menu due to changing pressure
+    
+Revision 2.05   4-22-13
+    add CleanComplete state to seperate cleaning complete message from starting vacuum motors
+	
+Revision 2.06   6-5-13
+    Changed Delay between cleaning cycles from 10 to 14 seconds
+    
+Revision 2.07	6-7-13
+	modify Rev 2.06 to accomodate PCB revision B which inverted PA0 and PA1
+        add variable laSwitchPol //save seperately at 0x2200, 0xff not set, 0 without schmit trigger, 1 with schmit trigger
+        add subroutine findPolarity() which determines the polarity and saves it in EEPROM
+		
+Revision 2.08   8-2-13
+    Changed lineup speed from .55 ft/s to .66 ft/s
+	Added a timeout function to the cleaning sequence.
+	Fixed a problem with find polarity not getting called at startup
+
+Revision 2.09   8-13-13
+    Fixed Timeout Error message appearing after cleaning cycle finished
+	
+Rev 2.10  		  8-18-13
+	Put ramp-up back in place, ramp down is not installed, takes 100 steps 2 seconds to get to full speed
+	changed PWMSCLA_Init and PWMSCLB_Init to 0x94 to get PWM of 100 hertz
+	
+Rev 2.11	8-31-13
+	group laSwitchPol with other variables, so it is reset to 0xff when defaults are restored
+	modify findPolarity(void) to always extend first 
+
+Rev 2.12    9-10-13
+
+	Added L.A. switch polarity to menu. Deleted previous switch polarity code.  Realized that the Interface
+	would be powered on without an actuator, therefore the previous code would not work.
+	
+	Changed the PWM frequencies to 156 Hz except the Camera, Focus and Zoom which will be 3.7KHz.
+	
+	External Head Ramp has not been enabled, it is still on/off (PWM frequency is currently 2.4KHz using counter timer interrupt).
+	
+	Changed the IncVariable and DecVariable	functions, added strcpy instead of individually copying each character (saved about 5K flash).
+	
+	Added external FET driver Ramp back in.  Keep code to prevent ramp down.  Changed from 416us to 6410us (156Hz)	
+	
+Rev 2.13    9-17=13
+
+	Added code to allow Cleaner to only trigger when the Cleaner camera is selected.
+
+Rev 2.14    9-26-2013
+    modified code that controls compressor to match Compressor Conroller Rev. 2.03, tested on 24" gear
+        Compressor turns off after 300 seconds
+        Does not save CompressorOnOff unless the operator changes it
+        	
+Rev 2.15	3-3-2014
+	Added two more vacuum distance/speed lines to the Vacuum settings menu 
+	Enabled SDO write to Index 2100,  byte 1 & 2 are the address, byte 3 is the data, byte 4 is a checksum
+	
+	Loc 0x8001 = 0x24   0x5A checksum 	   	 230021015A240180
+	
+    Send these to Entry Index 0x2100, Entry SubIndex 0x00, to upload the program
+    
+    DD18000B		movb #0x55,0x3f
+    E90B010B
+    9E55020B
+    F200030B
+    B23F040B
+    D818050B		movb #0xAA,0x3f
+    E40B060B
+    44AA070B
+    ED00080B
+    AD3F090B
+    E5060A0B		Jmp 0B00
+    DF0B0B0B
+    E9000C0B
+    
+    Send this to Entry Index 0x2100, Entry SubIndex 0x01, to run the program
+    
+    F500000B
+	
+Rev 2.16	4-1-2014
+	Added Machine Size setting to main menu, 8-10 uses external compressor pack and valve.
+	8-10 also disables pressure warning.
+
+Rev 2.17	4-10-2014
+	Changed frequency of PWM from 156Hz to 714Hz.  This should make the Linear Actuator Speeds more linear.
+	External Low Side FET switch is still 156Hz (controlled by TC3).
+	Changed line up to 0.1 inch steps.  Changed Vacuum upper limits from 200 to 300.
+	Added code to IncVariable and DecVariable functions to speed up the incrementing and decrementing of
+	numeric variables. 
+
+	Fixed Machine Size setting so the sizes could actually be changed. Changed it so that 8-10 and 12-22 
+	use external compressor and disable the pressure warning.  24-34 and 36-48 use internal comprssor and
+	send low pressure warning. Removed Pressure Warning Setting from menu.
+
+    Fixed a problem with the Timeout error when cleaner Line-up was set to zero. Cleaner would still 
+    initiate the timer and timeout in the middle of cleaning.
+    
+    Fixed a problem with the Timeout on the Vacuum sequences.  Timer would never start if the speed 
+    controller didn't start moving.  Also extended the time because the distance can now be 300".
+    
+    Made Third and Fourth _____VacTravel similar to First and Second in Vacuuming Sequence.  There 
+    should have been a 1 second wait before changing directions
+	
+Rev 2.18	4-16-2014
+	Fixed the problem with the lineup not moving in 1/10 inch increments.
+    
+Rev 2.19	5-16-2014
+	Changed margin (for distance) from 0.1 to 0.02 to increase travel accuracy.  Initialized Move_Position to -1,
+    so that the initial retract command would work, also changed an if statement in LA_Main to look for -1 
+    Added ability to externally move actuator (8-10" FBE coater).  Looks for a speed of non zero to determine
+    when an external move command is received.  Added a TPDO to transmit Moving status.  Added code to
+    allow external actuator commands only when 8-10 is selected.
+
+Rev 2.20	07-11-2014
+	Fixed low pressure warning repetitive message
+	Added delay to first state of cleaning cycle
+	
+Rev 2.21    09-24-2014
+    Made sure that Actuator was extending when extended received before stopping, same with retract.
+	This prevents noise on the H-Bridge output (extend/retract switch open cause high impedence) from
+	enabling the extended/retracted signal (program would stop the Actuator when extended/retracted became active).
+	
+Rev 3.00	 10-02-2014
+	This firmware requires the 47 ohm resistor in the gate network of the H-bridges be changed to 10 ohm.  This is
+	required to prevent shoot-through when running the bridge in slow-decay mode.
+	
+	Changed logic of code that looks at extending and retracting to prevent noise from stopping actuator. 
+	Rev 2.21 was looking for a high on the PortB pins. This could be true when in the stop condition because
+	of breaking.  It now looks for a low on PortB for the other leg of the H-Bridge (this has been changed
+	to PB1_PWM & PB3_PWM).
+	
+	Changed PWM outputs on Linear Actuator to use timer 6 to PWM PortB 1 & 3 to implement slow decay mode.
+	
+	Changed the PWM outputs on the Head to use timer 3 to PWM PortB 0 & 2 to implement slow decay mode.  The Head
+	motor is allowed to coast when stopping.
+
+Rev 3.01	 8-7-2015
+	
+	Fixed Code for Bootloader
+	
+Rev 3.02     12-5-2018
+	
+	Added TPOD for the actuator to extend after cleaning if required.  
+	
+Rev 3.03     1-24-2020		dld
+	
+	Changed Cleaner movement RPDO MessageID from 0x26a to 0x46a (0x26a is used for menu and trigger)
+	Removed check for 8-10 inch machine size for actuator movement.
+	
+Rev 3.04 	1/27/19		MFO
+		Added New Menu (updated version of the menu). 
+		Added PID for actuator movement (This should make the Actuator Speed more consistent as the battery voltage drops). 
+		Change the way the TPDO works for the Speed Control.  It is now Initialized and modified in Subroutines.
+		Added additional messages to indicate the cleaning operation being performed
+		
+Rev 3.05 5/18/2020		MTS
+		Added option to select the Trigger camera. (Have to toggle to camera of choice and select the camera from menu.)
+		Added an option of using the Vacuum camera as reference for line-up distance (Line Up On)
+		Increased Lineup Dist to 300.0 inches 
+
+Rev 3.06 10/06/2020		MTS
+		Changed the sequence in Diagnostics to Turn Head ON/OFF to reduce MosFET damage 
+
+Rev 3.07 8/25/2021	    DLD
+		Fixed a problem with the program slowing down and not sending Speed control commands fast enough.
+		This problem happens when the Linear Actuator is not fully retracted.
+		The problem was thought to be the following:
+		
+			The Stop_LA function had a 50ms delay, this delay makes sure the PWM outputs are low when
+			the function is exited (not sure why this is required).  The PWM period appears to be 6.41ms,
+			so I changed the 50ms delay to 10ms.
+			
+			Once the Actuator had made a movement, the Stop_LA function was always being called. I changed 
+			this to only call the function if "done" was "0" (no longer constantly called).  
+			
+			The problem was that constantly calling the Stop_LA function, introduced a 50ms delay everytime
+			the program went through the main loop.  
+			
+			This means that the MCO_ProcessStack function was only getting called about 20 times a second.  
+			The MCO_ProcessStack function cycles through the TPDOs that need to be sent 1 at a time each 
+			time it is called.  If there are 8 TPDOs (typical for most of the latest programs), then it 
+			takes 8 calls to the MCO_ProcessStack function to get all 8 TPDOs sent out.  So, a 50ms delay 
+			between each call will result in any one particular TPDO from being transmitted any faster 
+			than 400ms (8 calls times 50ms between calls equals 400ms).
+			
+			As a general rule, any delays in the "Main Loop" need to be a maximum of 1/8 the fastest
+			re-occuring TPDO time.  We have typically had our fastest TPDO times down around 100ms, so
+			delays in the main loop should be no greater than 12ms (10ms would probably be a better value).
+			A one time delay (not re-occuring in each loop) of longer than 12ms may be acceptable if you 
+			are not concerned with an occasional extended time on one of the re-occuring TPDOs.  
+			
+3.08	3/17/2022	dld
+		It appears that the PWM calculation in the TC3_Int_handler is taking too long and the counter wraps around
+		before getting out of the interrupt. This causes a 90ms low period on the PWM (suddenly stopping the Head motor)
+		  
+		Changed the calculation to a look up table, to speed up the code.  Also made the same changes in TC6_Int_Handler.
+		
+		Also changed the way the Diagnostics controls the Cleaning head.  Went back to "ON/OFF" control.  This allows the
+		Head to be turned on and left on if desired.  It also allows the Head to be turned off quickly.  Once the Head
+		is turned off, there is a 7 second period where the Head can not be turned back on.
+		
+		
+3.09	4/21/2022 	dld
+		"SEL TRIG CAM" menu function was causing the program to lock up.  Found that it should have been included
+		in the list of non-paged function menus.  Added pragma to make it a non-paged function.
+		
+					
+3.10 	5/25/2022	dld
+		Fixed a problem in the code where the fraction portion of the Line-up distance was being trunicated.
+
+3.11	5/26/2022	dld
+		Added a menu option to display line-up travel time.
+		Also defined RTI_One_Sec as an "int" instead of a float. 
+		Changed "Warning" text in Trigger camera selection sub-menu.
+		
+3.12	5/31/2022	dld
+		Changed all Timer1 delays from "Display", "DisplayTitler", "ClearTitler" and "PositionDisplay" functions.
+		Removed delays in "Menu_Function" and created a new function "Send_Menu_Status" to send Menu active status.  
+		Removed delays in "CameraMain" and call new function "Send_Menu_Status" to send Menu active status. 
+		Removed code to modify procImg in "DeSelect" and call new function "Send_Menu_Status" to send Menu active status.
+		Removed "ClearTitler" from "InitXmit" function
+		Added "Send_Menu_Status" to "RestoreDefaults" function
+		Removed code to set "StoreFlag" in "TC0_Int_Handler" (we don't currently use this)
+		Repurpose "StoreFlag" to be set when menu is exited and wait until the sequence is finished
+		Corrected menu button flags (cursor up, down, select). Was looking at Telem Data instead of flags.
+		Worked on Initial extend. Sequence was not going to Center and waiting before starting the head.
+		Fixed menu variable increment/decrement problem with "-0.0".
+		
+		Slowed cursor down while traveling
+		Put MCO_ProcessStack() in "Display" and "DisplayTitler" functions
+		Created a flag "AcceptKeys" to allow/inhibit Up/Down/Select inputs.  The previous method with "MenuTimer" and clearing "TC0_RCVD_Data" did not work.
+		Added "InProcess" flag that is used by the menu to slow it down when there is an active process.  This flag needs to be set and clear somewhere in "doevents"
+		
+		Changed TPDO 4 to have an event time of 0. (removed "MCO_InitTPDO" function calls for TPDO 4 in cleaning sequence).
+		The speed Controller Rev 2.24 and up only need 1 move command.
+
+3.13	6/22/2022   dld
+		Re-enabled the COP in main.c
+		
+3.15	6/24/2022   dld
+		Fixed divide by zero problem.
+		
+3.16	6/28/2022  dld
+    	Found that the CAN Filter had been disabled (Mask was set to 0xffff).  Re-enabled filter.   Multiple message could would fill the CAN message buffer (5 messages) and prevent the 
+    	some message from being processed.
+
+3.17  	7/20/2022  dld
+		Changed the way the Head PWM shuts off (to prevent damage to the H-Bridge)
+		Fixed an issue where both head direction could be turned on at the same time
+		Enabled CAN filters (including NMT messages)
+		Set number of RPDOS and TPDOS to 8
+
+3.18	9/23/2022  dld
+		
+		Reconfigured Options so the program could be used on either processor; 9S12Dx128 or 9S12Dx256
+	
+3.19	1/26/2023  dld
+
+		Found that the Camera Address was being written into the EEPROM at the very end of the variables.  This
+		caused a problem when the variables were being loaded and forced the default values to be used.
+		
+		Changed the Camera address location from 0x0900 to 0x0a00.
+
+3.20	3/27/2024  DLD
+
+		Added MAX33011 reset code, removed 2Wio files, added Timers to while loops in mcohw.c
+		Added code to disable Reset_Max33011 function	
+		Added code to turn vacuum on when all function keys are pushed
+		
+3.21	7/16/2024  DLD
+
+		Added Line Up Speed setting to "Settings 2" menu  (0.25 - 0.90, 0.66 default)
+		Changed the timeout for the lineup to also use the new speed setting
+
+3.22	8/21/2024 EBB 
+
+		Changed calculation for SequenceTimer to account for movement on slopes.
+		Changed TrigState2, StartFirstVacTravel, StartThirdVacTravel, StartFifthVacTravel to fix off by one value error when sending out negative values.
+
+3.23	10-8-24		EBB
+
+		MAX33011 Fault changes  
+			- Changes to MCO Stack to increase robustness and clear faults in the MAX330112
+			- (mco.h) changed Reset_Max33011() to always be runnable
+			- (mco.c) added Gen_Flags &= ~Gen_Flags_Menu_Active
+			- (mcohw.c) changed Timer1 lengths in 4 places
+
+		Changed Cleaning sequence so Actuator is retracted before line up sequence.
+		This should help the encoder stay more accurate.	
+		Added Crawler Stop messages after Vacuum Travel (This was previously left out)
+		
+3.24	11-14-24		EBB
+
+	Changes to update for MAX33011 and new CAN filtering.
+	- (mcohw.c) Changed MCOHW_SetCANFilter() to new version. Also added setFilters[] to keep track of each filter.
+	- (user.c) Changed clearing gProcImg[] in MCOUSER_ResetCommunication() so that it only clears on startup using clearProc.
+	- (user.c) Added clearing setFilters[] in MCOUSER_ResetCommunication() so that when MAX33011 resets it reinitializes RPDO/TPDOs properly. 
+
+3.25	07-29-25		DLD
+	Corrected critical flaws in the state machine logic for all timed movements to resolve a system hang.
+
+	- **Problem 1: Indefinite Hang.** The safety timer (`SequenceTimer`) was only initialized if it was already zero. 
+		This created a condition where a stale value from a prior operation or a calculated value of zero would prevent the timer from starting. 
+		If the hardware stalled, the system would hang indefinitely instead of timing out.
+	- **Problem 2: Missed Timeouts.** A race condition existed where a successful movement would clear the timer before a pending timeout was processed, 
+		causing the error state to be missed.
+	- **Fix:** The logic was refactored to unconditionally set the timer at the start of every timed operation and to guarantee it holds a positive value. 
+		The timer is now only cleared after a successful sequence is fully complete.

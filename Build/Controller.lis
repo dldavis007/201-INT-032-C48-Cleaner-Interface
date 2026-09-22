@@ -1,0 +1,108 @@
+                        .module Controller.c
+                        .area text
+ 0000                   .dbfile ..\..\REV3~1.25\SOURCE~1\Controller.c
+ 0000                   .dbfile C:\Users\vbenton.crtsglobal\Desktop\temp\REV3~1.25\SOURCE~1\Controller.c
+ 0000                   .dbfunc e main _main fV
+ 0000           _main::
+ 0000                   .dbline -1
+ 0000                   .dbline 12
+ 0000           ; #include <stdio.h>
+ 0000           ; 
+ 0000           ; #include "Controller.h"
+ 0000           ; #include "mc9s12a128.h"
+ 0000           ; #include "Flash.h"
+ 0000           ; #include "EEProm.h"
+ 0000           ; #include "Subroutines.h"
+ 0000           ; 
+ 0000           ; 
+ 0000           ; 
+ 0000           ; void main (void)
+ 0000           ; {
+ 0000                   .dbline 13
+ 0000           ;     InitPorts ();
+ 0000 4A000000          xcall $_InitPorts
+ 0004                   .dbline 14
+ 0004           ;       InitInterrupts ();
+ 0004 4A000000          xcall $_InitInterrupts
+ 0008                   .dbline 15
+ 0008           ;       InitPLL ();
+ 0008 4A000000          xcall $_InitPLL
+ 000C                   .dbline 16
+ 000C           ;       InitSCI ();
+ 000C 4A000000          xcall $_InitSCI
+ 0010                   .dbline 17
+ 0010           ;       PWMInit ();
+ 0010 4A000000          xcall $_PWMInit
+ 0014                   .dbline 18
+ 0014           ;       AtoDInit ();
+ 0014 4A000000          xcall $_AtoDInit
+ 0018                   .dbline 20
+ 0018           ;       
+ 0018           ;     EEInit ();
+ 0018 4A000000          xcall $_EEInit
+ 001C                   .dbline 21
+ 001C           ;       FlashInit ();
+ 001C 4A000000          xcall $_FlashInit
+ 0020                   .dbline 24
+ 0020           ; 
+ 0020           ;       // end of initialization, enable all interrupts
+ 0020           ;       INTR_ON();
+ 0020 10EF              cli
+ 0022                   .dbline 25
+ 0022           ;       InitCANopen ();
+ 0022 4A000000          xcall $_InitCANopen
+ 0026                   .dbline 28
+ 0026           ; 
+ 0026           ;       
+ 0026           ;     Load_Camera_Add();     //get camera address from memory, do NOT use default value
+ 0026 4A000000          xcall $_Load_Camera_Add
+ 002A                   .dbline 32
+ 002A           ;     //important to load_camera_add() before Load_Variables(), EEProm is not available for
+ 002A           ;     //brief period after save_variables at end of load_variables()
+ 002A           ; 
+ 002A           ;       Load_TrigCamera_Add();
+ 002A 4A000000          xcall $_Load_TrigCamera_Add
+ 002E                   .dbline 34
+ 002E           ;       //Skip over this function call to change the serial number
+ 002E           ;       Load_Serial_Num ();
+ 002E 4A000000          xcall $_Load_Serial_Num
+ 0032                   .dbline 36
+ 0032           ; 
+ 0032           ;       Load_Variables ();
+ 0032 4A000000          xcall $_Load_Variables
+ 0036                   .dbline 38
+ 0036           ;       
+ 0036           ;       InitXmit ();
+ 0036 4A000000          xcall $_InitXmit
+ 003A                   .dbline 42
+ 003A           ;       
+ 003A           ;       
+ 003A           ; 
+ 003A           ;       COPCTL = 0x47;                          //enable COP
+ 003A 180B47003C        movb #71,0x3c
+ 003F 200E              bra L3
+ 0041           L2:
+ 0041                   .dbline 45
+ 0041           ; 
+ 0041           ;       while (1)
+ 0041           ;       {
+ 0041                   .dbline 46
+ 0041           ;           ARMCOP = 0x55;
+ 0041 180B55003F        movb #85,0x3f
+ 0046                   .dbline 47
+ 0046           ;               ARMCOP = 0xAA;
+ 0046 180BAA003F        movb #170,0x3f
+ 004B                   .dbline 48
+ 004B           ;           doevents ();
+ 004B 4A000000          xcall $_doevents
+ 004F                   .dbline 49
+ 004F           ;       }
+ 004F           L3:
+ 004F                   .dbline 44
+ 004F 20F0              bra L2
+ 0051           X0:
+ 0051                   .dbline -2
+ 0051           L1:
+ 0051                   .dbline 0 ; func end
+ 0051 3D                rts
+ 0052                   .dbend

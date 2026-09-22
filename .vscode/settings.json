@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "*.asm12": "asm",
+        "*.s12": "asm",
+        "*.hc12": "asm",
+        "test_harness.h": "c",
+        "menu_engine.h": "c",
+        "c48_controller_config.h": "c",
+        "mco.h": "c",
+        "procimg.h": "c",
+        "mcohw.h": "c"
+    }
+}
