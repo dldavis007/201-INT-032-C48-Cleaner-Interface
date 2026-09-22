@@ -319,7 +319,7 @@ float updateSpd;
 extern SPid *spdPID;
 extern SPid speedPID;
 
-extern initPID;
+extern char initPID;
 
 #pragma abs_address: 0xda00
 struct MenuStruct Menuc[MenuSize] = {     
