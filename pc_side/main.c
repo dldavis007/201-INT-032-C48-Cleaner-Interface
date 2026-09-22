@@ -5,11 +5,13 @@
 #include "Controller.h"
 #include "EEProm.h"
 #include "Flash.h"
+#include "Interrupts.h"
 #include "mc9s12a128.h"
 #include "Subroutines.h"
 #include "pc_side.h"
 
 extern char State;
+extern unsigned cam_add;
 
 static volatile sig_atomic_t running = 1;
 
@@ -17,6 +19,63 @@ static void stop_host(int sig)
 {
     (void)sig;
     running = 0;
+}
+
+static const char *state_name(int state)
+{
+    switch (state) {
+    case TrigState:             return "TrigState";
+    case TrigRetractLA:         return "TrigRetractLA";
+    case TrigState2:            return "TrigState2";
+    case WaitingForMoving:      return "WaitingForMoving";
+    case LineUpInProgress:      return "LineUpInProgress";
+    case LineUpComplete:        return "LineUpComplete";
+    case StartSealState:        return "StartSealState";
+    case SealWaitState:         return "SealWaitState";
+    case StartExtendState:      return "StartExtendState";
+    case StartCleanState:       return "StartCleanState";
+    case RampUpState:           return "RampUpState";
+    case StartCenterCleanState: return "StartCenterCleanState";
+    case CenterCleanState:      return "CenterCleanState";
+    case StartFullCleanState:   return "StartFullCleanState";
+    case FullCleanState:        return "FullCleanState";
+    case ReverseHdState:        return "ReverseHdState";
+    case StopCleanState:        return "StopCleanState";
+    case CleanComplete:         return "CleanComplete";
+    case StartFirstVac:         return "StartFirstVac";
+    case FirstVacMoving:        return "FirstVacMoving";
+    case FirstVacInProgress:    return "FirstVacInProgress";
+    case StartSecondVac:        return "StartSecondVac";
+    case SecondVacMoving:       return "SecondVacMoving";
+    case SecondVacInProgress:   return "SecondVacInProgress";
+    case StartThirdVac:         return "StartThirdVac";
+    case ThirdVacMoving:        return "ThirdVacMoving";
+    case ThirdVacInProgress:    return "ThirdVacInProgress";
+    case StartFourthVac:        return "StartFourthVac";
+    case FourthVacMoving:       return "FourthVacMoving";
+    case FourthVacInProgress:   return "FourthVacInProgress";
+    case StartFifthVac:         return "StartFifthVac";
+    case FifthVacMoving:        return "FifthVacMoving";
+    case FifthVacInProgress:    return "FifthVacInProgress";
+    case StopState:             return "StopState";
+    case FinishState:           return "FinishState";
+    case ErrorState:            return "ErrorState";
+    default:                    return "(unnamed)";
+    }
+}
+
+static void log_state_transition(void)
+{
+    static int previous = -1;
+    int current = (int)State;
+    if (current != previous) {
+        if (previous < 0)
+            printf("[seq ] State = %d %s\n", current, state_name(current));
+        else
+            printf("[seq ] State %d %s -> %d %s\n",
+                   previous, state_name(previous), current, state_name(current));
+        previous = current;
+    }
 }
 
 int main(int argc, char **argv)
@@ -49,12 +108,15 @@ int main(int argc, char **argv)
         fprintf(stderr, "Unable to start UDP CAN transport\n");
         return 1;
     }
+    printf("[host] UDP CAN transport started\n");
     if (pc_side_rti_start() != 0) {
         fprintf(stderr, "Unable to start RTI simulation\n");
         pc_side_can_shutdown();
         return 1;
     }
+    printf("[host] RTI simulation started (%d ticks/second)\n", (int)RTI_One_Sec);
     InitCANopen();
+    printf("[host] CANopen initialized\n");
 
 #ifndef SKIP_EEPROM_LOAD
     Load_Camera_Add();
@@ -62,15 +124,24 @@ int main(int argc, char **argv)
     Load_Serial_Num();
     Load_Variables();
 #endif
+
+    /* Load_Camera_Add() is intentionally skipped on the PC because it reads
+     * absolute EEPROM addresses. A zero-initialized camera address can make
+     * the cleaner's address comparisons match an equally empty process image,
+     * creating false camera traffic. Require a real 0x1111 response instead. */
+    cam_add = 0x1111;
+    printf("[host] EEPROM skipped: camera address seeded to 0x%04X\n", cam_add);
+
     InitXmit();
+    printf("[host] running firmware main loop\n");
 
     while (running) {
         doevents();
         loops++;
-        if (loops == 1 || (loops % 1000000UL) == 0)
-            printf("[host] loops=%lu state=%d\n", loops, (int)State);
+        log_state_transition();
     }
 
+    printf("\n[host] shutting down after %lu loops\n", loops);
     pc_side_rti_stop();
     pc_side_can_shutdown();
     return 0;

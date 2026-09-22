@@ -111,6 +111,16 @@ static void sleep_ms(unsigned ms)
 #endif
 }
 
+static void can_log(const char *direction, const CAN_MSG *msg)
+{
+    int i;
+    printf("[%10lu ms] [CAN %s] 0x%03X [%u]",
+           milliseconds(), direction, (unsigned)msg->ID, (unsigned)msg->LEN);
+    for (i = 0; i < msg->LEN && i < 8; i++)
+        printf(" %02X", (unsigned)msg->BUF[i]);
+    printf("\n");
+}
+
 #ifdef _WIN32
 static DWORD WINAPI can_receive(void *unused)
 #else
@@ -128,6 +138,7 @@ static void *can_receive(void *unused)
             msg.LEN = packet[2] > 8 ? 8 : packet[2];
             if (n < 3 + msg.LEN) continue;
             memcpy(msg.BUF, packet + 3, msg.LEN);
+            can_log("RX", &msg);
             LOCK();
             next = (rx_head + 1) % RX_COUNT;
             if (next != rx_tail) { rx_ring[rx_head] = msg; rx_head = next; }
@@ -160,6 +171,7 @@ UNSIGNED8 MCOHW_PushMessage(CAN_MSG *msg)
     packet[1] = (unsigned char)(msg->ID >> 8);
     packet[2] = (unsigned char)length;
     memcpy(packet + 3, msg->BUF, (size_t)length);
+    can_log("TX", msg);
     return sendto(can_socket, (const char *)packet, length + 3, 0,
                   (struct sockaddr *)&can_peer, sizeof can_peer) >= 0;
 }
