@@ -2,6 +2,23 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "PC-Side: Build & Run",
+            "type": "shell",
+            "command": "mingw32-make run",
+            "options": {
+                "cwd": "${workspaceFolder}/pc_side"
+            },
+            "group": "test",
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated"
+            },
+            "detail": "Builds and runs the cleaner-interface PC host with simulated RTI and UDP CAN."
+        },
+        {
             "label": "Build Project",
             "type": "shell",
             "command": "${workspaceFolder}/.vscode/build.bat",
