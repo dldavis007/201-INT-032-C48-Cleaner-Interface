@@ -45,9 +45,9 @@ extern unsigned int IncSpeedUpTimer;
 
 unsigned char StoreFlag = 0;
 
-char CursorDownFlag;
-char CursorUpFlag;
-char SelectFlag;
+signed char CursorDownFlag;
+signed char CursorUpFlag;
+signed char SelectFlag;
 char AcceptKeys;
 char InProcess;
 

@@ -98,9 +98,9 @@ char compTimedOutflag = 0;
 char Variable_flag;
 char String_Var_ptr;
 char Multi_Var_ptr;
-extern char CursorUpFlag;
-extern char CursorDownFlag;
-extern char SelectFlag;
+extern signed char CursorUpFlag;
+extern signed char CursorDownFlag;
+extern signed char SelectFlag;
 char PressureMsgSent;
 char CamAddressXmitd;
 
