@@ -4,6 +4,13 @@
 #include <time.h>
 
 #ifdef _WIN32
+/* Keep the broad Windows API out of the firmware namespace. In particular,
+ * winuser.h maps LoadMenu to LoadMenuA, colliding with the cleaner firmware's
+ * own LoadMenu() function. */
+#define WIN32_LEAN_AND_MEAN
+#define NOGDI
+#define NOUSER
+#define NOMINMAX
 #include <winsock2.h>
 #include <windows.h>
 typedef SOCKET socket_t;
@@ -19,6 +26,15 @@ typedef int socket_t;
 typedef pthread_t thread_t;
 #define INVALID_SOCKET (-1)
 #define CLOSESOCKET close
+#endif
+
+/* Windows defines these before the MicroCANopen headers do. The firmware
+ * definitions must win so its source is compiled with target semantics. */
+#ifdef TRUE
+#undef TRUE
+#endif
+#ifdef FALSE
+#undef FALSE
 #endif
 
 #include "nodecfg.h"
