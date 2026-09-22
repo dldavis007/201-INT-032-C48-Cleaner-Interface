@@ -12,6 +12,7 @@
 
 extern char State;
 extern unsigned cam_add;
+extern struct menu_var NullVar;
 
 static volatile sig_atomic_t running = 1;
 
@@ -89,6 +90,12 @@ int main(int argc, char **argv)
 
     signal(SIGINT, stop_host);
     setvbuf(stdout, NULL, _IONBF, 0);
+
+    /* NullVar is the placeholder for menu rows that have no value. Its
+     * zero-initialized str_enum pointer is readable on the HCS12 (address 0 is
+     * register space) but faults when getstrval() calls strlen(NULL) on a PC.
+     * An empty string preserves the intended blank-row behavior. */
+    NullVar.str_enum = "";
 
     printf("INT-032 C48 Cleaner Interface - PC host\n");
     printf("UDP CAN receive :%u, send :%u (Ctrl+C to quit)\n",
