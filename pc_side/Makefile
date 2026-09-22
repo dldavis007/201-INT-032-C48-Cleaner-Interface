@@ -1,4 +1,4 @@
-CC ?= gcc
+CC := gcc
 SRC := ../Source\ Files
 BUILD := build
 ifeq ($(OS),Windows_NT)
