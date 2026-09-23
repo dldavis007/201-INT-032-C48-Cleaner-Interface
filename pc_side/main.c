@@ -135,8 +135,8 @@ int main(int argc, char **argv)
     /* Load_Camera_Add() is intentionally skipped on the PC because it reads
      * absolute EEPROM addresses. A zero-initialized camera address can make
      * the cleaner's address comparisons match an equally empty process image,
-     * creating false camera traffic. Require a real 0x1111 response instead. */
-    cam_add = 0x1111;
+     * creating false camera traffic. Require a real 0x3333 response instead. */
+    cam_add = 0x3333;
     printf("[host] EEPROM skipped: camera address seeded to 0x%04X\n", cam_add);
 
     InitXmit();
