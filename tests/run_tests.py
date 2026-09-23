@@ -144,7 +144,7 @@ def test_startup_and_camera_guard(host):
     host.wait_for_id(0x748)
     host.wait_alive(0.25)
     log = host.log()
-    require("camera address seeded to 0x1111" in log, "camera seed was not reported")
+    require("camera address seeded to 0x3333" in log, "camera seed was not reported")
     require("State = 35 FinishState" in log, "cleaner did not start in FinishState")
     require(not any(can_id == 0x310 for can_id, _ in host.frames),
             "idle startup emitted display traffic without a camera/menu request")
