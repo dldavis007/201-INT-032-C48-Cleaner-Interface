@@ -122,6 +122,8 @@ int main(int argc, char **argv)
         return 1;
     }
     printf("[host] RTI simulation started (%d ticks/second)\n", (int)RTI_One_Sec);
+    if (pc_side_reset_watch_start() != 0)
+        fprintf(stderr, "[host] reset watch not started: an NMT reset will hang the unit\n");
     InitCANopen();
     printf("[host] CANopen initialized\n");
 

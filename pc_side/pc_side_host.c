@@ -84,6 +84,7 @@ UNSIGNED8 MCOHW_IsTimeExpired(UNSIGNED16 timestamp)
 #define RX_COUNT 128
 static socket_t can_socket = INVALID_SOCKET;
 static struct sockaddr_in can_peer;
+static unsigned short can_receive_port, can_send_port;  /* for a reset relaunch */
 static CAN_MSG rx_ring[RX_COUNT];
 static volatile unsigned rx_head, rx_tail;
 static volatile int can_running;
@@ -215,6 +216,8 @@ int pc_side_can_init(unsigned short receive_port, unsigned short send_port)
     if (WSAStartup(MAKEWORD(2,2), &wsa) != 0) return 1;
     InitializeCriticalSection(&rx_lock);
 #endif
+    can_receive_port = receive_port;
+    can_send_port = send_port;
     can_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (can_socket == INVALID_SOCKET) return 2;
     memset(&local, 0, sizeof local);
@@ -292,5 +295,94 @@ void pc_side_can_shutdown(void)
     DeleteCriticalSection(&rx_lock); WSACleanup();
 #else
     pthread_join(can_thread, NULL);
+#endif
+}
+
+/* Processor reset.
+ *
+ * The firmware resets the hardware way: MCOUSER_ResetApplication (NMT 0x81,
+ * e.g. the CNT-19 passing on the button box's Reset key) and ResetProc arm the
+ * fastest COP rate (COPCTL = 0x01) and spin in while (1) until the watchdog
+ * fires. There is no COP here, so that spin is forever: the RX thread keeps
+ * logging, but the firmware thread never answers the bus again.
+ *
+ * The watch thread spots that write - CR == 1 is only ever set right before
+ * the spin - and relaunches the host on the same ports, so the unit comes back
+ * up from power-on as it does after a real COP reset. Closing the socket first
+ * is required: the new process binds the same receive port. */
+#define COPCTL_OFFSET 0x3C    /* COPCTL, mc9s12a128.h */
+
+static void pc_side_reset(void)
+{
+    printf("[host] *** RESET: relaunching on :%u -> :%u ***\n",
+           (unsigned)can_receive_port, (unsigned)can_send_port);
+    pc_side_rti_stop();
+    pc_side_can_shutdown();
+#ifdef _WIN32
+    {
+        char exe[MAX_PATH];
+        char cmd[MAX_PATH + 32];
+        STARTUPINFOA si;
+        PROCESS_INFORMATION pi;
+
+        memset(&si, 0, sizeof si);
+        si.cb = sizeof si;
+        memset(&pi, 0, sizeof pi);
+        if (GetModuleFileNameA(NULL, exe, sizeof exe)) {
+            snprintf(cmd, sizeof cmd, "\"%s\" %u %u",
+                     exe, (unsigned)can_receive_port, (unsigned)can_send_port);
+            /* Inherit handles so the new process writes to the same console or
+             * pipe (the bench relays this output). A literal 1: TRUE is the
+             * firmware's definition here, not Windows'. */
+            if (CreateProcessA(exe, cmd, NULL, NULL, 1, 0, NULL, NULL, &si, &pi)) {
+                CloseHandle(pi.hThread);
+                CloseHandle(pi.hProcess);
+            } else {
+                printf("[host] relaunch failed (%lu)\n", (unsigned long)GetLastError());
+            }
+        }
+    }
+    ExitProcess(0);
+#else
+    {
+        char receive[8], send[8];
+        snprintf(receive, sizeof receive, "%u", (unsigned)can_receive_port);
+        snprintf(send, sizeof send, "%u", (unsigned)can_send_port);
+        execl("/proc/self/exe", "/proc/self/exe", receive, send, (char *)NULL);
+        perror("[host] relaunch failed");
+        _exit(1);
+    }
+#endif
+}
+
+#ifdef _WIN32
+static DWORD WINAPI reset_watch(void *unused)
+#else
+static void *reset_watch(void *unused)
+#endif
+{
+    (void)unused;
+    for (;;) {
+        sleep_ms(100);
+        if ((*(volatile unsigned char *)&sfr_regs[COPCTL_OFFSET] & 0x07) == 1) {
+            printf("[host] COP reset spin detected -> resetting unit\n");
+            pc_side_reset();          /* does not return */
+        }
+    }
+    return 0;
+}
+
+int pc_side_reset_watch_start(void)
+{
+#ifdef _WIN32
+    HANDLE watch = CreateThread(NULL, 0, reset_watch, NULL, 0, NULL);
+    if (!watch) return 1;
+    CloseHandle(watch);
+    return 0;
+#else
+    pthread_t watch;
+    if (pthread_create(&watch, NULL, reset_watch, NULL) != 0) return 1;
+    pthread_detach(watch);
+    return 0;
 #endif
 }
