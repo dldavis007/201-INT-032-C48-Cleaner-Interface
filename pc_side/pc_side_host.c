@@ -152,6 +152,26 @@ static void can_log(const char *direction, const CAN_MSG *msg)
     printf("\n");
 }
 
+/* RX is logged only when a frame differs from the last one on its ID: the
+ * button box repeats its 0x180 word every 100 ms, so an idle bus would log
+ * nothing but "0x180 [3] 00 04 00". Tracked per ID because other frames
+ * interleave with that heartbeat. Logging only - every frame still reaches
+ * the firmware. Touched by the receive thread alone. */
+static struct { unsigned char seen, len, buf[8]; } rx_last[0x800];
+
+static int rx_is_repeat(const CAN_MSG *msg)
+{
+    unsigned id = msg->ID & 0x7ff;
+    int length = msg->LEN > 8 ? 8 : msg->LEN;
+    if (rx_last[id].seen && rx_last[id].len == length &&
+        !memcmp(rx_last[id].buf, msg->BUF, (size_t)length))
+        return 1;
+    rx_last[id].seen = 1;
+    rx_last[id].len = (unsigned char)length;
+    memcpy(rx_last[id].buf, msg->BUF, (size_t)length);
+    return 0;
+}
+
 #ifdef _WIN32
 static DWORD WINAPI can_receive(void *unused)
 #else
@@ -169,7 +189,7 @@ static void *can_receive(void *unused)
             msg.LEN = packet[2] > 8 ? 8 : packet[2];
             if (n < 3 + msg.LEN) continue;
             memcpy(msg.BUF, packet + 3, msg.LEN);
-            can_log("RX", &msg);
+            if (!rx_is_repeat(&msg)) can_log("RX", &msg);
             LOCK();
             next = (rx_head + 1) % RX_COUNT;
             if (next != rx_tail) { rx_ring[rx_head] = msg; rx_head = next; }
