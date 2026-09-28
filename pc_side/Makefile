@@ -19,7 +19,8 @@ endif
 
 CPPFLAGS := -DPC_SIDE -DSKIP_EEPROM_LOAD -I. -I"../Source Files" -include pc_side.h
 CFLAGS := -std=gnu11 -O0 -g -funsigned-char -fcommon -Wno-unknown-pragmas \
-          -Wno-builtin-declaration-mismatch -Wno-int-conversion -Wno-pointer-to-int-cast
+          -Wno-builtin-declaration-mismatch -Wno-int-conversion -Wno-pointer-to-int-cast \
+          -MMD -MP
 
 PRODUCTION := Subroutines.c Subroutines1.c mco.c user.c Interrupts.c PID.c
 OBJECTS := $(addprefix $(BUILD)/,$(PRODUCTION:.c=.o)) $(BUILD)/main.o $(BUILD)/pc_side_host.o
@@ -45,3 +46,7 @@ run: $(EXE)
 clean:
 	$(CLEAN_BUILD)
 	$(CLEAN_EXE)
+
+# -MMD writes build/*.d listing the headers each object included, so editing a
+# header rebuilds what includes it. -MP keeps a deleted header from failing it.
+-include $(wildcard $(BUILD)/*.d)
