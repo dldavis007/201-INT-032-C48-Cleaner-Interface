@@ -2797,10 +2797,10 @@ void CameraMain ( void )
 		while(Timer1);
         
         gTxMsg.ID = 0x2a1;
-        gTxMsg.LEN = 2; 
+        gTxMsg.LEN = 3; 
         gTxMsg.BUF[0] = cam_add;
-        gTxMsg.BUF[1] = cam_add >> 8;      
-        if (!MCOHW_PushMessage(&gTxMsg))
+        gTxMsg.BUF[1] = cam_add >> 8;
+		if (!MCOHW_PushMessage(&gTxMsg))
         {
             // failed to transmit
             MCOUSER_FatalError(0x8801);
