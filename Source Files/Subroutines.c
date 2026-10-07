@@ -129,7 +129,7 @@ const char enum_lin_act_str[]="CLEANER,LIN ACT";
 const char enum_machinesize_str[]="08-10,12-22,24-34,36-48";
 const char enum_alpha_str[]=" ,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,0,1,2,3,4,5,6,7,8,9,.,<,>,;,:,@,(,),-,-"; //last char is the cursor char, do not count for max
 const char enum_number_str[]="0,1,2,3,4,5,6,7,8,9,-";  //last char is the cursor char, do not count for max
-
+const char enum_hd_sd[]="SD,HD";  //enum for hd, sd setting
 
 //The following Menu Variables are saved in EEPROM
 
@@ -263,6 +263,10 @@ struct menu_var  CamTag = {
 
 struct menu_var  disp_add = {
 	   1,1,1,46,0,-4,"1234",enum_alpha_str
+};
+
+struct menu_var HDSDSetting = {
+	   1,1,1,2,0,2,"SD",enum_hd_sd
 };
 
 
@@ -787,31 +791,31 @@ struct MenuStruct Menuc[MenuSize] = {
     											" FOCUS SPEED        ",
     											" FILM ADVANCE       ",
                                                 " TAG                ",
-                                                " EXIT               ",
+                                                " HD/SD SETTING      ",
                                                 "                    ",
                                                 "                    ",
                                                 "                    ",
                                                 "                    ",
                                                 "                    ",
-                                                16,16,16,18,8,0,0,0,0,0,0,
+                                                16,16,16,18,8,17,0,0,0,0,0,
                                                 &LightLevel,
                                                 &ZoomSpeed,
                                                 &FocusSpeed,
                                                 &AdvanceTime,
                                                 &CamTag,
+                                                &HDSDSetting,
                                                 &NullVar,
                                                 &NullVar,
                                                 &NullVar,
                                                 &NullVar,
                                                 &NullVar,
-                                                &NullVar,
+                                                &StdVarFunction,
                                                 &StdVarFunction,
                                                 &StdVarFunction,
                                                 &StdVarFunction,
                                                 &StdVarFunction,
                                                 &StdVarFunction,
                                                 &ExitMenu,
-                                                &NullFunction,
                                                 &NullFunction,
                                                 &NullFunction,
                                                 &NullFunction,

@@ -8,6 +8,8 @@ MKDIR_BUILD = if not exist $(BUILD) mkdir $(BUILD)
 CLEAN_BUILD = if exist $(BUILD) rmdir /s /q $(BUILD)
 CLEAN_EXE = if exist $(EXE) del /f /q $(EXE)
 RUN_PREFIX =
+IS_RUNNING = tasklist /FI "IMAGENAME eq $(EXE)" 2>nul | findstr /I /C:"$(EXE)" >nul
+KILL_EXE = taskkill /F /IM $(EXE) >nul
 else
 EXE := cleaner_host
 LDLIBS := -pthread -lm
@@ -15,6 +17,8 @@ MKDIR_BUILD = mkdir -p $(BUILD)
 CLEAN_BUILD = rm -rf $(BUILD)
 CLEAN_EXE = rm -f $(EXE)
 RUN_PREFIX = ./
+IS_RUNNING = pgrep -x $(EXE) >/dev/null
+KILL_EXE = pkill -x $(EXE)
 endif
 
 CPPFLAGS := -DPC_SIDE -DSKIP_EEPROM_LOAD -I. -I"../Source Files" -include pc_side.h
@@ -39,10 +43,28 @@ $(BUILD)/%.o: %.c | $(BUILD)
 $(EXE): $(OBJECTS)
 	$(CC) -o $@ $(OBJECTS) $(LDLIBS)
 
-.PHONY: all run clean
+.PHONY: all run clean stop-if-running retry-relink
 all: $(EXE)
-run: $(EXE)
+
+# A live $(EXE) holds its own file open, so the relink fails with "Permission
+# denied". Build first; only kill a running host if the link actually needed it.
+run:
+	@$(MAKE) --no-print-directory $(EXE) || $(MAKE) --no-print-directory retry-relink
 	$(RUN_PREFIX)$(EXE)
+
+# Reached only after a failed build. No host running means it was never locked,
+# so the compiler/linker error above is the real one - stop and leave it on screen.
+stop-if-running:
+	@$(IS_RUNNING) || ( \
+	  echo *** BUILD FAILED - no $(EXE) was running, so this was NOT a file lock. && \
+	  echo *** The compiler or linker error above is the real one. && \
+	  exit 1 )
+	@echo *** relink blocked: a $(EXE) is running and holds the file open. Stopping it.
+	@$(KILL_EXE)
+
+retry-relink: stop-if-running
+	@$(MAKE) --no-print-directory $(EXE)
+
 clean:
 	$(CLEAN_BUILD)
 	$(CLEAN_EXE)

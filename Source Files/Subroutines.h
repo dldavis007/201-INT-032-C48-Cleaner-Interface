@@ -113,7 +113,7 @@ void ClearTitler ( void );
 void Send_Can_msg ( struct CAN_Msg *txMsg );
 int menu_function (void);
 void Send_Menu_Status (char stat);
-
+extern struct menu_var HDSDSetting;
 
 
 
