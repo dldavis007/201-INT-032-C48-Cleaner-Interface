@@ -20,9 +20,14 @@ mingw32-make check
 Only the Python standard library is required beyond the existing GCC and GNU
 Make prerequisites. Temporary local UDP ports are selected automatically.
 
-The camera migration suite adds 62 checks against the production firmware for
+The camera migration suite adds 72 checks against the production firmware for
 pairing, reassignment, selection, rejected/busy triggers, camera disable,
 nonblocking scan replies (including timer rollover), address changes, menu
 bindings and legacy/versioned EEPROM settings. UDP integration tests verify
 external triggering during a pending scan and settings after process restart.
 All tests use temporary EEPROM files. See `../CAMERA_MIGRATION.md` for hardware checks.
+
+Menu follow-up tests verify legacy CLN/VAC settings migrate to REV/FWD without
+changing direction values, and root-menu exit sends its final display clear
+before the controller handoff. UDP tests navigate to EXIT with real menu keys
+and check no cleaner display traffic follows the menu-close message.

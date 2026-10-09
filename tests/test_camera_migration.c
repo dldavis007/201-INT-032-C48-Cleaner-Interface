@@ -7,6 +7,7 @@
 #include "mcohw.h"
 #include "Subroutines.h"
 #include "EEProm.h"
+#include "Interrupts.h"
 #include "mc9s12a128.h"
 
 extern UNSIGNED8 gProcImg[PROCIMG_SIZE];
@@ -15,7 +16,9 @@ extern char cam_addx[2], State, Gen_Flags;
 extern unsigned long StateTime;
 extern UNSIGNED16 activeCamAddress, paired_camera_address;
 extern struct menu_var InternalExternalCameraSetting, CamEnable;
-extern struct menu_var CompressorOnOff, CntrStrokes, LightLevel, CamTag, NullVar;
+extern struct menu_var CompressorOnOff, CntrStrokes, LightLevel, CamTag, NullVar, LineUpDirection;
+extern char StackPointer, UpdateMenu;
+extern unsigned char StoreFlag;
 extern RPDO_CONFIG gRPDOConfig[];
 static CAN_MSG received, transmitted[128];
 static unsigned tx_count, failures, checks;
@@ -162,9 +165,47 @@ static void test_settings_and_menus(void) {
         }
     }
 }
+static void test_lineup_direction_compatibility(void) {
+    unsigned direction;
+    for (direction = 1; direction <= 2; ++direction) {
+        strcpy(LineUpDirection.str_value, direction == 1 ? "CLN" : "VAC");
+        Save_Variables();
+        strcpy(LineUpDirection.str_value, "REV"); LineUpDirection.value = 1;
+        Load_Variables();
+        CHECK(LineUpDirection.value == direction);
+        CHECK(!strcmp(LineUpDirection.str_value, direction == 1 ? "REV" : "FWD"));
+        Save_Variables();
+        LineUpDirection.value = 0; Load_Variables();
+        CHECK(LineUpDirection.value == direction);
+    }
+    CHECK(!strcmp(Menuc[3].Entry[2], " LINE UP DIR        "));
+}
+static void test_menu_exit_handoff(void) {
+    unsigned i, clear_index = 128, close_index = 128;
+    reset(); StackPointer = 0;
+    Gen_Flags = Gen_Flags_Menu_Active;
+    UpdateMenu = 1;
+    gProcImg[IN_digi_0] = 1;
+    INTR_ON(); rti_thread_start_realtime(1);
+    ExitMenu();
+    menu_function();
+    rti_thread_stop();
+    for (i=0; i<tx_count; ++i) {
+        if (transmitted[i].ID == WIM_ID && !memcmp(&transmitted[i].BUF[2], "Clr:", 4))
+            clear_index = i;
+        if (transmitted[i].ID == 0x200 && transmitted[i].BUF[0] == 0)
+            close_index = i;
+    }
+    CHECK(clear_index < close_index && close_index < tx_count);
+    CHECK(!(Gen_Flags & Gen_Flags_Menu_Active));
+    CHECK(!UpdateMenu && !(gProcImg[IN_digi_0] & 1) && StoreFlag);
+    for (i=close_index+1; i<tx_count; ++i) CHECK(transmitted[i].ID != WIM_ID);
+}
+
 int main(void) {
     EEInit(); MCOUSER_ResetCommunication(); MCO_ProcessStack();
     test_pairing(); test_triggers(); test_scanning_and_commands(); test_settings_and_menus();
+    test_lineup_direction_compatibility(); test_menu_exit_handoff();
     printf("Camera migration: %u checks, %u failures\n", checks, failures);
     return failures ? 1 : 0;
 }

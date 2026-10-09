@@ -521,17 +521,20 @@ void DeSelect ( void )
         MenuStackc[StackPointer].Index[2] = 0;
         MenuStackc[StackPointer].Index[3] = 0;
         Gen_Flags &= ~Gen_Flags_Menu_Active;
-//		gProcImg[IN_digi_0] &= ~0x01;
-		Send_Menu_Status (0x00);
-
+        gProcImg[IN_digi_0] &= ~0x01;
+        UpdateMenu = 0;
         ClearTitler ();
+        Timer1 = RTI_One_Sec * 0.05;
+        while (Timer1);
 		for (j=1;j<=NR_OF_TPDOS;j++)
 		{
 		    ARMCOP = 0x55;
 			ARMCOP = 0xAA;
 			i = MCO_ProcessStack();
 		}
-    	StoreFlag = 1;//Save_Variables ();
+        /* Return display ownership only after the final cleaner clear. */
+        Send_Menu_Status (0x00);
+        StoreFlag = 1;//Save_Variables ();
      }
 	 Variable_flag = 0;
 	 String_Var_ptr = 0;

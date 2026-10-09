@@ -48,7 +48,7 @@ python .\tests\run_tests.py
 ```
 
 The runner builds the real firmware host and runs the existing menu regressions,
-62 camera checks, and UDP pairing, scan and process-restart tests. GCC/GNU Make and
+72 camera checks, and UDP pairing, scan and process-restart tests. GCC/GNU Make and
 Python are required. On Windows the runner uses `mingw32-make`; on Linux it uses `make`.
 The Windows bench transport and wire format are retained.
 
@@ -59,7 +59,7 @@ reload it. Linux support uses POSIX threads and sockets without affecting target
 
 ## Validation still required
 
-The GCC PC build and all seven test groups pass. ImageCraft is unavailable in the
+The GCC PC build and all eight test groups pass. ImageCraft is unavailable in the
 migration environment, so no rebuilt embedded `.s19` is provided. Build the Cleaner
 project with ImageCraft, then verify on hardware:
 
@@ -70,3 +70,30 @@ project with ImageCraft, then verify on hardware:
 5. Scanning remains responsive and omits a disabled internal camera.
 6. Mode/enable and existing cleaner settings survive restart; announce pairing/selection again.
 7. Restore Defaults retains the camera address and serial number.
+
+## Menu follow-up
+
+Settings 2 now labels the travel setting **LINE UP DIR** with **REV / FWD**.
+The direction values stay the same: old `CLN` becomes `REV` and old `VAC` becomes
+`FWD` when legacy EEPROM settings are loaded. The new labels are saved on the
+next menu save.
+
+Root menu exit clears the cleaner display first, allows 50 ms for transmission, suppresses pending menu redraws,
+and then sends `0x200 [00]` to return ownership to CNT-19. Previously the clear
+followed the close notification and could erase CNT-19's restored main menu.
+Production-code and UDP tests verify the clear-before-close ordering and absence
+of later cleaner display traffic. Confirm the restored controller menu on the PC bench.
+
+## Camera PC-host persistence findings
+
+- VID-19 `hd_trigger`: the PC EEPROM writer is a stub, the PC settings-save
+  function returns without saving to disk, startup skips EEPROM loading, and
+  startup forces TriggerMode to LIQUID. Its PC menu settings do not survive a
+  fresh execution. The embedded firmware has EEPROM save/load code.
+- VID-18 `1.01_hd_trigger`: its PC flash is backed by `flash_<receive-port>.bin`
+  in the process working folder. Firmware saves menu settings on menu exit and
+  loads them at startup; trigger mode has its own persisted record. Use the
+  same receive port and working folder on each run. A changed port/folder,
+  missing backing file or failed write can make it appear to forget settings.
+
+Neither camera repository was modified in this cleaner follow-up.

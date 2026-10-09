@@ -123,7 +123,7 @@ unsigned char Use_IN_digi_15=0;
 
 const char enum_NULL_str[]="";
 const char enum_off_on_str[]="OFF, ON";
-const char enum_cln_vac_str[]="CLN,VAC";
+const char enum_lineup_dir_str[]="REV,FWD";
 const char enum_pos_neg_str[]="POS,NEG";
 const char enum_slow_fast_str[]="EXSLW, SLOW, FAST";
 const char enum_stop_retract_str[]="   STOP, EXTEND,RETRACT";
@@ -180,8 +180,8 @@ struct menu_var TestModeOnOff = {
 	   1,1,1,2,0,3,"OFF",enum_off_on_str
 };
 
-struct menu_var  LineUpClnVac = { //TrigVacOnOff
-	   1,1,1,2,0,3,"CLN",enum_cln_vac_str
+struct menu_var  LineUpDirection = {
+	   1,1,1,2,0,3,"REV",enum_lineup_dir_str
 };
 
 struct menu_var  LineupTimeOnOff = { 
@@ -289,7 +289,7 @@ struct menu_var CamEnable = {
     1,1,1,2,0,8," ENABLED","ENABLED,DISABLED"
 };
 static struct menu_var *SavedVariables[] = {
-    &CompressorOnOff, &CntrStrokes, &FullStrokes, &CntrDist, &FullDist, &LACntr, &LASpeed, &LineUpDist, &LineupSpeed, &SealTime, &TestModeOnOff, &LineUpClnVac, &LineupTimeOnOff, &laSwitchPol, &VacDist1, &VacDist2, &VacDist3, &VacDist4, &VacDist5, &VacSpeed1, &VacSpeed2, &VacSpeed3, &VacSpeed4, &VacSpeed5, &LowSetPoint, &HighSetPoint, &MachineSize, &ZoomSpeed, &FocusSpeed, &LightLevel, &AdvanceTime, &CamTag
+    &CompressorOnOff, &CntrStrokes, &FullStrokes, &CntrDist, &FullDist, &LACntr, &LASpeed, &LineUpDist, &LineupSpeed, &SealTime, &TestModeOnOff, &LineUpDirection, &LineupTimeOnOff, &laSwitchPol, &VacDist1, &VacDist2, &VacDist3, &VacDist4, &VacDist5, &VacSpeed1, &VacSpeed2, &VacSpeed3, &VacSpeed4, &VacSpeed5, &LowSetPoint, &HighSetPoint, &MachineSize, &ZoomSpeed, &FocusSpeed, &LightLevel, &AdvanceTime, &CamTag
 };
 #define SavedVariableCount (sizeof SavedVariables / sizeof SavedVariables[0])
 
@@ -455,7 +455,7 @@ struct MenuStruct Menuc[MenuSize] = {
                                                 0,0,1,2,
                                                 "     SETTINGS 2     ",
                                                 " CAMERA MODE        ",
-                                                " LINE UP ON         ",
+                                                " LINE UP DIR        ",
                                                 " LINEUP TIMER       ",
                                                 " LINEUP SPEED       ",
 												" EXIT               ",
@@ -467,7 +467,7 @@ struct MenuStruct Menuc[MenuSize] = {
                                                 "                    ",
                                                 11,16,16,15,0,0,0,0,0,0,0,
                                                 &InternalExternalCameraSetting,
-                                                &LineUpClnVac,
+                                                &LineUpDirection,
                                                 &LineupTimeOnOff,
                                                 &LineupSpeed,
 												&NullVar,
@@ -1302,6 +1302,11 @@ void Load_Variables(void)
         if (pos == 128 || !len) return;
         token[len] = 0;
         if (image[block + pos] == ',') ++pos;
+        /* Preserve travel direction from pre-rename EEPROM settings. */
+        if (SavedVariables[i] == &LineUpDirection) {
+            if (!strcmp(token, "CLN")) strcpy(token, "REV");
+            else if (!strcmp(token, "VAC")) strcpy(token, "FWD");
+        }
         strcpy(SavedVariables[i]->str_value, token);
         getvalue(SavedVariables[i], 0);
     }
@@ -1877,7 +1882,7 @@ void doevents ( void )
                     }
                     
 					// --- Configure Movement Parameters ---
-				    if ( LineUpClnVac.value==1 ) { // Negative Direction
+				    if ( LineUpDirection.value==1 ) { // Negative Direction
 						int travel_dist = (int)((LineUpDist.value + 0.001) * -10);
 						int lineup_speed = (int)(LineupSpeed.value * 120);
 

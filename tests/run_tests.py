@@ -259,6 +259,31 @@ def test_udp_pairing_scan_and_restart():
         host.close()
 
 
+def test_udp_menu_exit_handoff():
+    host = HostFixture()
+    try:
+        host.wait_for_id(0x748)
+        host.send(0x248, [1])
+        host.wait_for_id(0x310)
+        host.wait_alive(0.7)
+        # Move from CLEANER to the eighth root row, EXIT.
+        for _ in range(7):
+            host.send(0x180, [1, 0, 0]); host.wait_alive(0.08)
+            host.send(0x180, [0, 0, 0]); host.wait_alive(0.4)
+        start = len(host.frames)
+        host.send(0x180, [4, 0, 0]); host.wait_alive(0.5)
+        host.send(0x180, [0, 0, 0]); host.wait_alive(0.25)
+        frames = host.frames[start:]
+        closed = [i for i, (can_id, data) in enumerate(frames) if can_id == 0x200 and data == bytes([0])]
+        cleared = [i for i, (can_id, data) in enumerate(frames) if can_id == 0x310 and data[2:6] == b"Clr:"]
+        require(closed and cleared and max(cleared) < closed[-1],
+                "cleaner clear did not precede menu-close notification\n" + host.log())
+        require(not any(can_id == 0x310 for can_id, _ in frames[closed[-1] + 1:]),
+                "cleaner sent display traffic after returning ownership to CNT-19")
+    finally:
+        host.close()
+
+
 def main():
     cases_run = 0
     failures = []
@@ -292,6 +317,14 @@ def main():
     except (OSError, TestFailure) as exc:
         failures.append("UDP camera migration: %s" % exc)
         print("FAIL UDP camera migration: %s" % exc)
+
+    try:
+        test_udp_menu_exit_handoff()
+        cases_run += 1
+        print("PASS UDP menu-exit display handoff")
+    except (OSError, TestFailure) as exc:
+        failures.append("menu-exit handoff: %s" % exc)
+        print("FAIL menu-exit handoff: %s" % exc)
 
     host = HostFixture()
     try:
