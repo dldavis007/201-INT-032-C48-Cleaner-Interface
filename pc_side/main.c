@@ -8,7 +8,11 @@
 #define NOGDI
 #define NOUSER
 #define NOMINMAX
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include "posix_compat.h"
+#endif
 
 #undef TRUE
 #undef FALSE
@@ -203,23 +207,17 @@ int main(int argc, char **argv)
     // kick us out of a menu if we're restarting
     Send_Menu_Status (0x00);
 
-#ifndef SKIP_EEPROM_LOAD
     Load_Camera_Add();
-    Load_TrigCamera_Add();
+    if (!cam_add || cam_add == 0xffff) {
+        extern char cam_addx[2];
+        cam_add = 0x2731;
+        cam_addx[0] = cam_add;
+        cam_addx[1] = cam_add >> 8;
+        Save_Camera_Add();
+        printf("[host] camera address seeded to 0x%04X\n", cam_add);
+    }
     Load_Serial_Num();
     Load_Variables();
-#endif
-
-    /* HDSDSetting does not exist in the Cleaner yet - restore this when the HD
-     * trig handshake is ported over from the coater.
-     * HDSDSetting.value = 2.0f; */
-
-    /* Load_Camera_Add() is intentionally skipped on the PC because it reads
-     * absolute EEPROM addresses. A zero-initialized camera address can make
-     * the cleaner's address comparisons match an equally empty process image,
-     * creating false camera traffic. Require a real 0x3333 response instead. */
-    cam_add = 0x2731;
-    printf("[host] EEPROM skipped: camera address seeded to 0x%04X\n", cam_add);
 
     InitXmit();
     printf("[host] running firmware main loop\n");

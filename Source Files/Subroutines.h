@@ -32,8 +32,12 @@ struct menu_var *next_var; //pointer to then next variable if more than one per 
 #pragma nonpaged_function ZoomOutFunct
 #pragma nonpaged_function FocusFarFunct
 #pragma nonpaged_function FocusNearFunct
-#pragma nonpaged_function GetTrigCam
 
+
+void PollPairedCamera(void);
+int TrigRequest(void);
+void Load_Camera_Settings(void);
+void Save_Camera_Settings(void);
 
 //Subroutines.c
 void InitPorts ( void );
@@ -64,8 +68,6 @@ void Save_Variables ( void );
 int RestoreDefaults ( void );
 void Load_Camera_Add ( void );
 void Save_Camera_Add ( void );
-void Load_TrigCamera_Add ( void );
-void Save_TrigCamera_Add ( void );
 void Load_Serial_Num ( void );
 void Save_Serial_Num ( void );
 int ResetProc ( void );
@@ -79,7 +81,6 @@ void retract_LA(float desired_speed);
 void stop_LA(void);
 void Startup(int Move_Speed);
 void LAMain ( int Move_Position, int Move_Speed);
-int GetTrigCam (void);
 
 
 //Subroutines1.c

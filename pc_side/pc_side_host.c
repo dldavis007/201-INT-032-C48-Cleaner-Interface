@@ -6,8 +6,7 @@
  *
  *   - sfr_regs[]     backing store for _REG_BASE (mc9s12a128.h under PC_SIDE)
  *   - g_intr_masked  the flag INTR_ON/OFF map to (pc_side.h)
- *   - stubs for the EEPROM/Flash writers, whose real bodies spin on hardware
- *     status bits that never change here
+ *   - file-backed EEPROM and a stub Flash writer
  *   - the CAN transport: MCOHW_PushMessage / MCOHW_PullMessage over UDP, so the
  *     firmware exchanges real CAN frames with the Python emulators in
  *     C:\Working_Projects\can_emulators (same wire format as lib/can_udp.py)
@@ -35,18 +34,24 @@
 #define NOUSER
 #define NOMINMAX
 #include <errno.h>          /* before windows.h: TDM-GCC's mm_malloc.h needs EINVAL */
+#ifdef _WIN32
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <windows.h>
+#else
+#include "posix_compat.h"
+#endif
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 /* windows.h defines TRUE/FALSE; the firmware headers redefine them. Drop the
  * Win32 ones so the firmware's definitions win without a warning. */
 #undef TRUE
 #undef FALSE
 
+#include "EEProm.h"
 #include "nodecfg.h"
 #include "mco.h"
 #include "mcohw.h"
@@ -67,9 +72,31 @@ volatile int  g_intr_masked = 1;    /* masked at reset (see pc_side.h) */
  * their real bodies spin on hardware status bits (EEPROM command-complete,
  * CAN transmit-buffer-empty) that never set on a PC.
  * ========================================================================== */
-void EEInit(void) { }
-void EEWrite(int ArraySize, char WriteData[], int *WriteAddr)
-{ (void)ArraySize; (void)WriteData; (void)WriteAddr; }
+unsigned char pc_eeprom[0x800];
+static const char *eeprom_path(void) {
+    const char *path = getenv("CLEANER_EEPROM_FILE");
+    return path && *path ? path : "cleaner_eeprom.bin";
+}
+void EEInit(void) {
+    FILE *file;
+    memset(pc_eeprom, 0xff, sizeof pc_eeprom);
+    file = fopen(eeprom_path(), "rb");
+    if (file) { fread(pc_eeprom, 1, sizeof pc_eeprom, file); fclose(file); }
+}
+void EEWrite(int size, char data[], int *address) {
+    char *target = (char *)address;
+    FILE *file;
+    if (size < 0 || target < (char *)pc_eeprom ||
+        target + size > (char *)pc_eeprom + sizeof pc_eeprom) return;
+    memcpy(target, data, size);
+    file = fopen(eeprom_path(), "wb");
+    if (!file || fwrite(pc_eeprom, 1, sizeof pc_eeprom, file) != sizeof pc_eeprom) {
+        fprintf(stderr, "EEPROM write failed: %s\n", eeprom_path());
+        if (file) fclose(file);
+        exit(1);
+    }
+    fclose(file);
+}
 
 void FlashInit(void) { }
 void FlashWrite(int ArraySize, char WriteData[], int *WriteAddr)
@@ -290,10 +317,14 @@ static DWORD WINAPI can_rx_fn(LPVOID arg)
 /* Bring up the UDP CAN bus. Returns 0 on success. */
 int pc_side_can_init(unsigned short recv_port, unsigned short send_port)
 {
+#ifdef _WIN32
     WSADATA wsa;
+#endif
     struct sockaddr_in me;
 
+#ifdef _WIN32
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
+#endif
 
     can_recv_port = recv_port;      /* a reset relaunches us on these */
     can_send_port = send_port;
@@ -310,12 +341,14 @@ int pc_side_can_init(unsigned short recv_port, unsigned short send_port)
     /* Windows UDP: a prior sendto to an unbound port raises ICMP "port
      * unreachable", which would make the NEXT recv fail with WSAECONNRESET.
      * Disable that so a peer that is not up yet cannot poison RX. */
+#ifdef _WIN32
     {
         BOOL  off = 0;
         DWORD ret = 0;
         WSAIoctl(can_sock, SIO_UDP_CONNRESET, &off, sizeof off,
                  NULL, 0, &ret, NULL, NULL);
     }
+#endif
 
     /* Non-blocking: MCOHW_PushMessage must never block the firmware thread. A
      * blocking sendto stalls when a peer's receive buffer saturates under the
@@ -351,7 +384,9 @@ void pc_side_can_shutdown(void)
         can_sock = INVALID_SOCKET;
     }
     DeleteCriticalSection(&rx_lock);
+#ifdef _WIN32
     WSACleanup();
+#endif
 }
 
 /* TX seam: firmware -> bus. */
@@ -482,10 +517,8 @@ void rti_thread_stop(void)
  * here, so that spin is forever and RestoreDefaults() - which ends in ResetProc
  * - hangs the host. main.c's stall detector spots the spin and calls this.
  *
- * A reset is a RELAUNCH, not a jump back into main(): the restore only works
- * because startup re-initializes every global from its initializers (EEWrite is
- * a stub above and SKIP_EEPROM_LOAD skips the load, so a fresh process comes up
- * on the compiled-in defaults, exactly as the target does after the 0xFF flag).
+ * A reset relaunches the host and reloads the EEPROM file. RestoreDefaults
+ * marks the legacy settings erased and resets the separate camera settings.
  *
  * Called from the stall-detector thread, with the firmware thread still
  * spinning in ResetProc - nothing is asked of it. Closing the socket FIRST is
@@ -494,10 +527,13 @@ void rti_thread_stop(void)
  * ========================================================================== */
 void pc_side_reset(void)
 {
+#ifdef _WIN32
     char exe[MAX_PATH];
     char cmd[MAX_PATH + 32];
     STARTUPINFOA        si;
     PROCESS_INFORMATION pi;
+
+#endif
 
     LOG_PRINTF(("[host] *** RESET: relaunching on :%u -> :%u ***\n",
                 can_recv_port, can_send_port));
@@ -505,6 +541,7 @@ void pc_side_reset(void)
     rti_thread_stop();
     pc_side_can_shutdown();
 
+#ifdef _WIN32
     memset(&si, 0, sizeof si);
     si.cb = sizeof si;
     memset(&pi, 0, sizeof pi);
@@ -527,4 +564,16 @@ void pc_side_reset(void)
 
     pc_log_shutdown();          /* drain the tail before we go */
     ExitProcess(0);
+#else
+    {
+        char receive[8], send[8];
+        char *args[] = {"cleaner_host", receive, send, NULL};
+        snprintf(receive, sizeof receive, "%u", can_recv_port);
+        snprintf(send, sizeof send, "%u", can_send_port);
+        pc_log_shutdown();
+        execv("/proc/self/exe", args);
+        perror("host restart");
+        exit(1);
+    }
+#endif
 }

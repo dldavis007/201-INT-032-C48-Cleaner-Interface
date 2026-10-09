@@ -21,7 +21,7 @@ IS_RUNNING = pgrep -x $(EXE) >/dev/null
 KILL_EXE = pkill -x $(EXE)
 endif
 
-CPPFLAGS := -DPC_SIDE -DSKIP_EEPROM_LOAD -I. -I"../Source Files" -include pc_side.h
+CPPFLAGS := -DPC_SIDE -I. -I"../Source Files" -include pc_side.h
 CFLAGS := -std=gnu11 -O0 -g -funsigned-char -fcommon -Wno-unknown-pragmas \
           -Wno-builtin-declaration-mismatch -Wno-int-conversion -Wno-pointer-to-int-cast \
           -MMD -MP

@@ -41,8 +41,13 @@ DEFINES: DATA TYPES USED
 **************************************************************************/
 
 #define UNSIGNED8 unsigned char
+#ifdef PC_SIDE
+#define UNSIGNED16 unsigned short
+#define UNSIGNED32 unsigned int
+#else
 #define UNSIGNED16 unsigned int
 #define UNSIGNED32 unsigned long
+#endif
 
 
 /**************************************************************************

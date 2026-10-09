@@ -215,6 +215,8 @@ UNSIGNED8 i;
   // RPDO6, default ID (), 2 byte, position actuator
   MCO_InitRPDO(6,0x46a,3,OUT_digi_13);       
     
+  MCO_InitRPDO(7,0x321,8,CAMERA_PAIRING);
+
   // TPDO1, default ID ($NODEID+0x180), 0ms event, 10ms inhibit, 1 bytes, Menu Status
 //  MCO_InitTPDO(1,0x200,0,100,1,IN_digi_0);
 // Manually send this 

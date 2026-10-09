@@ -27,7 +27,8 @@ Modify these for your application
 **************************************************************************/
 
 // Define the size of the process image
-#define PROCIMG_SIZE 34
+#define PROCIMG_SIZE 42
+#define CAMERA_PAIRING 34
 
 // Define process variables: offsets into the process image 
 // Menu Control

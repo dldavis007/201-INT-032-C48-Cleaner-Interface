@@ -720,7 +720,8 @@ UNSIGNED8 MCO_ProcessStack
       while (i < NR_OF_RPDOS)
       {
         // is this one of our RPDOs?
-        if (gRxCAN.ID == gRPDOConfig[i].CANID)
+        if (gRPDOConfig[i].len && gRxCAN.ID == gRPDOConfig[i].CANID &&
+            gRxCAN.LEN >= gRPDOConfig[i].len)
         {
           // copy data from RPDO to process image
           memcpy(&(gProcImg[gRPDOConfig[i].offset]),&(gRxCAN.BUF[0]),gRPDOConfig[i].len);

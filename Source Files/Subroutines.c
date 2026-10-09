@@ -104,8 +104,11 @@ extern signed char SelectFlag;
 char PressureMsgSent;
 char CamAddressXmitd;
 
-unsigned char ActCam4;
-unsigned char ActCam5;
+UNSIGNED16 activeCamAddress;
+UNSIGNED16 paired_camera_address;
+static UNSIGNED16 scan_reply_time;
+static UNSIGNED16 scan_reply_address;
+static unsigned char scan_reply_pending;
 
 
 char laSwitch;
@@ -278,9 +281,17 @@ struct menu_var SerialNum = {
 	   1,1,1,10,0,-6,"------",enum_number_str
 };
 
-//saved seperately at 0x0c50
-unsigned char TrigCam4 = 123;
-unsigned char TrigCam5 = 45;
+/* Separate from the legacy CSV settings and retired 0x0c50 trigger address. */
+struct menu_var InternalExternalCameraSetting = {
+    1,1,1,2,0,8,"INTERNAL","INTERNAL,EXTERNAL"
+};
+struct menu_var CamEnable = {
+    1,1,1,2,0,8," ENABLED","ENABLED,DISABLED"
+};
+static struct menu_var *SavedVariables[] = {
+    &CompressorOnOff, &CntrStrokes, &FullStrokes, &CntrDist, &FullDist, &LACntr, &LASpeed, &LineUpDist, &LineupSpeed, &SealTime, &TestModeOnOff, &LineUpClnVac, &LineupTimeOnOff, &laSwitchPol, &VacDist1, &VacDist2, &VacDist3, &VacDist4, &VacDist5, &VacSpeed1, &VacSpeed2, &VacSpeed3, &VacSpeed4, &VacSpeed5, &LowSetPoint, &HighSetPoint, &MachineSize, &ZoomSpeed, &FocusSpeed, &LightLevel, &AdvanceTime, &CamTag
+};
+#define SavedVariableCount (sizeof SavedVariables / sizeof SavedVariables[0])
 
 
 
@@ -443,19 +454,19 @@ struct MenuStruct Menuc[MenuSize] = {
                                 
                                                 0,0,1,2,
                                                 "     SETTINGS 2     ",
-                                      			" SEL TRIG CAM       ",
+                                                " CAMERA MODE        ",
                                                 " LINE UP ON         ",
                                                 " LINEUP TIMER       ",
                                                 " LINEUP SPEED       ",
 												" EXIT               ",
-                                                "      WARNING       ",
-                                                "THE CURRENT CAMERA  ",
-                                                "WILL BE SELECTED AS ",
-                                                "THE TRIGGER CAMERA  ",
                                                 "                    ",
                                                 "                    ",
-                                                0,16,16,15,0,0,0,0,0,0,0,
-                                                &NullVar,
+                                                "                    ",
+                                                "                    ",
+                                                "                    ",
+                                                "                    ",
+                                                11,16,16,15,0,0,0,0,0,0,0,
+                                                &InternalExternalCameraSetting,
                                                 &LineUpClnVac,
                                                 &LineupTimeOnOff,
                                                 &LineupSpeed,
@@ -466,7 +477,7 @@ struct MenuStruct Menuc[MenuSize] = {
 												&NullVar,
                                                 &NullVar,
                                                 &NullVar,
-                                                &GetTrigCam,
+                                                &StdVarFunction,
 												&StdVarFunction,
 												&StdVarFunction,
 												&StdVarFunction,
@@ -792,23 +803,24 @@ struct MenuStruct Menuc[MenuSize] = {
     											" FILM ADVANCE       ",
                                                 " TAG                ",
                                                 " HD/SD SETTING      ",
+                                                " CAMERA             ",
+                                                " EXIT               ",
                                                 "                    ",
                                                 "                    ",
                                                 "                    ",
-                                                "                    ",
-                                                "                    ",
-                                                16,16,16,18,8,17,0,0,0,0,0,
+                                                16,16,16,18,8,17,11,0,0,0,0,
                                                 &LightLevel,
                                                 &ZoomSpeed,
                                                 &FocusSpeed,
                                                 &AdvanceTime,
                                                 &CamTag,
                                                 &HDSDSetting,
+                                                &CamEnable,
                                                 &NullVar,
                                                 &NullVar,
                                                 &NullVar,
                                                 &NullVar,
-                                                &NullVar,
+                                                &StdVarFunction,
                                                 &StdVarFunction,
                                                 &StdVarFunction,
                                                 &StdVarFunction,
@@ -816,7 +828,6 @@ struct MenuStruct Menuc[MenuSize] = {
                                                 &StdVarFunction,
                                                 &StdVarFunction,
                                                 &ExitMenu,
-                                                &NullFunction,
                                                 &NullFunction,
                                                 &NullFunction,
                                                 &NullFunction,
@@ -1210,136 +1221,152 @@ int FocusNearFunct ( void )
     return 0;
 }
 
-void Load_Variables ( void )
+
+void PollPairedCamera(void)
 {
- 	int EE_offset=0;
-	char tempstr[130];
-    char *cptr,*token;
-	struct menu_var *var;
-
-	if ( *(char *)EE_begin == 0xff )
-	{
-	    Save_Variables();
-		return;
-	}
-		
-    if (strlen((char *)EE_begin)>128)
-	{
-	    tempstr[0] = 0xff;
-		EEWrite ( 1, tempstr,(int *)(EE_begin));//Put a 0xff in the beginning of EEPROM to force defaults
-		ResetProc ();
-		return;
-	}
-	
-	strncpy(tempstr,(char *)EE_begin,sizeof(tempstr));
-    token = strtok(tempstr, ",");
-
-	for(cptr=(char *)&CompressorOnOff.str_value;  cptr<=(char *)&CamTag.str_value;  cptr=cptr+((char *)&CntrStrokes.str_value - (char *)&CompressorOnOff.str_value))
-	{
-		if (strlen(token)>STR_VALUE_LEN)
-    	{
-	        tempstr[0] = 0xff;
-			EEWrite ( 1, tempstr,(int *)(EE_begin));//Put a 0xff in the beginning of EEPROM to force defaults
-    		ResetProc ();
-			return;
-    	}
-		
-		strncpy(cptr,token,STR_VALUE_LEN);
-		token = strtok(NULL, ",");
-		if ( token == NULL )
-		{
-		    EE_offset = EE_offset + 128;
-			if (!*(char *)(EE_begin + EE_offset))
-			    break; //Last variable loaded
-            if (strlen((char *)(EE_begin + EE_offset))>128)
-        	{
-        	    tempstr[0] = 0xff;
-        		EEWrite ( 1, tempstr,(int *)(EE_begin));//Put a 0xff in the beginning of EEPROM to force defaults
-        		ResetProc ();
-				return;
-        	}
-			strncpy(tempstr,(char *)(EE_begin + EE_offset),sizeof(tempstr));
-			token = strtok(tempstr, ",");
-		}
-	}
-		
-	//&CamTag
-	for(var=&CompressorOnOff; var<=&CamTag; var=var+1)	
-	//for(var=&CompressorOnOff; var<=&CntrStrokes; var=var+1)
-	{
-	    getvalue(var,0);
-	}
-
+    UNSIGNED16 address = gProcImg[CAMERA_PAIRING + 1] +
+                         ((UNSIGNED16)gProcImg[CAMERA_PAIRING + 2] << 8);
+    unsigned char unit = gProcImg[CAMERA_PAIRING];
+    memset(&gProcImg[CAMERA_PAIRING], 0, 8);
+    if (!address) return;
+    if (unit == NODE_ID) paired_camera_address = address;
+    else if (address == paired_camera_address) paired_camera_address = 0;
 }
 
-void Save_Variables ( void )
+int TrigRequest(void)
 {
- 	int offset=0,EE_offset=0;
-	char *cptr;
-    char tempstr[130];
-	char Null_Char = NULL;
-	char *Null_Ptr = &Null_Char;
+    int selected;
+    if (!(gProcImg[OUT_digi_0] & 0x02)) return 0;
+    gProcImg[OUT_digi_0] &= ~0x02;
+    if (State != FinishState) return 0;
+    selected = InternalExternalCameraSetting.value == 2 ?
+        paired_camera_address && paired_camera_address == activeCamAddress :
+        InternalExternalCameraSetting.value == 1 && CamEnable.value == 1 &&
+        cam_add && activeCamAddress == cam_add && (VSEL_PORT & CAM_ON);
+    if (!selected) {
+        if (InternalExternalCameraSetting.value == 2)
+            Display(paired_camera_address ? "Warn:WRONG EXT CAM" : "Warn:NO EXT CAM PAIRED");
+        else Display("Warn:WRONG INT CAMERA");
+        return 0;
+    }
+    State = TrigState;
+    StateTime = 0;
+    PressureMsgSent = 0;
+    Use_IN_digi_15 |= 1;
+    gProcImg[IN_digi_15] = Use_IN_digi_15;
+    return 1;
+}
 
-	for(cptr=(char *)&CompressorOnOff.str_value;  cptr<=(char *)&CamTag.str_value;  cptr=cptr+((char *)&CntrStrokes.str_value - (char *)&CompressorOnOff.str_value))
-	{
-	    if ( (offset + strlen(cptr) + 1) < 128 )
-		    sprintf(tempstr+offset,"%s,",cptr); //puts a comma
-		else
-		    *(tempstr+offset-1)=NULL; //puts a null in place of the last comma
-		offset = offset + strlen(cptr) + 1;
-		
-		if (offset>127) //current variable will go over the buffer limit
-		{
-			EEWrite ( 128, tempstr, (int *)(EE_begin + EE_offset));
-			EE_offset = EE_offset + 128;
-			sprintf(tempstr,"%s,",cptr); //starts back over by putting the current variable at beginning of tempstr
-			offset = strlen(cptr) + 1;
-		}
-		
-	}
-	*(tempstr+offset-1)=NULL; //end the last string with a null
-	EEWrite ( 128, tempstr, (int *)(EE_begin + EE_offset));
-	EEWrite ( 1,Null_Ptr,(int *)(EE_begin + EE_offset + 128));//Put a Null in the first location of the next 128 byte block 
+void Load_Camera_Settings(void)
+{
+    unsigned char *record = (unsigned char *)EE_ADDR(0x0c60);
+    InternalExternalCameraSetting.value = CamEnable.value = 1;
+    if (record[0] == 1 && record[1] >= 1 && record[1] <= 2 &&
+        record[2] >= 1 && record[2] <= 2) {
+        InternalExternalCameraSetting.value = record[1];
+        CamEnable.value = record[2];
+    }
+    getstrval(&InternalExternalCameraSetting);
+    getstrval(&CamEnable);
+}
 
-	if(save_serial_flag==1){
-		 
-		Save_Serial_Num();
-		save_serial_flag=0; 
-	}
-	
-}                                                                                        
+void Save_Camera_Settings(void)
+{
+    char record[3];
+    record[0] = 1;
+    record[1] = (char)InternalExternalCameraSetting.value;
+    record[2] = (char)CamEnable.value;
+    EEWrite(3, record, (int *)EE_ADDR(0x0c60));
+}
 
+void Load_Variables(void)
+{
+    unsigned i, block, pos, len;
+    char token[STR_VALUE_LEN + 1];
+    char *image = EE_begin;
+    Load_Camera_Settings();
+    if ((unsigned char)image[0] == 0xff) { Save_Variables(); return; }
+    block = pos = 0;
+    for (i = 0; i < SavedVariableCount; ++i) {
+        if (pos >= 128 || image[block + pos] == 0) {
+            block += 128;
+            pos = 0;
+        }
+        if (block >= 0x200 || !image[block + pos] ||
+            (unsigned char)image[block + pos] == 0xff) return;
+        len = 0;
+        while (pos < 128 && image[block + pos] && image[block + pos] != ',') {
+            if (len >= STR_VALUE_LEN - 1) return;
+            token[len++] = image[block + pos++];
+        }
+        if (pos == 128 || !len) return;
+        token[len] = 0;
+        if (image[block + pos] == ',') ++pos;
+        strcpy(SavedVariables[i]->str_value, token);
+        getvalue(SavedVariables[i], 0);
+    }
+}
+
+void Save_Variables(void)
+{
+    unsigned i, pos = 0, block = 0, len, total = 0;
+    char buffer[128];
+    /* Verify capacity before writing; 0x0a00 holds the camera addresses. */
+    for (i = 0; i < SavedVariableCount; ++i) {
+        len = strlen(SavedVariables[i]->str_value);
+        if (!len || len >= STR_VALUE_LEN) return;
+        if (pos + len + 1 >= 128) { total += 128; pos = 0; }
+        pos += len + 1;
+    }
+    if (total + 128 > 0x200) return;
+    pos = 0;
+    memset(buffer, 0, sizeof buffer);
+    for (i = 0; i < SavedVariableCount; ++i) {
+        len = strlen(SavedVariables[i]->str_value);
+        if (pos + len + 1 >= 128) {
+            buffer[pos - 1] = 0;
+            EEWrite(128, buffer, (int *)(EE_begin + block));
+            block += 128;
+            pos = 0;
+            memset(buffer, 0, sizeof buffer);
+        }
+        memcpy(buffer + pos, SavedVariables[i]->str_value, len);
+        pos += len;
+        buffer[pos++] = ',';
+    }
+    buffer[pos - 1] = 0;
+    EEWrite(128, buffer, (int *)(EE_begin + block));
+    /* No terminator may overlap the separately stored camera addresses. */
+    if (block + 128 < 0x200) {
+        buffer[0] = 0;
+        EEWrite(1, buffer, (int *)(EE_begin + block + 128));
+    }
+    Save_Camera_Settings();
+    if (save_serial_flag == 1) { Save_Serial_Num(); save_serial_flag = 0; }
+}
 
 int RestoreDefaults ( void )
 {
+    char erased = (char)0xff;
     Send_Menu_Status (0x00);
-	CompressorOnOff.str_value[0] = 0xFF;    
-	Save_Variables();
+    InternalExternalCameraSetting.value = CamEnable.value = 1;
+    Save_Camera_Settings();
+    EEWrite(1, &erased, (int *)EE_begin);
     ResetProc ();
 	return 0;
 }
-
-int GetTrigCam (void)
-{
-	TrigCam4 = ActCam4;
-	TrigCam5 = ActCam5;
-	Display("Proc:Camera Selected");
-	Save_TrigCamera_Add();
-	return 0;
-}
-
 
 //retreive camera address from EEProm
 void Load_Camera_Add ( void )
 {
     char *VarEEPROMPntr2;
-    VarEEPROMPntr2 = (char *)0x0a00;
+    VarEEPROMPntr2 = EE_ADDR(0x0a00);
     
     cam_addx[0] = *VarEEPROMPntr2;
     cam_addx[1] = *(VarEEPROMPntr2 + 1);   
-    cam_add = cam_addx[0] + (cam_addx[1]<<8); 
+    cam_add = (unsigned char)cam_addx[0] + ((UNSIGNED16)(unsigned char)cam_addx[1]<<8);
 	
-	sprintf(disp_add.str_value,"04X",cam_add);
+	sprintf(disp_add.str_value,"%04X",cam_add);
 	//disp_add.value              
 }
 
@@ -1347,40 +1374,12 @@ void Save_Camera_Add ( void )
 {
     char *EEpromPtr;
     
-    sprintf(disp_add.str_value,"04X",cam_add);
+    sprintf(disp_add.str_value,"%04X",cam_add);
 	
 	EEpromPtr = &cam_addx[0];
 
- 	EEWrite ( 2, EEpromPtr, (int *)0x0a00 );
+    EEWrite ( 2, EEpromPtr, (int *)EE_ADDR(0x0a00) );
 }
-
-
-//retreive selected camera address from EEProm
-void Load_TrigCamera_Add ( void )
-{
-    char *VarEEPROMPntr2;
-    VarEEPROMPntr2 = (char *)0x0c50;
-    
-    TrigCam4 = *VarEEPROMPntr2;
-    TrigCam5 = *(VarEEPROMPntr2 + 1);   
-    //cam_add = cam_addx[0] + (cam_addx[1]<<8); 
-	
-	//sprintf(disp_add.str_value,"04X",cam_add);
-	//disp_add.value              
-}
-
-void Save_TrigCamera_Add ( void )
-{
-    char *EEpromPtr;
-    
-    //sprintf(disp_add.str_value,"04X",cam_add);
-	
-	EEpromPtr = &TrigCam4;
-
- 	EEWrite ( 2, EEpromPtr, (int *)0x0c50 );
-}
-
-
 
 
 //retreive Serial Number from EEProm
@@ -1389,7 +1388,7 @@ void Load_Serial_Num ( void )
     char tempstr[130];
     char *VarEEPROMPntr2;
 	
-    VarEEPROMPntr2 = (char *)0x0b10;
+    VarEEPROMPntr2 = EE_ADDR(0x0b10);
     
     if ( *VarEEPROMPntr2 >= '0' && *VarEEPROMPntr2 <= '9')
 	{
@@ -1413,7 +1412,7 @@ void Save_Serial_Num ( void )
     
     EEpromPtr = &SerialNum.str_value[0];
 
- 	EEWrite ( 7, EEpromPtr, (int *)0x0b10 );
+    EEWrite ( 7, EEpromPtr, (int *)EE_ADDR(0x0b10) );
 }
 
 int ResetProc ( void )
@@ -1756,7 +1755,8 @@ void doevents ( void )
             Save_Variables();
         }
   
-        if ( MenuStackc[StackPointer].Index[0] == 0 &&
+        if ( CamEnable.value == 1 && cam_add &&
+             MenuStackc[StackPointer].Index[0] == 0 &&
              MenuStackc[StackPointer].Index[1] == 0 &&
              MenuStackc[StackPointer].Index[2] == 0 &&
              MenuStackc[StackPointer].Index[3] == 4 &&
@@ -1794,7 +1794,10 @@ void doevents ( void )
 		    InProcess = 1;
 			
 		CompressorMain ();
-     	CameraMain ();
+        PollPairedCamera();
+        CameraMain ();
+        gProcImg[OUT_digi_6] = 0;
+        gProcImg[OUT_digi_4] = gProcImg[OUT_digi_5] = 0;
 		
 	     
         if ( gProcImg[OUT_digi_14] )//&& !strcmp(MachineSize," 8-10") )
@@ -1808,20 +1811,7 @@ void doevents ( void )
 		LAMain ( Move_Position, Move_Speed);
 //	test ();
 
-            if ( gProcImg[OUT_digi_0] & 0x02 )
-            {
-			    //if ( State == FinishState && ( VSEL_PORT & CAM_ON ) )
-				if (State == FinishState && (ActCam4 == TrigCam4 && ActCam5 == TrigCam5))				   //Trigger on Vacuum Camera
-				{				
-				    State = TrigState;
-					PressureMsgSent = 0;
-					Use_IN_digi_15|=(1<<0);
-					gProcImg[IN_digi_15] = Use_IN_digi_15;
-				}
-				StateTime = 0;
-                gProcImg[OUT_digi_0] &=  ~0x02;				
-            }			
-		
+            TrigRequest();
 
 			//Cleaning routine, See State definitions for exact sequence!!!!!!
 			switch (State)
@@ -2696,16 +2686,16 @@ void CompressorMain ( void )
 
 void CameraMain ( void )
 {
-    int i;
-	
+    /* Disabled cameras are hidden from scanning and cannot be selected. */
 	//light value is set in settings menu 0 - 100% duty
-    PWMDTY7 = LightLevel.value * LightLevel.value;
+    PWMDTY7 = CamEnable.value == 1 ? LightLevel.value * LightLevel.value : 0;
+    if (CamEnable.value != 1) { VSEL_PORT &= ~CAM_ON; scan_reply_pending = 0; }
 
     ++ran_num;      //random number used for camera address
 
 	    sprintf ( disp_add.str_value, "%04X", cam_add );    //for video diplay of camera address
         
-        if ( (gProcImg[OUT_digi_6] & 0x08) &&              //command to activate menu
+        if ( (CamEnable.value == 1 && cam_add && gProcImg[OUT_digi_6] == 0x08) &&              //command to activate menu
             (gProcImg[OUT_digi_7] == (cam_add & 0x00FF)) &&         //lsb - old address
                 (gProcImg[OUT_digi_8]<< 8 ==  (cam_add & 0xFF00)) &&
                  !(Gen_Flags & GEN_FLAGS_MENU_ACTIVE) )
@@ -2762,11 +2752,10 @@ void CameraMain ( void )
 
     if ( gProcImg[OUT_digi_4] || gProcImg[OUT_digi_5])
     {
-        ActCam4 = gProcImg[OUT_digi_4];
-        ActCam5 = gProcImg[OUT_digi_5];
+        activeCamAddress = gProcImg[OUT_digi_4] + ((UNSIGNED16)gProcImg[OUT_digi_5] << 8);
     }
 	
-    if ( gProcImg[OUT_digi_4] == (cam_add & 0x00FF) &&
+    if ( CamEnable.value == 1 && cam_add && gProcImg[OUT_digi_4] == (cam_add & 0x00FF) &&
         gProcImg[OUT_digi_5]<< 8 == (cam_add & 0xFF00) )    //compare
 	{
     	char tempstr[18];
@@ -2780,39 +2769,33 @@ void CameraMain ( void )
     	VSEL_PORT &= ~CAM_ON;       //turn camera off, portA bit 0x10 low
     }
 
-    if ( gProcImg[OUT_digi_6] & 0x01 )   //command to generate random address
+    if ( CamEnable.value == 1 && gProcImg[OUT_digi_6] == 0x01 )   //command to generate random address
     {
         srand(ran_num);               //seed the random number      
-        cam_add = rand();
+        cam_add = (UNSIGNED16)rand();
+        if (!cam_add) cam_add = 1;
         gProcImg[OUT_digi_6] = 0x00;
         cam_addx[1] = cam_add>>8;
         cam_addx[0] = cam_add;     
         Save_Camera_Add();
     }
 
-    //command to transmit address
-    if ( gProcImg[OUT_digi_6] & 0x02)   //called by scan_camera in 2-wire
-    {
-        gProcImg[OUT_digi_6] = 0x00;             
-    	//VSEL_PORT &= ~CAM_ON;           //camera off, portA bit 0x10 low
-
-        //make delay proportional to camera address so cameras report in ascending order
-		Timer1 = cam_add/100;
-		while(Timer1);
-        
+    if (CamEnable.value == 1 && cam_add && gProcImg[OUT_digi_6] == 0x02) {
+        scan_reply_address = (UNSIGNED16)cam_add;
+        scan_reply_time = MCOHW_GetTime() + cam_add/100;
+        scan_reply_pending = 1;
+    }
+    if (scan_reply_pending && MCOHW_IsTimeExpired(scan_reply_time)) {
+        scan_reply_pending = 0;
         gTxMsg.ID = 0x2a1;
-        gTxMsg.LEN = 3; 
-        gTxMsg.BUF[0] = cam_add;
-        gTxMsg.BUF[1] = cam_add >> 8;
-		if (!MCOHW_PushMessage(&gTxMsg))
-        {
-            // failed to transmit
-            MCOUSER_FatalError(0x8801);
-        }
-         //! Transmit this without using the TPDO
+        gTxMsg.LEN = 3;
+        gTxMsg.BUF[0] = scan_reply_address;
+        gTxMsg.BUF[1] = scan_reply_address >> 8;
+        gTxMsg.BUF[2] = 0;
+        if (!MCOHW_PushMessage(&gTxMsg)) MCOUSER_FatalError(0x8801);
     }
 
-     if ( (gProcImg[OUT_digi_6] & 0x04) &&              //command to store address 
+     if ( (CamEnable.value == 1 && gProcImg[OUT_digi_6] == 0x04) &&              //command to store address
             (gProcImg[OUT_digi_7] == (cam_add & 0x00FF)) &&         //lsb - old address
                 ( (gProcImg[OUT_digi_8]<< 8) ==  (cam_add & 0xFF00)) ) //msb - old address
     {   //change to new address
@@ -2823,44 +2806,6 @@ void CameraMain ( void )
         cam_addx[1] = cam_add>>8;
         Save_Camera_Add();
    } 
-   /*     if ( (gProcImg[OUT_digi_6] & 0x10) &&              //command to return menu string
-            (gProcImg[OUT_digi_7] == (cam_add & 0x00FF)) &&         //lsb - old address
-                (gProcImg[OUT_digi_8]<< 8 ==  (cam_add & 0xFF00)) ) //&&
-                 //!(Gen_Flags & GEN_FLAGS_MENU_ACTIVE) )
-        {
-            gProcImg[OUT_digi_6] = 0x00;    //reset command
-            //format "1i 1234 xx xx xx xx xx " (8 bytes)
-            gTxMsg.ID = 0x3a1;
-            gTxMsg.LEN = 8; 
-            gTxMsg.BUF[0] = 1;
-
-            for(i=0; i<4; i++) 
-            {
-                gTxMsg.BUF[0] = i+0x10;
-                gTxMsg.BUF[2] = cam_add>>8;
-                gTxMsg.BUF[1] = cam_add;
-                gTxMsg.BUF[3] = cam_menu_entry[0];
-                gTxMsg.BUF[4] = cam_menu_entry[1];
-                gTxMsg.BUF[5] = cam_menu_entry[2];
-                gTxMsg.BUF[6] = cam_menu_entry[3];
-                gTxMsg.BUF[7] = cam_menu_entry[4];
-
-               //! Transmit this without using the TPDO
-               if (!MCOHW_PushMessage(&gTxMsg))
-               {
-                   // failed to transmit
-                   MCOUSER_FatalError(0x8801);
-               }
-            	Timer1 = RTI_One_Sec * .05;     //delay
-                while(Timer1);
-        }
-    }
-*/
-
-    //send new address 
-    //gProcImg[IN_digi_1] = cam_add;     //lsb 
-    //gProcImg[IN_digi_2] = cam_add >> 8; //msb
-
 	//Advance film when PLC_Trig and Cam_Tog2 pressed
     if ( !(Gen_Flags & Gen_Flags_Menu_Active) && (TC0_RCVD_Data & TeleData_PLCTrig) && (TC0_RCVD_Data & TeleData_CamTog2) )
     {

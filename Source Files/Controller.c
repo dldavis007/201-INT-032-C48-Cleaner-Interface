@@ -29,7 +29,6 @@ void main (void)
     //important to load_camera_add() before Load_Variables(), EEProm is not available for
     //brief period after save_variables at end of load_variables()
 
-	Load_TrigCamera_Add();
 	//Skip over this function call to change the serial number
 	Load_Serial_Num ();
 

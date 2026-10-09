@@ -22,11 +22,7 @@ extern char MaxLADist[];
 extern char Gen_Flags;
 extern char State;
 
-extern unsigned char TrigCam4;
-extern unsigned char TrigCam5;
 
-extern unsigned char ActCam4;
-extern unsigned char ActCam5;
 
 char UpdateArrayVar=0;
 
