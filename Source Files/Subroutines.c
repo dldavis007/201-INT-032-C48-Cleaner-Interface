@@ -264,12 +264,14 @@ struct menu_var  CamTag = {
 	   1,1,1,46,0,-11,"CLEANER CAM",enum_alpha_str
 };
 
-struct menu_var  disp_add = {
-	   1,1,1,46,0,-4,"1234",enum_alpha_str
-};
-
 struct menu_var HDSDSetting = {
 	   1,1,1,2,0,2,"SD",enum_hd_sd
+};
+
+
+// Does not need to be saved in EEPROM, but is used to display the camera address on the menu
+struct menu_var  disp_add = {
+	   1,1,1,46,0,-4,"1234",enum_alpha_str
 };
 
 
@@ -1319,7 +1321,7 @@ void Save_Variables(void)
     if (total + 128 > 0x200) return;
     pos = 0;
     memset(buffer, 0, sizeof buffer);
-    for (var = &CompressorOnOff; var <= &CamTag; ++var) {
+    for (var = &CompressorOnOff; var <= &HDSDSetting; ++var) {
         len = strlen(var->str_value);
         if (pos + len + 1 >= 128) {
             buffer[pos - 1] = 0;
