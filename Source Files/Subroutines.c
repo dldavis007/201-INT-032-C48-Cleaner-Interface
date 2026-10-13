@@ -1279,7 +1279,7 @@ void Load_Variables(void)
     Load_Camera_Settings();
     if ((unsigned char)image[0] == 0xff) { Save_Variables(); return; }
     block = pos = 0;
-    for (var = &CompressorOnOff; var <= &CamTag; ++var) {
+    for (var = &CompressorOnOff; var <= &HDSDSetting; ++var) {
         if (pos >= 128 || image[block + pos] == 0) {
             block += 128;
             pos = 0;
@@ -1310,7 +1310,7 @@ void Save_Variables(void)
     struct menu_var *var;
     char buffer[128];
     /* Verify capacity before writing; 0x0a00 holds the camera addresses. */
-    for (var = &CompressorOnOff; var <= &CamTag; ++var) {
+    for (var = &CompressorOnOff; var <= &HDSDSetting; ++var) {
         len = strlen(var->str_value);
         if (!len || len >= STR_VALUE_LEN) return;
         if (pos + len + 1 >= 128) { total += 128; pos = 0; }
