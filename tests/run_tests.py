@@ -276,10 +276,8 @@ def test_udp_menu_exit_handoff():
         frames = host.frames[start:]
         closed = [i for i, (can_id, data) in enumerate(frames) if can_id == 0x200 and data == bytes([0])]
         cleared = [i for i, (can_id, data) in enumerate(frames) if can_id == 0x310 and data[2:6] == b"Clr:"]
-        require(closed and cleared and max(cleared) < closed[-1],
-                "cleaner clear did not precede menu-close notification\n" + host.log())
-        require(not any(can_id == 0x310 for can_id, _ in frames[closed[-1] + 1:]),
-                "cleaner sent display traffic after returning ownership to CNT-19")
+        require(closed and cleared and closed[-1] < min(cleared),
+                "original close-before-clear order was not restored\n" + host.log())
     finally:
         host.close()
 
@@ -321,7 +319,7 @@ def main():
     try:
         test_udp_menu_exit_handoff()
         cases_run += 1
-        print("PASS UDP menu-exit display handoff")
+        print("PASS original UDP menu-exit ordering")
     except (OSError, TestFailure) as exc:
         failures.append("menu-exit handoff: %s" % exc)
         print("FAIL menu-exit handoff: %s" % exc)

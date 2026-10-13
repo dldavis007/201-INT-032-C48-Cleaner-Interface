@@ -6,6 +6,13 @@
 #define STR_VALUE_LEN 12
 
 
+/* The PC compiler must retain the target's contiguous saved-variable block. */
+#ifdef PC_SIDE
+#define MENU_VAR_LAYOUT __attribute__((aligned(32)))
+#else
+#define MENU_VAR_LAYOUT
+#endif
+
 struct menu_var{
 float value;            //actual value of the variable, or pointer to enum list if an enum type variable
 float inc;              //increment/decrement value, may be int or float, must be 1 for enum type variable
@@ -16,7 +23,7 @@ signed char len_str;			//length of str_value, pads left with spaces
 char str_value[STR_VALUE_LEN];     //string equivalent of value, or current enum pointed to by value
 const char *str_enum;         //pointer to comma separated enum list, must be NULL for non-enum variable types
 struct menu_var *next_var; //pointer to then next variable if more than one per line
-};
+} MENU_VAR_LAYOUT;
 
 
 #pragma nonpaged_function NullFunction

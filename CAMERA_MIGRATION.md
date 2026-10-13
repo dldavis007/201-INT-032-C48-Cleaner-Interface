@@ -26,8 +26,10 @@ Disabled internal cameras do not appear in scans.
 ## Settings compatibility
 
 Legacy CSV settings keep their original order and 128-byte block boundaries.
-Serialization now uses an explicit variable table, avoiding assumptions about the
-placement of globals by ImageCraft versus GCC. The CSV occupies `0x0800–0x09ff`;
+Serialization uses the original contiguous menu-variable block from
+`CompressorOnOff` through `CamTag`. Add future saved variables between those
+endpoints. PC-only type alignment and GCC declaration-order flags preserve the
+block layout on the host. The CSV occupies `0x0800–0x09ff`;
 camera address `0x0a00` and serial number `0x0b10` remain separate.
 
 The new settings record is at `0x0c60`: `[version 1, mode, enable]`, with enum
@@ -48,7 +50,7 @@ python .\tests\run_tests.py
 ```
 
 The runner builds the real firmware host and runs the existing menu regressions,
-72 camera checks, and UDP pairing, scan and process-restart tests. GCC/GNU Make and
+74 camera checks, and UDP pairing, scan and process-restart tests. GCC/GNU Make and
 Python are required. On Windows the runner uses `mingw32-make`; on Linux it uses `make`.
 The Windows bench transport and wire format are retained.
 
@@ -78,11 +80,10 @@ The direction values stay the same: old `CLN` becomes `REV` and old `VAC` become
 `FWD` when legacy EEPROM settings are loaded. The new labels are saved on the
 next menu save.
 
-Root menu exit clears the cleaner display first, allows 50 ms for transmission, suppresses pending menu redraws,
-and then sends `0x200 [00]` to return ownership to CNT-19. Previously the clear
-followed the close notification and could erase CNT-19's restored main menu.
-Production-code and UDP tests verify the clear-before-close ordering and absence
-of later cleaner display traffic. Confirm the restored controller menu on the PC bench.
+The experimental clear-before-close change in `DeSelect` has been reverted.
+`DeSelect` matches the original pre-migration function: it announces menu close,
+then clears the display. The actual CNT-19 main-menu problem needs further diagnosis.
+Tests verify this original ordering instead of requiring the experimental handoff.
 
 ## Camera PC-host persistence findings
 
@@ -97,3 +98,13 @@ of later cleaner display traffic. Confirm the restored controller menu on the PC
   missing backing file or failed write can make it appear to forget settings.
 
 Neither camera repository was modified in this cleaner follow-up.
+
+## MicroCANopen receive check
+
+The only migration change to `mco.c` adds `gRPDOConfig[i].len` and
+`gRxCAN.LEN >= gRPDOConfig[i].len` to PDO matching. It ignores unconfigured slots
+and prevents short frames from copying unused/stale buffer bytes into the process
+image. Valid configured payloads, including padded frames, behave as before.
+This is defensive validation, not a requirement of the camera pairing format.
+The change remains in place pending a decision about the shared stack policy.
+No other `mcoxxx.c` or `mcoxxx.h` file was changed by this migration.

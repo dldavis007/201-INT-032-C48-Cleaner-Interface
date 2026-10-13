@@ -138,6 +138,8 @@ static void test_settings_and_menus(void) {
     unsigned i;
     char *record = EE_ADDR(0x0c60);
     reset(); memset(pc_eeprom, 0xff, sizeof pc_eeprom);
+    CHECK((char *)&CntrStrokes - (char *)&CompressorOnOff == sizeof(struct menu_var));
+    CHECK(((char *)&CamTag - (char *)&CompressorOnOff) % sizeof(struct menu_var) == 0);
     EE_ADDR(0x0c50)[0] = 0x34; EE_ADDR(0x0c50)[1] = 0x12;
     Load_Camera_Settings();
     CHECK(InternalExternalCameraSetting.value == 1 && CamEnable.value == 1);
@@ -184,7 +186,7 @@ static void test_menu_exit_handoff(void) {
     unsigned i, clear_index = 128, close_index = 128;
     reset(); StackPointer = 0;
     Gen_Flags = Gen_Flags_Menu_Active;
-    UpdateMenu = 1;
+    UpdateMenu = 0;
     gProcImg[IN_digi_0] = 1;
     INTR_ON(); rti_thread_start_realtime(1);
     ExitMenu();
@@ -196,10 +198,10 @@ static void test_menu_exit_handoff(void) {
         if (transmitted[i].ID == 0x200 && transmitted[i].BUF[0] == 0)
             close_index = i;
     }
-    CHECK(clear_index < close_index && close_index < tx_count);
+    CHECK(close_index < clear_index && clear_index < tx_count);
     CHECK(!(Gen_Flags & Gen_Flags_Menu_Active));
-    CHECK(!UpdateMenu && !(gProcImg[IN_digi_0] & 1) && StoreFlag);
-    for (i=close_index+1; i<tx_count; ++i) CHECK(transmitted[i].ID != WIM_ID);
+    CHECK(StoreFlag);
+
 }
 
 int main(void) {

@@ -184,7 +184,7 @@ struct menu_var  LineUpDirection = {
 	   1,1,1,2,0,3,"REV",enum_lineup_dir_str
 };
 
-struct menu_var  LineupTimeOnOff = { 
+struct menu_var  LineupTimeOnOff = {
 	   1,1,1,2,0,3,"OFF",enum_off_on_str
 };
 
@@ -288,15 +288,6 @@ struct menu_var InternalExternalCameraSetting = {
 struct menu_var CamEnable = {
     1,1,1,2,0,8," ENABLED","ENABLED,DISABLED"
 };
-static struct menu_var *SavedVariables[] = {
-    &CompressorOnOff, &CntrStrokes, &FullStrokes, &CntrDist, &FullDist, &LACntr, &LASpeed, &LineUpDist, &LineupSpeed, &SealTime, &TestModeOnOff, &LineUpDirection, &LineupTimeOnOff, &laSwitchPol, &VacDist1, &VacDist2, &VacDist3, &VacDist4, &VacDist5, &VacSpeed1, &VacSpeed2, &VacSpeed3, &VacSpeed4, &VacSpeed5, &LowSetPoint, &HighSetPoint, &MachineSize, &ZoomSpeed, &FocusSpeed, &LightLevel, &AdvanceTime, &CamTag
-};
-#define SavedVariableCount (sizeof SavedVariables / sizeof SavedVariables[0])
-
-
-
-
-
 //The following Menu Variables are NOT saved in EEPROM
 struct menu_var  NullVar;
 
@@ -1281,13 +1272,14 @@ void Save_Camera_Settings(void)
 
 void Load_Variables(void)
 {
-    unsigned i, block, pos, len;
+    unsigned block, pos, len;
+    struct menu_var *var;
     char token[STR_VALUE_LEN + 1];
     char *image = EE_begin;
     Load_Camera_Settings();
     if ((unsigned char)image[0] == 0xff) { Save_Variables(); return; }
     block = pos = 0;
-    for (i = 0; i < SavedVariableCount; ++i) {
+    for (var = &CompressorOnOff; var <= &CamTag; ++var) {
         if (pos >= 128 || image[block + pos] == 0) {
             block += 128;
             pos = 0;
@@ -1303,22 +1295,23 @@ void Load_Variables(void)
         token[len] = 0;
         if (image[block + pos] == ',') ++pos;
         /* Preserve travel direction from pre-rename EEPROM settings. */
-        if (SavedVariables[i] == &LineUpDirection) {
+        if (var == &LineUpDirection) {
             if (!strcmp(token, "CLN")) strcpy(token, "REV");
             else if (!strcmp(token, "VAC")) strcpy(token, "FWD");
         }
-        strcpy(SavedVariables[i]->str_value, token);
-        getvalue(SavedVariables[i], 0);
+        strcpy(var->str_value, token);
+        getvalue(var, 0);
     }
 }
 
 void Save_Variables(void)
 {
-    unsigned i, pos = 0, block = 0, len, total = 0;
+    unsigned pos = 0, block = 0, len, total = 0;
+    struct menu_var *var;
     char buffer[128];
     /* Verify capacity before writing; 0x0a00 holds the camera addresses. */
-    for (i = 0; i < SavedVariableCount; ++i) {
-        len = strlen(SavedVariables[i]->str_value);
+    for (var = &CompressorOnOff; var <= &CamTag; ++var) {
+        len = strlen(var->str_value);
         if (!len || len >= STR_VALUE_LEN) return;
         if (pos + len + 1 >= 128) { total += 128; pos = 0; }
         pos += len + 1;
@@ -1326,8 +1319,8 @@ void Save_Variables(void)
     if (total + 128 > 0x200) return;
     pos = 0;
     memset(buffer, 0, sizeof buffer);
-    for (i = 0; i < SavedVariableCount; ++i) {
-        len = strlen(SavedVariables[i]->str_value);
+    for (var = &CompressorOnOff; var <= &CamTag; ++var) {
+        len = strlen(var->str_value);
         if (pos + len + 1 >= 128) {
             buffer[pos - 1] = 0;
             EEWrite(128, buffer, (int *)(EE_begin + block));
@@ -1335,7 +1328,7 @@ void Save_Variables(void)
             pos = 0;
             memset(buffer, 0, sizeof buffer);
         }
-        memcpy(buffer + pos, SavedVariables[i]->str_value, len);
+        memcpy(buffer + pos, var->str_value, len);
         pos += len;
         buffer[pos++] = ',';
     }
