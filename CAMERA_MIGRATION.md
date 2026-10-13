@@ -16,7 +16,7 @@ The old **SEL TRIG CAM** action and its EEPROM trigger-address reader/writer are
 (`0x48` for this cleaner), bytes 1–2 are the camera address, low byte first.
 The remaining bytes are reserved. `0x421` selects the camera using two address bytes.
 A camera announcing a different target unit clears its previous pairing with this cleaner.
-Zero camera addresses and short PDO messages are ignored.
+Zero camera addresses are ignored. Pairing senders must supply all eight bytes.
 
 The pairing mailbox occupies new process-image bytes 34–41. Existing actuator,
 status and analog fields keep their original offsets. Scan requests on `0x521`
@@ -50,7 +50,7 @@ python .\tests\run_tests.py
 ```
 
 The runner builds the real firmware host and runs the existing menu regressions,
-74 camera checks, and UDP pairing, scan and process-restart tests. GCC/GNU Make and
+73 camera checks, and UDP pairing, scan and process-restart tests. GCC/GNU Make and
 Python are required. On Windows the runner uses `mingw32-make`; on Linux it uses `make`.
 The Windows bench transport and wire format are retained.
 
@@ -99,12 +99,9 @@ Tests verify this original ordering instead of requiring the experimental handof
 
 Neither camera repository was modified in this cleaner follow-up.
 
-## MicroCANopen receive check
+## Shared MicroCANopen stack
 
-The only migration change to `mco.c` adds `gRPDOConfig[i].len` and
-`gRxCAN.LEN >= gRPDOConfig[i].len` to PDO matching. It ignores unconfigured slots
-and prevents short frames from copying unused/stale buffer bytes into the process
-image. Valid configured payloads, including padded frames, behave as before.
-This is defensive validation, not a requirement of the camera pairing format.
-The change remains in place pending a decision about the shared stack policy.
-No other `mcoxxx.c` or `mcoxxx.h` file was changed by this migration.
+`mco.c` is restored exactly to its pre-migration version. No migration changes
+remain in the `mcoxxx.c` or `mcoxxx.h` files. The original stack matches PDOs by
+CAN ID and copies the configured payload length; senders must supply that length.
+The short-frame rejection test was removed with the defensive receive check.

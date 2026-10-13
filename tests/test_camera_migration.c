@@ -73,7 +73,6 @@ static int trigger(void) {
 }
 static void test_pairing(void) {
     unsigned i;
-    unsigned char short_pair[3] = {NODE_ID, 0x34, 0x12};
     reset();
     CHECK(sizeof(UNSIGNED16) == 2);
     CHECK(CAMERA_PAIRING >= OUT_ana_1 + 2 && CAMERA_PAIRING + 8 <= PROCIMG_SIZE);
@@ -84,7 +83,6 @@ static void test_pairing(void) {
     pair(0x22, 0x7654); CHECK(paired_camera_address == 0xabcd);
     pair(0x22, 0xabcd); CHECK(!paired_camera_address);
     pair(NODE_ID, 0x4444); pair(NODE_ID, 0x4444); CHECK(paired_camera_address == 0x4444);
-    receive(0x321, short_pair, 3); PollPairedCamera(); CHECK(paired_camera_address == 0x4444);
     {
         unsigned char padded[8] = {0x31,0x27,0,0,0,0,0,0};
         receive(0x421, padded, 8); CameraMain();
