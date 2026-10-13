@@ -445,7 +445,7 @@ struct MenuStruct Menuc[MenuSize] = {
                                 
                                                 0,0,1,2,
                                                 "     SETTINGS 2     ",
-                                                " CAMERA MODE        ",
+                                                " CAMERA             ",
                                                 " LINE UP DIR        ",
                                                 " LINEUP TIMER       ",
                                                 " LINEUP SPEED       ",
